@@ -1,274 +1,374 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Lern·AI</title>
-  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;1,9..144,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-  <style>
-    :root {
-      --cream: #FAFAF7; --ink: #1A1A18; --ink-light: #4A4A45; --ink-faint: #9A9A92;
-      --accent: #2D5BE3; --accent-light: #EEF2FF;
-      --gold: #C9933A; --gold-light: #FDF6EC;
-      --green: #2A7D4F; --green-light: #EDF7F2;
-      --red: #C0392B; --red-light: #FDF0EE;
-      --orange: #D4690A; --orange-light: #FEF3E8;
-      --border: #E8E8E2; --shadow: 0 2px 16px rgba(0,0,0,0.06); --radius: 12px;
-    }
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: 'DM Sans', sans-serif; background: var(--cream); color: var(--ink); min-height: 100vh; display: flex; flex-direction: column; }
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Lern·AI</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;1,9..144,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<style>
+/* ── VARIABLES ── */
+:root {
+  --cream: #FAFAF7;
+  --ink:   #1A1A18;
+  --ink2:  #4A4A45;
+  --ink3:  #9A9A92;
+  --blue:  #2D5BE3;
+  --blue-l:#EEF2FF;
+  --green: #2A7D4F;
+  --green-l:#EDF7F2;
+  --gold:  #C9933A;
+  --gold-l:#FDF6EC;
+  --red:   #C0392B;
+  --red-l: #FDF0EE;
+  --orange:#D4690A;
+  --orange-l:#FEF3E8;
+  --border:#E8E8E2;
+  --radius:12px;
+  --shadow:0 2px 16px rgba(0,0,0,0.06);
+}
 
-    header { border-bottom: 1px solid var(--border); padding: 0 32px; display: flex; align-items: center; justify-content: space-between; height: 64px; background: white; position: sticky; top: 0; z-index: 100; }
-    .logo { font-family: 'Fraunces', serif; font-size: 22px; font-weight: 600; letter-spacing: -0.5px; }
-    .logo span { color: var(--accent); }
-    .lang-toggle { display: flex; gap: 4px; background: var(--cream); border: 1px solid var(--border); border-radius: 8px; padding: 3px; }
-    .lang-btn { padding: 5px 12px; border-radius: 6px; border: none; background: transparent; font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500; cursor: pointer; color: var(--ink-faint); transition: all 0.2s; }
-    .lang-btn.active { background: white; color: var(--ink); box-shadow: 0 1px 4px rgba(0,0,0,0.1); }
+/* ── RESET ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'DM Sans', sans-serif; background: var(--cream); color: var(--ink); min-height: 100vh; display: flex; flex-direction: column; }
 
-    main { max-width: 900px; margin: 0 auto; padding: 40px 24px 60px; flex: 1; width: 100%; }
+/* ── HEADER ── */
+header {
+  background: white;
+  border-bottom: 1px solid var(--border);
+  height: 60px;
+  padding: 0 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+.logo { font-family: 'Fraunces', serif; font-size: 21px; font-weight: 600; letter-spacing: -0.5px; }
+.logo span { color: var(--blue); }
+.header-right { display: flex; align-items: center; gap: 14px; }
+.header-link {
+  font-size: 12px;
+  color: var(--ink3);
+  cursor: pointer;
+  background: none;
+  border: none;
+  font-family: 'DM Sans', sans-serif;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 0;
+}
+.header-link:hover { color: var(--blue); }
+.lang-toggle { display: flex; gap: 3px; background: var(--cream); border: 1px solid var(--border); border-radius: 8px; padding: 3px; }
+.lang-btn { padding: 4px 10px; border-radius: 5px; border: none; background: transparent; font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500; cursor: pointer; color: var(--ink3); transition: all .15s; }
+.lang-btn.active { background: white; color: var(--ink); box-shadow: 0 1px 4px rgba(0,0,0,.1); }
 
-    .hero { text-align: center; margin-bottom: 40px; }
-    .hero h1 { font-family: 'Fraunces', serif; font-size: 40px; font-weight: 600; line-height: 1.15; letter-spacing: -1px; margin-bottom: 12px; }
-    .hero h1 em { font-style: italic; color: var(--accent); }
-    .hero p { font-size: 16px; color: var(--ink-light); max-width: 480px; margin: 0 auto; line-height: 1.6; }
+/* ── MAIN ── */
+main { max-width: 860px; margin: 0 auto; padding: 36px 20px 80px; flex: 1; width: 100%; }
 
-    .card { background: white; border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow); padding: 28px; margin-bottom: 20px; }
-    .card-label { font-size: 11px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: var(--ink-faint); margin-bottom: 12px; }
+/* ── HERO ── */
+.hero { text-align: center; margin-bottom: 36px; }
+.hero h1 { font-family: 'Fraunces', serif; font-size: 38px; font-weight: 600; line-height: 1.15; letter-spacing: -1px; margin-bottom: 10px; }
+.hero h1 em { font-style: italic; color: var(--blue); }
+.hero p { font-size: 15px; color: var(--ink2); max-width: 460px; margin: 0 auto; line-height: 1.6; }
 
-    .api-row { display: flex; gap: 10px; align-items: center; }
-    .api-input { flex: 1; padding: 11px 14px; border: 1.5px solid var(--border); border-radius: 8px; font-family: 'DM Sans', sans-serif; font-size: 14px; color: var(--ink); background: var(--cream); transition: border-color 0.2s; outline: none; }
-    .api-input:focus { border-color: var(--accent); background: white; }
-    .api-toggle { padding: 11px 14px; border: 1.5px solid var(--border); border-radius: 8px; background: var(--cream); cursor: pointer; font-size: 16px; }
+/* ── CARD ── */
+.card { background: white; border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow); padding: 24px; margin-bottom: 16px; }
+.card-label { font-size: 11px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: var(--ink3); margin-bottom: 12px; }
 
-    /* Source tabs */
-    .source-tabs { display: flex; gap: 6px; margin-bottom: 18px; flex-wrap: wrap; }
-    .source-tab { flex: 1; min-width: 120px; padding: 10px 8px; border: 1.5px solid var(--border); border-radius: 8px; background: white; font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500; cursor: pointer; text-align: center; transition: all 0.2s; color: var(--ink-faint); }
-    .source-tab.active { border-color: var(--accent); background: var(--accent-light); color: var(--accent); }
-    .source-panel { display: none; }
-    .source-panel.active { display: block; }
+/* ── API KEY ── */
+.api-row { display: flex; gap: 8px; }
+.api-input { flex: 1; padding: 11px 14px; border: 1.5px solid var(--border); border-radius: 8px; font-family: 'DM Sans', sans-serif; font-size: 14px; color: var(--ink); background: var(--cream); outline: none; transition: border-color .2s; }
+.api-input:focus { border-color: var(--blue); background: white; }
+.icon-btn { padding: 11px 14px; border: 1.5px solid var(--border); border-radius: 8px; background: var(--cream); cursor: pointer; font-size: 16px; }
+.icon-btn:hover { border-color: var(--blue); }
 
-    /* URL inputs */
-    .url-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 10px; }
-    .url-row { display: flex; gap: 8px; align-items: center; }
-    .url-input { flex: 1; padding: 10px 14px; border: 1.5px solid var(--border); border-radius: 8px; font-family: 'DM Sans', sans-serif; font-size: 14px; color: var(--ink); outline: none; transition: border-color 0.2s; background: var(--cream); }
-    .url-input:focus { border-color: var(--accent); background: white; }
-    .url-remove { width: 34px; height: 34px; border: 1.5px solid var(--border); border-radius: 6px; background: white; cursor: pointer; font-size: 15px; display: flex; align-items: center; justify-content: center; color: var(--ink-faint); transition: all 0.2s; flex-shrink: 0; }
-    .url-remove:hover { border-color: var(--red); color: var(--red); }
-    .add-url-btn { padding: 9px 16px; border: 1.5px dashed var(--border); border-radius: 8px; background: transparent; font-family: 'DM Sans', sans-serif; font-size: 13px; cursor: pointer; color: var(--ink-faint); transition: all 0.2s; width: 100%; margin-top: 4px; }
-    .add-url-btn:hover { border-color: var(--accent); color: var(--accent); }
-    .url-note { font-size: 12px; color: var(--ink-faint); margin-top: 8px; line-height: 1.5; }
+/* ── SOURCE TABS ── */
+.source-tabs { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 16px; }
+.stab {
+  padding: 12px 8px;
+  border: 2px solid var(--border);
+  border-radius: 10px;
+  background: white;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  text-align: center;
+  color: var(--ink3);
+  transition: all .15s;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+}
+.stab.active { border-color: var(--blue); background: var(--blue-l); color: var(--blue); }
 
-    /* Upload */
-    .upload-zone { border: 2px dashed var(--border); border-radius: var(--radius); padding: 32px 24px; text-align: center; cursor: pointer; transition: all 0.2s; position: relative; }
-    .upload-zone:hover, .upload-zone.drag-over { border-color: var(--accent); background: var(--accent-light); }
-    .upload-zone input[type="file"] { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; }
-    .upload-icon { font-size: 30px; margin-bottom: 8px; }
-    .upload-zone h3 { font-size: 15px; font-weight: 600; margin-bottom: 4px; }
-    .upload-zone p { font-size: 13px; color: var(--ink-faint); }
-    .file-list { display: flex; flex-direction: column; gap: 8px; margin-top: 12px; }
-    .file-item { display: flex; align-items: center; gap: 10px; padding: 10px 14px; background: var(--green-light); border: 1px solid #C3E6D5; border-radius: 8px; font-size: 13px; font-weight: 500; color: var(--green); }
-    .remove-file { margin-left: auto; cursor: pointer; color: var(--ink-faint); }
+/* ── SOURCE PANELS ── */
+.spanel { display: none; }
+.spanel.active { display: block; }
 
-    .text-input { width: 100%; min-height: 140px; padding: 14px; border: 1.5px solid var(--border); border-radius: 8px; font-family: 'DM Sans', sans-serif; font-size: 14px; line-height: 1.6; color: var(--ink); resize: vertical; outline: none; transition: border-color 0.2s; }
-    .text-input:focus { border-color: var(--accent); }
+/* ── URL LIST ── */
+.url-row { display: flex; gap: 8px; margin-bottom: 8px; }
+.url-input { flex: 1; padding: 10px 12px; border: 1.5px solid var(--border); border-radius: 8px; font-family: 'DM Sans', sans-serif; font-size: 13px; color: var(--ink); background: var(--cream); outline: none; transition: border-color .2s; }
+.url-input:focus { border-color: var(--blue); background: white; }
+.url-remove { width: 36px; height: 38px; border: 1.5px solid var(--border); border-radius: 8px; background: white; cursor: pointer; font-size: 16px; color: var(--ink3); flex-shrink: 0; }
+.url-add { margin-top: 6px; padding: 8px 14px; border: 1.5px dashed var(--border); border-radius: 8px; background: transparent; font-family: 'DM Sans', sans-serif; font-size: 13px; color: var(--ink3); cursor: pointer; width: 100%; }
+.url-add:hover { border-color: var(--blue); color: var(--blue); }
+.url-hint { font-size: 12px; padding: 7px 10px; border-radius: 6px; margin-top: 4px; margin-bottom: 4px; line-height: 1.5; }
+.url-hint.warn { background: var(--gold-l); color: #7A5000; border-left: 3px solid var(--gold); }
+.url-hint.bad  { background: var(--red-l);  color: var(--red);  border-left: 3px solid var(--red); }
 
-    .mode-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 10px; }
-    .mode-btn { padding: 14px 8px; border: 2px solid var(--border); border-radius: 10px; background: white; cursor: pointer; text-align: center; transition: all 0.2s; font-family: 'DM Sans', sans-serif; user-select: none; -webkit-user-select: none; display: block; -webkit-tap-highlight-color: transparent; }
-    .mode-btn:hover { border-color: var(--accent); background: var(--accent-light); }
-    .mode-btn.selected { border-color: var(--accent) !important; background: var(--accent-light) !important; box-shadow: 0 0 0 3px rgba(45,91,227,0.15); }
-    .mode-btn:not(.selected) { border-color: var(--border) !important; background: white !important; }
-    .mode-icon { font-size: 22px; margin-bottom: 5px; }
-    .mode-name { font-size: 13px; font-weight: 600; color: var(--ink); }
-    .mode-desc { font-size: 11px; color: var(--ink-faint); margin-top: 2px; }
+/* ── FILE UPLOAD ── */
+.file-zone { border: 2px dashed var(--border); border-radius: 10px; padding: 30px 20px; text-align: center; cursor: pointer; transition: all .2s; background: var(--cream); }
+.file-zone:hover, .file-zone.drag { border-color: var(--blue); background: var(--blue-l); }
+.file-zone p { font-size: 13px; color: var(--ink3); margin-top: 6px; }
+.file-zone strong { color: var(--blue); }
+.file-list { margin-top: 10px; display: flex; flex-wrap: wrap; gap: 6px; }
+.file-chip { background: var(--blue-l); color: var(--blue); border: 1px solid var(--blue); border-radius: 20px; padding: 4px 10px; font-size: 12px; display: flex; align-items: center; gap: 6px; }
+.file-chip button { background: none; border: none; cursor: pointer; color: var(--blue); font-size: 14px; padding: 0; line-height: 1; }
+#fileInput { display: none; }
 
-    .generate-btn { width: 100%; padding: 16px; background: var(--accent); color: white; border: none; border-radius: 10px; font-family: 'DM Sans', sans-serif; font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 20px; }
-    .generate-btn:hover { background: #1E4BC9; transform: translateY(-1px); box-shadow: 0 4px 20px rgba(45,91,227,0.3); }
+/* ── TEXT AREA ── */
+.text-area { width: 100%; padding: 12px; border: 1.5px solid var(--border); border-radius: 8px; font-family: 'DM Sans', sans-serif; font-size: 13px; color: var(--ink); background: var(--cream); resize: vertical; min-height: 120px; outline: none; transition: border-color .2s; }
+.text-area:focus { border-color: var(--blue); background: white; }
 
-    .error-box { padding: 14px 18px; background: var(--red-light); border: 1px solid #F5C6C2; border-radius: 10px; color: var(--red); font-size: 14px; margin-top: 16px; display: none; }
+/* ── OUTPUT MODE ── */
+.mode-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.mode-btn {
+  padding: 14px 8px;
+  border: 2px solid var(--border);
+  border-radius: 10px;
+  background: white;
+  cursor: pointer;
+  text-align: center;
+  font-family: 'DM Sans', sans-serif;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  transition: all .15s;
+}
+.mode-btn .mode-icon  { font-size: 20px; display: block; margin-bottom: 4px; }
+.mode-btn .mode-title { font-size: 13px; font-weight: 600; color: var(--ink); display: block; }
+.mode-btn .mode-desc  { font-size: 11px; color: var(--ink3); display: block; margin-top: 2px; }
+.mode-btn.active { border-color: var(--blue); background: var(--blue-l); }
+.mode-btn.active .mode-title { color: var(--blue); }
 
-    .loading-state { text-align: center; padding: 60px 24px; display: none; }
-    .loading-spinner { width: 44px; height: 44px; border: 3px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 16px; }
-    @keyframes spin { to { transform: rotate(360deg); } }
-    .loading-title { color: var(--ink); font-size: 16px; font-weight: 600; margin-bottom: 6px; }
-    .loading-sub { color: var(--ink-faint); font-size: 14px; }
+/* ── GENERATE BUTTON ── */
+.gen-btn { width: 100%; padding: 15px; background: var(--blue); color: white; border: none; border-radius: 10px; font-family: 'DM Sans', sans-serif; font-size: 15px; font-weight: 600; cursor: pointer; transition: opacity .2s; margin-top: 16px; }
+.gen-btn:hover { opacity: .9; }
 
-    #results { display: none; }
-    .result-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; flex-wrap: wrap; gap: 12px; }
-    .result-header h2 { font-family: 'Fraunces', serif; font-size: 26px; font-weight: 600; }
+/* ── ERROR ── */
+.error-box { background: var(--red-l); border: 1px solid var(--red); color: var(--red); border-radius: 8px; padding: 10px 14px; font-size: 13px; margin-bottom: 12px; display: none; }
 
-    .action-btn { padding: 9px 18px; border: 1.5px solid var(--border); border-radius: 8px; background: white; font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.2s; display: inline-flex; align-items: center; gap: 6px; }
-    .action-btn:hover { border-color: var(--accent); color: var(--accent); }
-    .action-btn.primary { background: var(--accent); color: white; border-color: var(--accent); }
-    .action-btn.primary:hover { background: #1E4BC9; }
-    .action-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+/* ── LOADING ── */
+#loadingState { display: none; text-align: center; padding: 60px 20px; }
+.spinner { width: 40px; height: 40px; border: 3px solid var(--blue-l); border-top-color: var(--blue); border-radius: 50%; animation: spin .8s linear infinite; margin: 0 auto 16px; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.loading-steps { margin-top: 20px; display: flex; flex-direction: column; gap: 6px; max-width: 280px; margin-left: auto; margin-right: auto; }
+.loading-step { font-size: 13px; color: var(--ink3); padding: 6px 12px; background: white; border-radius: 20px; border: 1px solid var(--border); }
+.loading-step.done { color: var(--green); border-color: var(--green); }
 
-    .source-quality { padding: 14px 18px; border-radius: 10px; margin-bottom: 20px; font-size: 14px; line-height: 1.6; display: none; }
-    .source-quality.good { background: var(--green-light); border: 1px solid #C3E6D5; color: var(--green); }
-    .source-quality.warn { background: var(--orange-light); border: 1px solid #F5C8A0; color: var(--orange); }
-    .source-quality.bad { background: var(--red-light); border: 1px solid #F5C6C2; color: var(--red); }
-    .sq-title { font-weight: 700; margin-bottom: 4px; }
+/* ── RESULTS ── */
+#results { display: none; }
+.result-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; flex-wrap: wrap; gap: 8px; }
+.result-header h2 { font-family: 'Fraunces', serif; font-size: 22px; font-weight: 600; }
+.result-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+.btn-sm { padding: 8px 14px; border-radius: 8px; border: 1.5px solid var(--border); background: white; font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500; cursor: pointer; color: var(--ink); transition: all .15s; display: inline-flex; align-items: center; gap: 5px; }
+.btn-sm:hover { border-color: var(--blue); color: var(--blue); }
+.btn-sm.primary { background: var(--blue); color: white; border-color: var(--blue); }
+.btn-sm.primary:hover { opacity: .9; }
 
-    .tabs { display: flex; gap: 4px; border-bottom: 1px solid var(--border); margin-bottom: 28px; overflow-x: auto; }
-    .tab { padding: 10px 18px; border: none; background: none; font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 500; color: var(--ink-faint); cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1px; transition: all 0.2s; white-space: nowrap; }
-    .tab.active { color: var(--accent); border-bottom-color: var(--accent); }
-    .tab-content { display: none; }
-    .tab-content.active { display: block; }
+/* ── QUALITY BANNER ── */
+.quality-banner { border-radius: 10px; padding: 12px 16px; margin-bottom: 16px; font-size: 13px; line-height: 1.5; border-left: 4px solid; }
+.quality-banner.great { background: var(--green-l); border-color: var(--green); color: #1A4A2E; }
+.quality-banner.ok    { background: var(--gold-l);  border-color: var(--gold);  color: #5C3D00; }
+.quality-banner.weak  { background: var(--red-l);   border-color: var(--red);   color: var(--red); }
 
-    /* Overview */
-    .section-tag { display: inline-flex; align-items: center; gap: 6px; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; letter-spacing: 0.3px; margin-bottom: 10px; }
-    .tag-blue { background: var(--accent-light); color: var(--accent); }
-    .tag-gold { background: var(--gold-light); color: var(--gold); }
-    .tag-green { background: var(--green-light); color: var(--green); }
-    .overview-text { font-size: 15px; line-height: 1.7; }
-    .overview-section { margin-bottom: 20px; }
-    .highlight-quote { border-left: 3px solid var(--gold); padding: 14px 20px; background: var(--gold-light); border-radius: 0 8px 8px 0; margin: 16px 0; font-family: 'Fraunces', serif; font-size: 16px; font-style: italic; line-height: 1.6; }
-    .terms-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px; margin-top: 10px; }
-    .term-card { padding: 14px 16px; background: var(--cream); border: 1px solid var(--border); border-radius: 10px; }
-    .term-name { font-weight: 600; font-size: 14px; color: var(--accent); margin-bottom: 4px; }
-    .term-def { font-size: 13px; color: var(--ink-light); line-height: 1.5; }
+/* ── RESULT TABS ── */
+.result-tabs { display: flex; gap: 6px; margin-bottom: 16px; flex-wrap: wrap; }
+.rtab { padding: 9px 16px; border: 1.5px solid var(--border); border-radius: 8px; background: white; font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500; cursor: pointer; color: var(--ink3); transition: all .15s; }
+.rtab.active { border-color: var(--blue); background: var(--blue-l); color: var(--blue); }
+.rpanel { display: none; }
+.rpanel.active { display: block; }
 
-    /* Poster */
-    .poster-download-bar { display: flex; justify-content: flex-end; margin-bottom: 14px; }
-    #learningPoster { background: white; border-radius: 16px; border: 1px solid var(--border); box-shadow: 0 4px 32px rgba(0,0,0,0.08); padding: 36px; font-family: 'DM Sans', sans-serif; }
-    .poster-header { text-align: center; margin-bottom: 22px; padding-bottom: 20px; border-bottom: 2px solid #F0F0EA; }
-    .poster-subject { font-size: 10px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--accent); margin-bottom: 8px; }
-    .poster-title { font-family: 'Fraunces', serif; font-size: 30px; font-weight: 600; color: var(--ink); line-height: 1.2; letter-spacing: -0.5px; margin-bottom: 10px; }
-    .poster-summary { font-size: 13px; color: var(--ink-light); max-width: 580px; margin: 0 auto; line-height: 1.6; }
-    .key-facts { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 18px; }
-    .fact-box { background: var(--cream); border: 1px solid var(--border); border-radius: 10px; padding: 12px 8px; text-align: center; }
-    .fact-icon { font-size: 18px; margin-bottom: 4px; }
-    .fact-label { font-size: 9px; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; color: var(--ink-faint); margin-bottom: 3px; }
-    .fact-value { font-size: 12px; font-weight: 600; color: var(--ink); line-height: 1.3; }
-    .poster-quote { border-left: 3px solid var(--gold); padding: 12px 18px; background: var(--gold-light); border-radius: 0 8px 8px 0; margin-bottom: 20px; font-family: 'Fraunces', serif; font-size: 14px; font-style: italic; color: var(--ink); line-height: 1.5; }
-    .mindmap-container { display: flex; flex-direction: column; align-items: center; margin-bottom: 24px; }
-    .hub { background: var(--accent); color: white; font-family: 'Fraunces', serif; font-size: 18px; font-weight: 600; padding: 12px 32px; border-radius: 40px; text-align: center; box-shadow: 0 4px 16px rgba(45,91,227,0.25); }
-    .connector { width: 2px; height: 22px; background: #CBD5E1; margin: 0 auto; }
-    .branches-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; width: 100%; align-items: stretch; }
-    .branch-node { border-radius: 10px; padding: 12px 14px; display: flex; flex-direction: column; }
-    .branch-node:nth-child(6n+1) { background: #EEF4FE; border: 1.5px solid #A8C4F5; }
-    .branch-node:nth-child(6n+2) { background: #FEF8EE; border: 1.5px solid #F5D4A8; }
-    .branch-node:nth-child(6n+3) { background: #EEF9F4; border: 1.5px solid #A8E0C4; }
-    .branch-node:nth-child(6n+4) { background: #FEF0F2; border: 1.5px solid #F5A8B4; }
-    .branch-node:nth-child(6n+5) { background: #F5F0FE; border: 1.5px solid #C4A8F5; }
-    .branch-node:nth-child(6n+6) { background: #F0FEFE; border: 1.5px solid #A8E8F5; }
-    .branch-title { font-size: 12px; font-weight: 700; margin-bottom: 6px; }
-    .branch-node:nth-child(6n+1) .branch-title { color: #1E5BC6; }
-    .branch-node:nth-child(6n+2) .branch-title { color: #9A6820; }
-    .branch-node:nth-child(6n+3) .branch-title { color: #1E7A4A; }
-    .branch-node:nth-child(6n+4) .branch-title { color: #9A2030; }
-    .branch-node:nth-child(6n+5) .branch-title { color: #5A20AA; }
-    .branch-node:nth-child(6n+6) .branch-title { color: #1A7A9A; }
-    .branch-keywords { display: flex; flex-wrap: wrap; gap: 4px; }
-    .branch-kw { font-size: 11px; color: var(--ink-light); background: rgba(255,255,255,0.7); border-radius: 4px; padding: 2px 6px; }
-    .poster-footer { border-top: 1px solid #F0F0EA; padding-top: 14px; display: flex; justify-content: space-between; align-items: center; margin-top: 8px; }
-    .poster-brand { font-family: 'Fraunces', serif; font-size: 13px; color: var(--ink-faint); }
-    .poster-brand span { color: var(--accent); }
-    .poster-date { font-size: 11px; color: var(--ink-faint); }
+/* ── POSTER ── */
+.poster { background: white; border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+.poster-header { background: var(--blue); color: white; padding: 20px 24px; }
+.poster-header h2 { font-family: 'Fraunces', serif; font-size: 22px; font-weight: 600; margin-bottom: 4px; }
+.poster-header p { font-size: 13px; opacity: .8; }
+.poster-keywords { display: flex; flex-wrap: wrap; gap: 6px; padding: 14px 24px; background: var(--blue-l); border-bottom: 1px solid var(--border); }
+.kw { background: var(--blue); color: white; font-size: 11px; font-weight: 600; padding: 4px 10px; border-radius: 20px; }
+.poster-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--border); }
+.poster-box { background: white; padding: 18px; min-height: 120px; }
+.poster-box h3 { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .8px; color: var(--blue); margin-bottom: 8px; }
+.poster-box ul { padding-left: 16px; }
+.poster-box li { font-size: 13px; line-height: 1.65; color: var(--ink2); margin-bottom: 3px; }
+.poster-sources { padding: 12px 24px; background: var(--cream); border-top: 1px solid var(--border); font-size: 11px; color: var(--ink3); }
+.poster-sources a { color: var(--blue); text-decoration: none; }
 
-    /* Exam */
-    .exam-list { display: flex; flex-direction: column; gap: 12px; }
-    .exam-item { padding: 16px 20px; background: white; border: 1px solid var(--border); border-radius: 10px; display: flex; gap: 14px; align-items: flex-start; }
-    .exam-num { width: 28px; height: 28px; background: var(--accent-light); color: var(--accent); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; flex-shrink: 0; }
-    .exam-q { font-size: 15px; line-height: 1.5; padding-top: 2px; }
+/* ── OVERVIEW ── */
+.ov-section { margin-bottom: 20px; }
+.ov-section h3 { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .8px; color: var(--blue); margin-bottom: 10px; }
+.ov-card { background: white; border: 1px solid var(--border); border-radius: 10px; padding: 14px 16px; margin-bottom: 8px; font-size: 14px; line-height: 1.65; color: var(--ink2); }
+.contradiction { background: var(--orange-l); border: 1px solid var(--orange); border-radius: 10px; padding: 12px 14px; margin-bottom: 8px; font-size: 13px; color: #5C2D00; line-height: 1.5; }
+.contradiction.fix { background: var(--blue-l); border-color: var(--blue); color: #1A2E6B; }
+.source-row { display: flex; align-items: center; gap: 10px; background: white; border: 1px solid var(--border); border-radius: 8px; padding: 10px 14px; margin-bottom: 6px; font-size: 13px; }
+.src-badge { font-size: 10px; font-weight: 600; padding: 3px 8px; border-radius: 20px; flex-shrink: 0; }
+.src-badge.good { background: var(--green-l); color: var(--green); }
+.src-badge.warn { background: var(--gold-l);  color: var(--gold); }
+.src-badge.bad  { background: var(--red-l);   color: var(--red); }
+.source-row a { color: var(--blue); text-decoration: none; font-size: 12px; margin-left: auto; flex-shrink: 0; }
 
-    /* ── FEEDBACK ── */
-    .feedback-section { margin-top: 32px; padding: 24px 28px; background: white; border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow); }
-    .feedback-title { font-family: 'Fraunces', serif; font-size: 18px; font-weight: 600; margin-bottom: 6px; }
-    .feedback-sub { font-size: 13px; color: var(--ink-faint); margin-bottom: 20px; }
-    .stars { display: flex; gap: 8px; margin-bottom: 16px; }
-    .star { font-size: 32px; cursor: pointer; transition: transform 0.15s; filter: grayscale(1) opacity(0.4); }
-    .star:hover, .star.active { filter: none; transform: scale(1.15); }
-    .feedback-comment { width: 100%; padding: 12px 14px; border: 1.5px solid var(--border); border-radius: 8px; font-family: 'DM Sans', sans-serif; font-size: 14px; line-height: 1.6; resize: vertical; outline: none; min-height: 80px; transition: border-color 0.2s; }
-    .feedback-comment:focus { border-color: var(--accent); }
-    .feedback-submit { margin-top: 12px; padding: 11px 24px; background: var(--accent); color: white; border: none; border-radius: 8px; font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.2s; }
-    .feedback-submit:hover { background: #1E4BC9; }
-    .feedback-submit:disabled { opacity: 0.5; cursor: not-allowed; }
-    .feedback-success { display: none; padding: 14px 18px; background: var(--green-light); border: 1px solid #C3E6D5; border-radius: 8px; color: var(--green); font-size: 14px; font-weight: 500; margin-top: 12px; }
+/* ── QUESTIONS ── */
+.q-item { background: white; border: 1px solid var(--border); border-radius: 10px; padding: 16px; margin-bottom: 10px; }
+.q-num  { font-size: 11px; font-weight: 600; color: var(--blue); text-transform: uppercase; letter-spacing: .8px; margin-bottom: 6px; }
+.q-text { font-size: 14px; font-weight: 600; color: var(--ink); margin-bottom: 10px; line-height: 1.4; }
+.q-answers { display: flex; flex-direction: column; gap: 5px; }
+.q-answer { padding: 9px 12px; border: 1.5px solid var(--border); border-radius: 7px; font-size: 13px; color: var(--ink2); cursor: pointer; transition: all .15s; background: white; text-align: left; font-family: 'DM Sans', sans-serif; width: 100%; }
+.q-answer:hover { border-color: var(--blue); background: var(--blue-l); color: var(--blue); }
+.q-answer.correct { border-color: var(--green); background: var(--green-l); color: var(--green); cursor: default; }
+.q-answer.wrong   { border-color: var(--red);   background: var(--red-l);   color: var(--red);   cursor: default; }
+.q-expl { margin-top: 8px; padding: 10px 12px; background: var(--green-l); border-radius: 8px; font-size: 12px; color: var(--green); display: none; }
 
-    /* Feedback overview panel */
-    #feedbackPanel { display: none; }
-    .feedback-overview { background: white; border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow); padding: 24px; }
-    .fb-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 20px; }
-    .fb-stat { background: var(--cream); border-radius: 10px; padding: 16px; text-align: center; border: 1px solid var(--border); }
-    .fb-stat-num { font-family: 'Fraunces', serif; font-size: 28px; font-weight: 600; color: var(--accent); }
-    .fb-stat-label { font-size: 12px; color: var(--ink-faint); margin-top: 4px; }
-    .fb-list { display: flex; flex-direction: column; gap: 10px; max-height: 400px; overflow-y: auto; }
-    .fb-item { padding: 14px 16px; background: var(--cream); border-radius: 10px; border: 1px solid var(--border); }
-    .fb-item-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; }
-    .fb-stars { font-size: 14px; }
-    .fb-date { font-size: 11px; color: var(--ink-faint); }
-    .fb-comment { font-size: 13px; color: var(--ink-light); line-height: 1.5; }
-    .fb-empty { text-align: center; padding: 32px; color: var(--ink-faint); font-size: 14px; }
-    .show-feedback-btn { background: none; border: none; font-family: 'DM Sans', sans-serif; font-size: 13px; color: var(--ink-faint); cursor: pointer; padding: 4px 0; text-decoration: underline; }
-    .show-feedback-btn:hover { color: var(--accent); }
+/* ── GLOSSAR ── */
+.glossar-search { display: flex; gap: 8px; margin-bottom: 14px; }
+.glossar-input { flex: 1; padding: 11px 14px; border: 1.5px solid var(--border); border-radius: 8px; font-family: 'DM Sans', sans-serif; font-size: 14px; color: var(--ink); background: var(--cream); outline: none; transition: border-color .2s; }
+.glossar-input:focus { border-color: var(--blue); background: white; }
+.glossar-card { background: white; border: 1px solid var(--border); border-radius: 10px; padding: 20px; margin-bottom: 12px; }
+.glossar-term { font-family: 'Fraunces', serif; font-size: 22px; font-weight: 600; color: var(--blue); margin-bottom: 10px; }
+.glossar-def  { font-size: 14px; line-height: 1.7; color: var(--ink2); margin-bottom: 14px; }
+.glossar-meta { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px; }
+.glossar-meta-box { background: var(--cream); border-radius: 8px; padding: 10px 12px; }
+.glossar-meta-box .lbl { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .6px; color: var(--ink3); margin-bottom: 4px; }
+.glossar-meta-box .val { font-size: 13px; color: var(--ink2); line-height: 1.5; }
+.glossar-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.glossar-chip { background: var(--blue-l); color: var(--blue); border: 1px solid var(--blue); border-radius: 20px; padding: 4px 12px; font-size: 12px; cursor: pointer; transition: all .15s; }
+.glossar-chip:hover { background: var(--blue); color: white; }
 
-    .poster-sources { border-top:1px solid #F0F0EA; padding-top:12px; margin-top:16px; }
-    .poster-sources-title { font-size:10px; font-weight:700; letter-spacing:1px; text-transform:uppercase; color:var(--ink-faint); margin-bottom:8px; }
-    .poster-source-item { font-size:11px; color:var(--ink-light); margin-bottom:4px; line-height:1.4; }
-    .source-num { font-weight:700; color:var(--accent); margin-right:4px; }
-    .poster-mix-praise { margin-top:10px; padding:8px 14px; background:var(--gold-light); border-radius:8px; font-size:12px; color:var(--gold); font-weight:600; }
-    .source-mix-box { display:flex; gap:10px; align-items:center; padding:12px 16px; border-radius:10px; margin-top:12px; font-size:14px; font-weight:500; }
-    .source-mix-box.great { background:var(--gold-light); border:1px solid #F0D5A0; color:var(--gold); }
-    .source-mix-box.good { background:var(--green-light); border:1px solid #C3E6D5; color:var(--green); }
-    .source-mix-box.weak { background:var(--orange-light); border:1px solid #F5C8A0; color:var(--orange); }
-    .mix-icon { font-size:20px; }
-    .source-cite-item { display:flex; gap:10px; padding:10px 0; border-bottom:1px solid var(--border); }
-    .source-cite-title { font-size:14px; font-weight:500; margin-bottom:3px; }
-    .source-cite-url { font-size:12px; color:var(--accent); text-decoration:none; word-break:break-all; }
-    /* Glossar */
-    .glossar-card { background:white; border:1px solid var(--border); border-radius:var(--radius); padding:24px; box-shadow:var(--shadow); }
-    .glossar-term { font-family:"Fraunces",serif; font-size:24px; font-weight:600; color:var(--accent); margin-bottom:12px; }
-    .glossar-def { font-size:15px; line-height:1.7; color:var(--ink); margin-bottom:16px; }
-    .glossar-example { font-size:14px; line-height:1.6; padding:12px 16px; background:var(--gold-light); border-left:3px solid var(--gold); border-radius:0 8px 8px 0; margin-bottom:12px; color:var(--ink); }
-    .glossar-origin { font-size:13px; color:var(--ink-light); padding:8px 12px; background:var(--cream); border-radius:8px; margin-bottom:12px; }
-    .glossar-example-label { font-weight:700; }
-    .glossar-related { font-size:13px; color:var(--ink-faint); margin-top:8px; display:flex; flex-wrap:wrap; gap:6px; align-items:center; }
-    .glossar-chip { display:inline-block; padding:4px 12px; background:var(--accent-light); color:var(--accent); border-radius:20px; font-size:12px; font-weight:600; cursor:pointer; transition:all 0.2s; }
-    .glossar-chip:hover { background:var(--accent); color:white; }
-    /* Handwriting & Image Analysis */
-    .hw-title { font-family:"Fraunces",serif; font-size:16px; font-weight:600; color:var(--orange); margin-bottom:6px; }
-    .hw-subtitle { font-size:13px; color:var(--ink-light); margin-bottom:10px; }
-    .hw-item { display:flex; flex-wrap:wrap; gap:8px; align-items:center; margin-bottom:8px; }
-    .hw-word { font-weight:700; font-size:14px; color:var(--ink); background:rgba(255,255,255,0.7); padding:3px 10px; border-radius:6px; }
-    .hw-alt { font-size:13px; color:var(--orange); font-style:italic; }
-    .ia-title { font-family:"Fraunces",serif; font-size:18px; font-weight:600; margin-bottom:10px; color:var(--ink); }
-    .ia-symbolism { font-size:14px; line-height:1.7; color:var(--ink-light); margin-bottom:16px; padding:12px 16px; background:var(--gold-light); border-left:3px solid var(--gold); border-radius:0 8px 8px 0; }
-    .ia-elements { display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:10px; }
-    .ia-element { padding:12px 14px; background:var(--cream); border:1px solid var(--border); border-radius:10px; }
-    .ia-element-name { font-weight:700; font-size:13px; color:var(--accent); margin-bottom:4px; }
-    .ia-element-desc { font-size:12px; color:var(--ink-light); line-height:1.5; }
-    .warning-reason { font-size:13px; line-height:1.6; padding:10px 14px; background:var(--orange-light); border:1px solid #F5C8A0; border-radius:8px; margin-bottom:8px; color:var(--orange); }
-    .contradiction-item { display:flex; gap:10px; align-items:flex-start; padding:12px 16px; border-radius:10px; margin-bottom:8px; font-size:14px; line-height:1.6; }
-    .contradiction-item.conflict { background:#FEF3E8; border:1px solid #F5C8A0; color:#7A3A00; }
-    .contradiction-item.correction { background:#EEF4FE; border:1px solid #A8C4F5; color:#1A3A7A; }
-    .contradiction-icon { font-size:16px; flex-shrink:0; margin-top:2px; }
+/* ── HW + IMAGE ANALYSIS ── */
+.hw-box { background: #FFF8E1; border: 1px solid var(--gold); border-radius: 10px; padding: 14px; margin-bottom: 14px; }
+.hw-box h4 { font-size: 13px; font-weight: 600; color: var(--gold); margin-bottom: 8px; }
+.hw-row { font-size: 13px; color: var(--ink2); padding: 5px 0; border-bottom: 1px solid var(--border); }
+.hw-row:last-child { border-bottom: none; }
+.ia-box { background: white; border: 1px solid var(--border); border-radius: 10px; padding: 16px; margin-bottom: 14px; }
+.ia-box h4 { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .8px; color: var(--blue); margin-bottom: 10px; }
+.ia-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 10px; }
+.ia-el { background: var(--cream); border-radius: 8px; padding: 10px; font-size: 12px; color: var(--ink2); }
+.ia-el strong { color: var(--ink); display: block; margin-bottom: 2px; }
+.ia-symbolism { font-size: 13px; color: var(--ink2); line-height: 1.6; background: var(--blue-l); border-radius: 8px; padding: 12px; }
 
-    /* Footer disclaimer */
-    footer { background: white; border-top: 1px solid var(--border); padding: 20px 32px; text-align: center; }
-    .disclaimer { font-size: 12px; color: var(--ink-faint); line-height: 1.7; max-width: 700px; margin: 0 auto; }
-    .disclaimer a { color: var(--accent); text-decoration: none; }
+/* ── WARNING MODAL ── */
+.modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.5); z-index: 500; display: none; align-items: center; justify-content: center; padding: 20px; }
+.modal-overlay.show { display: flex; }
+.modal { background: white; border-radius: 16px; padding: 28px; max-width: 400px; width: 100%; box-shadow: 0 20px 60px rgba(0,0,0,.2); }
+.modal-icon { font-size: 36px; text-align: center; margin-bottom: 12px; }
+.modal h3 { font-family: 'Fraunces', serif; font-size: 20px; font-weight: 600; text-align: center; margin-bottom: 12px; }
+.modal-reasons { background: var(--cream); border-radius: 8px; padding: 12px; margin-bottom: 18px; font-size: 13px; color: var(--ink2); line-height: 1.7; }
+.modal-btns { display: flex; gap: 8px; }
+.modal-btns button { flex: 1; padding: 11px; border-radius: 8px; font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 600; cursor: pointer; border: none; }
+.modal-cancel  { background: var(--cream); border: 1.5px solid var(--border) !important; color: var(--ink) !important; }
+.modal-proceed { background: var(--blue); color: white; }
 
-    @media (max-width: 640px) {
-      .branches-grid { grid-template-columns: repeat(2, 1fr); }
-      .key-facts { grid-template-columns: repeat(2, 1fr); }
-      .mode-grid { grid-template-columns: 1fr; }
-      .fb-stats { grid-template-columns: repeat(3, 1fr); }
-      .hero h1 { font-size: 28px; }
-      header { padding: 0 16px; }
-      main { padding: 24px 16px 40px; }
-      #learningPoster { padding: 20px; }
-      .poster-title { font-size: 22px; }
-      footer { padding: 16px; }
-    }
-  </style>
+/* ── FEEDBACK MODAL ── */
+.stars { display: flex; gap: 8px; justify-content: center; margin: 14px 0; }
+.star { font-size: 28px; cursor: pointer; filter: grayscale(1); transition: transform .1s; }
+.star.on { filter: none; transform: scale(1.1); }
+.feedback-ta { width: 100%; padding: 10px; border: 1.5px solid var(--border); border-radius: 8px; font-family: 'DM Sans', sans-serif; font-size: 13px; color: var(--ink); resize: none; outline: none; min-height: 80px; margin-bottom: 14px; }
+.feedback-ta:focus { border-color: var(--blue); }
+
+/* ── FEEDBACK OVERVIEW ── */
+#feedbackOverview { display: none; }
+.fb-stat { text-align: center; padding: 24px; background: var(--blue-l); border-radius: 10px; margin-bottom: 16px; }
+.fb-stat .avg { font-family: 'Fraunces', serif; font-size: 52px; font-weight: 600; color: var(--blue); }
+.fb-stat p { color: var(--ink3); font-size: 13px; margin-top: 4px; }
+.fb-entry { background: white; border: 1px solid var(--border); border-radius: 8px; padding: 12px 14px; margin-bottom: 8px; }
+.fb-entry .fb-stars { font-size: 16px; margin-bottom: 4px; }
+.fb-entry .fb-comment { font-size: 13px; color: var(--ink2); margin-bottom: 4px; }
+.fb-entry .fb-date { font-size: 11px; color: var(--ink3); }
+
+/* ── QUELLEN-HISTORIE DRAWER ── */
+.drawer-overlay {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,.45);
+  z-index: 400;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .25s;
+}
+.drawer-overlay.show { opacity: 1; pointer-events: all; }
+
+.drawer {
+  position: fixed; top: 0; right: 0; bottom: 0;
+  width: 320px; max-width: 90vw;
+  background: white;
+  z-index: 401;
+  display: flex; flex-direction: column;
+  box-shadow: -4px 0 24px rgba(0,0,0,.12);
+  transform: translateX(100%);
+  transition: transform .25s;
+}
+.drawer.show { transform: translateX(0); }
+
+.drawer-head {
+  padding: 18px 20px;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+  flex-shrink: 0;
+}
+.drawer-head h3 { font-family: 'Fraunces', serif; font-size: 17px; font-weight: 600; }
+.drawer-close { background: none; border: none; font-size: 20px; cursor: pointer; color: var(--ink3); padding: 4px; }
+.drawer-close:hover { color: var(--ink); }
+
+.drawer-body { flex: 1; overflow-y: auto; padding: 16px; }
+
+.hist-empty { text-align: center; padding: 48px 20px; color: var(--ink3); font-size: 13px; line-height: 1.7; }
+
+.hist-entry { background: var(--cream); border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; margin-bottom: 10px; }
+.hist-entry-meta { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+.hist-entry-date  { font-size: 11px; color: var(--ink3); }
+.hist-entry-title { font-size: 13px; font-weight: 600; color: var(--ink); margin-bottom: 8px; }
+
+.hist-src-row { display: flex; align-items: center; gap: 8px; padding: 5px 0; border-bottom: 1px solid var(--border); font-size: 12px; }
+.hist-src-row:last-child { border-bottom: none; }
+.hist-src-url { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--blue); text-decoration: none; }
+.hist-src-url.nolink { color: var(--ink2); }
+
+.hist-badge { font-size: 10px; font-weight: 600; padding: 2px 7px; border-radius: 20px; flex-shrink: 0; }
+.hist-badge.great { background: var(--green-l); color: var(--green); }
+.hist-badge.ok    { background: var(--gold-l);  color: var(--gold); }
+.hist-badge.weak  { background: var(--red-l);   color: var(--red); }
+.hist-badge.file  { background: var(--blue-l);  color: var(--blue); }
+
+.hist-quality-badge { font-size: 10px; font-weight: 600; padding: 2px 8px; border-radius: 20px; }
+.hist-quality-badge.great { background: var(--green-l); color: var(--green); }
+.hist-quality-badge.good  { background: var(--gold-l);  color: var(--gold); }
+.hist-quality-badge.weak  { background: var(--red-l);   color: var(--red); }
+
+.hist-clear { width: 100%; margin-top: 8px; padding: 10px; border: 1.5px solid var(--red-l); border-radius: 8px; background: white; color: var(--red); font-family: 'DM Sans', sans-serif; font-size: 13px; cursor: pointer; }
+.hist-clear:hover { background: var(--red-l); }
+
+/* ── FOOTER ── */
+footer { text-align: center; padding: 20px; font-size: 11px; color: var(--ink3); border-top: 1px solid var(--border); }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 600px) {
+  .hero h1 { font-size: 28px; }
+  .poster-grid { grid-template-columns: 1fr; }
+  .mode-grid { grid-template-columns: 1fr 1fr; }
+  .glossar-meta { grid-template-columns: 1fr; }
+  .ia-grid { grid-template-columns: 1fr; }
+  .header-link span { display: none; }
+}
+</style>
 </head>
 <body>
 
+<!-- ── HEADER ─────────────────────────────────────────────────────────── -->
 <header>
-  <div class="logo">Lern<span>·</span>AI</div>
-  <div style="display:flex; gap:12px; align-items:center;">
-    <button class="show-feedback-btn" onclick="toggleFeedbackPanel()" data-de="📊 Feedback-Übersicht" data-en="📊 Feedback Overview">📊 Feedback-Übersicht</button>
+  <div class="logo">Lern<span>·AI</span></div>
+  <div class="header-right">
+    <button class="header-link" onclick="openDrawer()">📚 <span>Meine Quellen</span></button>
+    <button class="header-link" onclick="showFeedbackOverview()">📊 <span>Feedback</span></button>
     <div class="lang-toggle">
       <button class="lang-btn active" onclick="setLang('de')">🇩🇪 DE</button>
       <button class="lang-btn" onclick="setLang('en')">🇬🇧 EN</button>
@@ -278,877 +378,1075 @@
 
 <main>
 
-  <!-- Feedback overview panel (hidden by default) -->
-  <div id="feedbackPanel" style="margin-bottom:24px;">
-    <div class="feedback-overview">
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
-        <h2 style="font-family:'Fraunces',serif; font-size:22px; font-weight:600;" data-de="📊 Feedback-Übersicht" data-en="📊 Feedback Overview">📊 Feedback-Übersicht</h2>
-        <button class="action-btn" onclick="toggleFeedbackPanel()" data-de="✕ Schließen" data-en="✕ Close">✕ Schließen</button>
-      </div>
-      <div class="fb-stats">
-        <div class="fb-stat"><div class="fb-stat-num" id="fbTotal">0</div><div class="fb-stat-label" data-de="Bewertungen" data-en="Reviews">Bewertungen</div></div>
-        <div class="fb-stat"><div class="fb-stat-num" id="fbAvg">–</div><div class="fb-stat-label" data-de="Ø Sterne" data-en="Avg Stars">Ø Sterne</div></div>
-        <div class="fb-stat"><div class="fb-stat-num" id="fbComments">0</div><div class="fb-stat-label" data-de="Kommentare" data-en="Comments">Kommentare</div></div>
-      </div>
-      <div class="fb-list" id="fbList">
-        <div class="fb-empty" data-de="Noch kein Feedback vorhanden." data-en="No feedback yet.">Noch kein Feedback vorhanden.</div>
-      </div>
-    </div>
-  </div>
-
+  <!-- ── HERO ── -->
   <div class="hero">
-    <h1 data-de="Lerne <em>smarter</em>,<br>nicht härter." data-en="Study <em>smarter</em>,<br>not harder.">Lerne <em>smarter</em>,<br>nicht härter.</h1>
-    <p data-de="Gib Links, Videos oder Text ein – erhalte sofort ein Lernplakat, Übersicht und Prüfungsfragen." data-en="Enter links, videos or text – instantly get a study poster, overview and exam questions.">Gib Links, Videos oder Text ein – erhalte sofort ein Lernplakat, Übersicht und Prüfungsfragen.</p>
+    <h1 data-de="Lern<em>material</em><br>in Sekunden." data-en="Learning material<br>in <em>seconds</em>.">Lern<em>material</em><br>in Sekunden.</h1>
+    <p data-de="Gib Links, Videos oder Text ein – erhalte sofort ein Lernplakat, Übersicht und Prüfungsfragen." data-en="Enter links, videos or text – instantly get a learning poster, overview and exam questions.">Gib Links, Videos oder Text ein – erhalte sofort ein Lernplakat, Übersicht und Prüfungsfragen.</p>
   </div>
 
+  <!-- ── INPUT SECTION ── -->
   <div id="inputSection">
 
+    <!-- API KEY -->
     <div class="card">
       <div class="card-label" data-de="API-SCHLÜSSEL" data-en="API KEY">API-SCHLÜSSEL</div>
       <div class="api-row">
-        <input class="api-input" id="apiKey" type="password" placeholder="sk-ant-api..." />
-        <button class="api-toggle" onclick="toggleApiKey()">👁</button>
+        <input id="apiKey" class="api-input" type="password" placeholder="sk-ant-api..." autocomplete="off"/>
+        <button class="icon-btn" onclick="toggleApi()">👁</button>
       </div>
     </div>
 
+    <!-- SOURCE INPUT -->
     <div class="card">
-      <div class="card-label" data-de="LERNMATERIAL EINGEBEN" data-en="ENTER STUDY MATERIAL">LERNMATERIAL EINGEBEN</div>
+      <div class="card-label" data-de="LERNMATERIAL EINGEBEN" data-en="ENTER LEARNING MATERIAL">LERNMATERIAL EINGEBEN</div>
+
       <div class="source-tabs">
-        <button class="source-tab active" onclick="switchSource(event,'website')" data-de="🌐 Webseiten" data-en="🌐 Websites">🌐 Webseiten</button>
-        <button class="source-tab" onclick="switchSource(event,'youtube')" data-de="🎬 YouTube" data-en="🎬 YouTube">🎬 YouTube</button>
-        <button class="source-tab" onclick="switchSource(event,'file')" data-de="📄 Dateien" data-en="📄 Files">📄 Dateien</button>
-        <button class="source-tab" onclick="switchSource(event,'text')" data-de="✏️ Text" data-en="✏️ Text">✏️ Text</button>
+        <button class="stab active" onclick="switchTab(this,'website')">🌐 <span data-de="Webseiten" data-en="Websites">Webseiten</span></button>
+        <button class="stab" onclick="switchTab(this,'youtube')">🎬 YouTube</button>
+        <button class="stab" onclick="switchTab(this,'file')">📄 <span data-de="Dateien" data-en="Files">Dateien</span></button>
+        <button class="stab" onclick="switchTab(this,'text')">✏️ Text</button>
       </div>
 
-      <!-- Website URLs -->
-      <div class="source-panel active" id="panelWebsite">
-        <div class="url-list" id="websiteList">
+      <!-- Website panel -->
+      <div id="panelWebsite" class="spanel active">
+        <div id="websiteList">
           <div class="url-row">
-            <input class="url-input" type="url" placeholder="https://www.bpb.de/..." />
+            <input class="url-input" type="url" placeholder="https://www.bpb.de/..." onblur="checkUrlHint(this)"/>
             <button class="url-remove" onclick="removeUrl(this)">✕</button>
           </div>
         </div>
-        <button class="add-url-btn" onclick="addUrl('websiteList','https://www.bpb.de/...')" data-de="+ Weiteren Link hinzufügen" data-en="+ Add another link">+ Weiteren Link hinzufügen</button>
-        <p class="url-note" data-de="💡 Empfohlen: bpb.de, planet-wissen.de, schulbuch-seiten, offizielle Institutionen. Die KI prüft automatisch die Seriosität." data-en="💡 Recommended: official educational sites, news, institutions. AI checks source quality automatically.">💡 Empfohlen: bpb.de, planet-wissen.de, Schulbuch-Seiten, offizielle Institutionen. Die KI prüft automatisch die Seriosität.</p>
+        <button class="url-add" onclick="addUrl('websiteList','https://www.bpb.de/...')">+ <span data-de="Weiteren Link hinzufügen" data-en="Add another link">Weiteren Link hinzufügen</span></button>
       </div>
 
-      <!-- YouTube URLs -->
-      <div class="source-panel" id="panelYoutube">
-        <div class="url-list" id="youtubeList">
+      <!-- YouTube panel -->
+      <div id="panelYoutube" class="spanel">
+        <div id="youtubeList">
           <div class="url-row">
-            <input class="url-input" type="url" placeholder="https://www.youtube.com/watch?v=..." />
+            <input class="url-input" type="url" placeholder="https://www.youtube.com/watch?v=..."/>
             <button class="url-remove" onclick="removeUrl(this)">✕</button>
           </div>
         </div>
-        <button class="add-url-btn" onclick="addUrl('youtubeList','https://www.youtube.com/watch?v=...')" data-de="+ Weiteres Video hinzufügen" data-en="+ Add another video">+ Weiteres Video hinzufügen</button>
-        <p class="url-note" data-de="💡 Empfohlen: MrWissen2go, Terra X, funk, kurzgesagt, Crashcourse – Videotitel und Kanal werden automatisch gelesen." data-en="💡 Recommended: educational channels. Video title and channel are read automatically.">💡 Empfohlen: MrWissen2go, Terra X, funk, kurzgesagt, Crashcourse – Videotitel und Kanal werden automatisch gelesen.</p>
+        <button class="url-add" onclick="addUrl('youtubeList','https://www.youtube.com/watch?v=...')">+ <span data-de="Weiteres Video hinzufügen" data-en="Add another video">Weiteres Video hinzufügen</span></button>
       </div>
 
-      <!-- Files -->
-      <div class="source-panel" id="panelFile">
-        <div class="upload-zone" id="uploadZone">
-          <input type="file" id="fileInput" accept=".pdf,.png,.jpg,.jpeg,.webp" multiple onchange="handleFiles(this)" />
-          <div class="upload-icon">📂</div>
-          <h3 data-de="PDFs oder Bilder hochladen" data-en="Upload PDFs or Images">PDFs oder Bilder hochladen</h3>
-          <p data-de="PDF, PNG, JPG · Mehrere Dateien möglich" data-en="PDF, PNG, JPG · Multiple files">PDF, PNG, JPG · Mehrere Dateien möglich</p>
+      <!-- File panel -->
+      <div id="panelFile" class="spanel">
+        <div class="file-zone" id="fileZone"
+          onclick="document.getElementById('fileInput').click()"
+          ondragover="event.preventDefault();this.classList.add('drag')"
+          ondragleave="this.classList.remove('drag')"
+          ondrop="event.preventDefault();this.classList.remove('drag');handleFiles(event.dataTransfer.files)">
+          <div style="font-size:28px">📂</div>
+          <p><strong data-de="Dateien auswählen" data-en="Select files">Dateien auswählen</strong> <span data-de="oder hierher ziehen" data-en="or drag here">oder hierher ziehen</span></p>
+          <p style="font-size:11px;margin-top:4px">PDF, Bilder, Word</p>
         </div>
-        <div class="file-list" id="fileList"></div>
+        <input type="file" id="fileInput" multiple accept=".pdf,.png,.jpg,.jpeg,.gif,.webp,.txt,.doc,.docx" onchange="handleFiles(this.files)"/>
+        <div id="fileList" class="file-list"></div>
       </div>
 
-      <!-- Text -->
-      <div class="source-panel" id="panelText">
-        <textarea class="text-input" id="textInput" placeholder="Füge hier deinen Lernstoff ein – Notizen, Mitschriften, beliebige Texte..."></textarea>
+      <!-- Text panel -->
+      <div id="panelText" class="spanel">
+        <textarea id="textInput" class="text-area" rows="6" placeholder="Füge hier deinen Text, deine Mitschrift oder dein Unterrichtsmaterial ein..."></textarea>
       </div>
     </div>
 
+    <!-- OUTPUT MODE -->
     <div class="card">
-      <div class="card-label" data-de="AUSGABE" data-en="OUTPUT">AUSGABE</div>
+      <div class="card-label" data-de="AUSGABE-FORMAT" data-en="OUTPUT FORMAT">AUSGABE-FORMAT</div>
       <div class="mode-grid">
-        <label class="mode-btn selected" onclick="selectMode(this,'poster')">
-          <input type="radio" name="outputMode" value="poster" checked style="display:none;">
-          <div class="mode-icon">🗺️</div>
-          <div class="mode-name" data-de="Lernplakat" data-en="Study Poster">Lernplakat</div>
-          <div class="mode-desc" data-de="Mindmap zum Download" data-en="Mindmap to download">Mindmap zum Download</div>
-        </label>
-        <label class="mode-btn" onclick="selectMode(this,'overview')">
-          <input type="radio" name="outputMode" value="overview" style="display:none;">
-          <div class="mode-icon">📖</div>
-          <div class="mode-name" data-de="Übersicht" data-en="Overview">Übersicht</div>
-          <div class="mode-desc" data-de="Strukturierte Zusammenfassung" data-en="Structured summary">Strukturierte Zusammenfassung</div>
-        </label>
-        <label class="mode-btn" onclick="selectMode(this,'all')">
-          <input type="radio" name="outputMode" value="all" style="display:none;">
-          <div class="mode-icon">⚡</div>
-          <div class="mode-name" data-de="Alles" data-en="Everything">Alles</div>
-          <div class="mode-desc" data-de="Plakat + Übersicht + Fragen" data-en="Poster + Overview + Questions">Plakat + Übersicht + Fragen</div>
-        </label>
+        <div class="mode-btn active" onclick="selectMode(this,'all')">
+          <span class="mode-icon">✨</span>
+          <span class="mode-title" data-de="Alles" data-en="Everything">Alles</span>
+          <span class="mode-desc" data-de="Plakat + Übersicht + Fragen" data-en="Poster + Overview + Questions">Plakat + Übersicht + Fragen</span>
+        </div>
+        <div class="mode-btn" onclick="selectMode(this,'poster')">
+          <span class="mode-icon">🗺️</span>
+          <span class="mode-title" data-de="Lernplakat" data-en="Learning Poster">Lernplakat</span>
+          <span class="mode-desc" data-de="Visuelle Mindmap" data-en="Visual mindmap">Visuelle Mindmap</span>
+        </div>
+        <div class="mode-btn" onclick="selectMode(this,'questions')">
+          <span class="mode-icon">📝</span>
+          <span class="mode-title" data-de="Prüfungsfragen" data-en="Exam Questions">Prüfungsfragen</span>
+          <span class="mode-desc">Multiple Choice</span>
+        </div>
       </div>
     </div>
 
-    <button class="generate-btn" onclick="generate()">
-      <span>✨</span>
-      <span data-de="Lernmaterial erstellen" data-en="Generate Study Material">Lernmaterial erstellen</span>
+    <div id="errorBox" class="error-box"></div>
+    <button class="gen-btn" onclick="generate()">
+      <span data-de="✨ Lernmaterial erstellen" data-en="✨ Create learning material">✨ Lernmaterial erstellen</span>
     </button>
-    <div class="error-box" id="errorBox"></div>
+
+  </div><!-- /inputSection -->
+
+  <!-- ── LOADING ── -->
+  <div id="loadingState">
+    <div class="spinner"></div>
+    <p style="font-family:'Fraunces',serif;font-size:18px;font-weight:600;margin-bottom:8px" data-de="Analysiere Quellen..." data-en="Analysing sources...">Analysiere Quellen...</p>
+    <p style="font-size:13px;color:var(--ink3)" data-de="Das dauert etwa 20–40 Sekunden." data-en="This takes about 20–40 seconds.">Das dauert etwa 20–40 Sekunden.</p>
+    <div class="loading-steps">
+      <div id="step1" class="loading-step">📖 <span data-de="Quellen lesen" data-en="Reading sources">Quellen lesen</span></div>
+      <div id="step2" class="loading-step">🔍 <span data-de="Inhalte analysieren" data-en="Analysing content">Inhalte analysieren</span></div>
+      <div id="step3" class="loading-step">✍️ <span data-de="Lernmaterial erstellen" data-en="Creating material">Lernmaterial erstellen</span></div>
+    </div>
   </div>
 
-  <!-- Loading -->
-  <div class="loading-state" id="loadingState">
-    <div class="loading-spinner"></div>
-    <div class="loading-title" id="loadingTitle" data-de="KI analysiert dein Material…" data-en="AI is analyzing your material…">KI analysiert dein Material…</div>
-    <div class="loading-sub" id="loadingSub" data-de="Das dauert meist 10–20 Sekunden." data-en="This usually takes 10–20 seconds.">Das dauert meist 10–20 Sekunden.</div>
-  </div>
-
-  <!-- Results -->
+  <!-- ── RESULTS ── -->
   <div id="results">
     <div class="result-header">
-      <h2 data-de="Dein Lernmaterial" data-en="Your Study Material">Dein Lernmaterial</h2>
-      <div style="display:flex; gap:8px; flex-wrap:wrap;">
-        <button class="action-btn primary" onclick="downloadAll()" id="dlAllBtn" data-de="⬇ Alles herunterladen" data-en="⬇ Download All">⬇ Alles herunterladen</button>
-        <button class="action-btn" onclick="reset()" data-de="↩ Neu starten" data-en="↩ Start over">↩ Neu starten</button>
+      <h2 data-de="Dein Lernmaterial" data-en="Your learning material">Dein Lernmaterial</h2>
+      <div class="result-actions">
+        <button class="btn-sm" onclick="downloadActive()">⬇ Download</button>
+        <button class="btn-sm" onclick="openFeedback()">⭐ Feedback</button>
+        <button class="btn-sm primary" onclick="restart()">↩ <span data-de="Neu starten" data-en="Restart">Neu starten</span></button>
       </div>
     </div>
-
-    <div class="source-quality" id="sourceQuality">
-      <div class="sq-title" id="sqTitle"></div>
-      <div id="sqText"></div>
-    </div>
-
-    <div id="handwritingWarning" style="display:none; padding:16px 20px; background:#FEF3E8; border:1px solid #F5C8A0; border-radius:10px; margin-bottom:16px;"></div>
-    <div id="imageAnalysis" style="display:none; background:white; border:1px solid var(--border); border-radius:var(--radius); padding:24px; margin-bottom:20px; box-shadow:var(--shadow);"></div>
-    <div class="tabs">
-      <button class="tab active" onclick="switchTab('poster')" id="tabPoster" data-de="🗺️ Lernplakat" data-en="🗺️ Poster">🗺️ Lernplakat</button>
-      <button class="tab" onclick="switchTab('overview')" id="tabOverview" data-de="📖 Übersicht" data-en="📖 Overview">📖 Übersicht</button>
-      <button class="tab" onclick="switchTab('exam')" id="tabExam" data-de="❓ Prüfungsfragen" data-en="❓ Exam">❓ Prüfungsfragen</button>
-      <button class="tab" onclick="switchTab('glossar')" id="tabGlossar" data-de="🔍 Begriffe erklären" data-en="🔍 Explain Terms">🔍 Begriffe erklären</button>
-    </div>
-
-    <div class="tab-content active" id="tabContentPoster">
-      <div class="poster-download-bar">
-        <button class="action-btn primary" id="dlBtn" onclick="downloadPoster()" data-de="⬇ Als PNG speichern" data-en="⬇ Save as PNG">⬇ Als PNG speichern</button>
-      </div>
-      <div id="learningPoster"></div>
-    </div>
-
-    <div class="tab-content" id="tabContentOverview">
-      <div style="display:flex; justify-content:flex-end; margin-bottom:12px;">
-        <button class="action-btn primary" onclick="downloadSection('overviewContent', 'uebersicht')" data-de="⬇ Als PNG speichern" data-en="⬇ Save as PNG">⬇ Als PNG speichern</button>
-      </div>
-      <div class="card" id="overviewContent"></div>
-    </div>
-
-    <div class="tab-content" id="tabContentExam">
-      <div style="display:flex; justify-content:flex-end; margin-bottom:12px;">
-        <button class="action-btn primary" onclick="downloadSection('examContent', 'pruefungsfragen')" data-de="⬇ Als PNG speichern" data-en="⬇ Save as PNG">⬇ Als PNG speichern</button>
-      </div>
-      <div class="exam-list" id="examContent"></div>
-    </div>
-
-    <div class="tab-content" id="tabContentGlossar">
-      <div class="card" style="margin-bottom:16px;">
-        <div class="card-label" data-de="BEGRIFF EINGEBEN" data-en="ENTER TERM">BEGRIFF EINGEBEN</div>
-        <div style="display:flex; gap:10px; align-items:center;">
-          <input class="api-input" id="glossarInput" type="text" placeholder="z.B. Markgrafschaft, Herzogtum, Insignien..." style="flex:1;" />
-          <button class="action-btn primary" onclick="explainTerm()" id="glossarBtn" data-de="Erklären" data-en="Explain">Erklären</button>
+    <div id="qualityBanner"></div>
+    <div class="result-tabs" id="resultTabs"></div>
+    <div id="rpPoster"    class="rpanel"></div>
+    <div id="rpOverview"  class="rpanel"></div>
+    <div id="rpQuestions" class="rpanel"></div>
+    <div id="rpGlossar"   class="rpanel">
+      <div class="card">
+        <div class="card-label">🔍 BEGRIFFE ERKLÄREN</div>
+        <div class="glossar-search">
+          <input id="glossarInput" class="glossar-input" type="text" placeholder="Begriff eingeben, z.B. Markgrafschaft..." onkeydown="if(event.key==='Enter')explainTerm()"/>
+          <button class="btn-sm primary" onclick="explainTerm()"><span data-de="Erklären" data-en="Explain">Erklären</span></button>
         </div>
-        <p style="font-size:12px;color:var(--ink-faint);margin-top:8px;" data-de="💡 Gib einen Begriff ein den du nicht verstehst – die KI erklärt ihn einfach mit einem Beispiel." data-en="💡 Enter a term you don't understand – AI explains it simply with an example.">💡 Gib einen Begriff ein den du nicht verstehst – die KI erklärt ihn einfach mit einem Beispiel.</p>
+        <div id="glossarResult"></div>
       </div>
-      <div id="glossarLoading" style="display:none; text-align:center; padding:32px;">
-        <div class="loading-spinner" style="margin:0 auto 12px;"></div>
-        <div style="color:var(--ink-faint); font-size:14px;" data-de="Begriff wird erklärt…" data-en="Explaining term…">Begriff wird erklärt…</div>
-      </div>
-      <div id="glossarResult"></div>
     </div>
+  </div>
 
-    <!-- Feedback -->
-    <div class="feedback-section" id="feedbackSection">
-      <div class="feedback-title" data-de="War das hilfreich?" data-en="Was this helpful?">War das hilfreich?</div>
-      <div class="feedback-sub" data-de="Dein anonymes Feedback hilft uns, die App zu verbessern." data-en="Your anonymous feedback helps us improve the app.">Dein anonymes Feedback hilft uns, die App zu verbessern.</div>
-      <div class="stars" id="stars">
-        <span class="star" onclick="setStar(1)">⭐</span>
-        <span class="star" onclick="setStar(2)">⭐</span>
-        <span class="star" onclick="setStar(3)">⭐</span>
-        <span class="star" onclick="setStar(4)">⭐</span>
-        <span class="star" onclick="setStar(5)">⭐</span>
-      </div>
-      <textarea class="feedback-comment" id="feedbackComment" placeholder="Optionaler Kommentar – was hat gut geklappt, was könnte besser sein?"></textarea>
-      <br>
-      <button class="feedback-submit" id="feedbackSubmit" onclick="submitFeedback()" data-de="Feedback absenden" data-en="Submit Feedback">Feedback absenden</button>
-      <div class="feedback-success" id="feedbackSuccess" data-de="✅ Danke für dein Feedback!" data-en="✅ Thanks for your feedback!">✅ Danke für dein Feedback!</div>
+  <!-- ── FEEDBACK OVERVIEW ── -->
+  <div id="feedbackOverview">
+    <div class="result-header">
+      <h2>📊 <span data-de="Feedback-Übersicht" data-en="Feedback overview">Feedback-Übersicht</span></h2>
+      <button class="btn-sm primary" onclick="hideFeedbackOverview()">↩ <span data-de="Zurück" data-en="Back">Zurück</span></button>
     </div>
+    <div id="feedbackContent"></div>
   </div>
 
 </main>
 
-<!-- Warning Modal -->
-<div id="warningModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:1000; align-items:center; justify-content:center; padding:24px;">
-  <div style="background:white; border-radius:16px; max-width:480px; width:100%; padding:32px; box-shadow:0 8px 48px rgba(0,0,0,0.2);">
-    <div style="font-size:40px; text-align:center; margin-bottom:12px;" id="warningIcon">⚠️</div>
-    <h3 id="warningTitle" style="font-family:'Fraunces',serif; font-size:20px; font-weight:600; text-align:center; margin-bottom:16px; color:var(--ink);"></h3>
-    <div id="warningReasons" style="margin-bottom:16px;"></div>
-    <div style="font-size:12px; color:var(--ink-faint); background:var(--cream); border-radius:8px; padding:12px; margin-bottom:20px; line-height:1.6;">
-      💡 Laut <strong>klicksafe.de</strong> (EU-Medienkompetenz-Initiative): Prüfe bei unbekannten Quellen immer – Wer steckt dahinter? Gibt es ein Impressum? Ist der Autor erkennbar?
-    </div>
-    <div style="display:flex; gap:10px;">
-      <button onclick="closeWarningModal(false)" style="flex:1; padding:12px; border:1.5px solid var(--border); border-radius:8px; background:white; font-family:'DM Sans',sans-serif; font-size:14px; font-weight:600; cursor:pointer;" data-de="↩ Andere Quelle wählen" data-en="↩ Choose another source">↩ Andere Quelle wählen</button>
-      <button onclick="closeWarningModal(true)" style="flex:1; padding:12px; border:none; border-radius:8px; background:var(--orange); color:white; font-family:'DM Sans',sans-serif; font-size:14px; font-weight:600; cursor:pointer;" data-de="Trotzdem fortfahren" data-en="Continue anyway">Trotzdem fortfahren</button>
+<!-- ── WARNING MODAL ── -->
+<div id="warnModal" class="modal-overlay">
+  <div class="modal">
+    <div class="modal-icon" id="warnIcon">⚠️</div>
+    <h3 id="warnTitle"></h3>
+    <div class="modal-reasons" id="warnReasons"></div>
+    <div class="modal-btns">
+      <button class="modal-cancel" style="flex:1;padding:11px;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer;background:var(--cream);border:1.5px solid var(--border);color:var(--ink)" onclick="closeWarn(false)" data-de="Andere Quelle wählen" data-en="Choose other source">Andere Quelle wählen</button>
+      <button class="modal-proceed" style="flex:1;padding:11px;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer;background:var(--blue);color:white;border:none" onclick="closeWarn(true)" data-de="Trotzdem fortfahren" data-en="Continue anyway">Trotzdem fortfahren</button>
     </div>
   </div>
 </div>
 
-<!-- Footer disclaimer -->
-<footer>
-  <div class="disclaimer">
-    <strong>⚠️ Hinweis:</strong> Lern·AI ist ein <strong>Lernhilfsmittel</strong> und ersetzt keine geprüften Lehrmaterialien oder Fachlehrkräfte. Die generierten Inhalte können Fehler enthalten und sind nicht als vollständig oder wissenschaftlich gesichert zu betrachten. Bitte überprüfe wichtige Informationen stets mit zuverlässigen Quellen.
+<!-- ── FEEDBACK MODAL ── -->
+<div id="feedbackModal" class="modal-overlay">
+  <div class="modal">
+    <h3 data-de="Wie hilfreich war Lern·AI?" data-en="How helpful was Lern·AI?">Wie hilfreich war Lern·AI?</h3>
+    <div class="stars">
+      <span class="star" onclick="setStar(1)">⭐</span>
+      <span class="star" onclick="setStar(2)">⭐</span>
+      <span class="star" onclick="setStar(3)">⭐</span>
+      <span class="star" onclick="setStar(4)">⭐</span>
+      <span class="star" onclick="setStar(5)">⭐</span>
+    </div>
+    <textarea id="feedbackText" class="feedback-ta" placeholder="Optionaler Kommentar..."></textarea>
+    <div class="modal-btns">
+      <button style="flex:1;padding:11px;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer;background:var(--cream);border:1.5px solid var(--border);color:var(--ink)" onclick="closeFeedback()" data-de="Abbrechen" data-en="Cancel">Abbrechen</button>
+      <button style="flex:1;padding:11px;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer;background:var(--blue);color:white;border:none" onclick="submitFeedback()" data-de="Absenden" data-en="Submit">Absenden</button>
+    </div>
   </div>
+</div>
+
+<!-- ── QUELLEN-HISTORIE DRAWER ── -->
+<div id="drawerOverlay" class="drawer-overlay" onclick="closeDrawer()"></div>
+<div id="drawerEl" class="drawer">
+  <div class="drawer-head">
+    <h3 data-de="📚 Meine Quellen-Historie" data-en="📚 My Source History">📚 Meine Quellen-Historie</h3>
+    <button class="drawer-close" onclick="closeDrawer()">✕</button>
+  </div>
+  <div class="drawer-body" id="drawerBody"></div>
+</div>
+
+<footer>
+  <p data-de="Lern·AI ist ein Lernhilfsmittel. Alle Inhalte sollten kritisch geprüft werden. · Theo Gutendorf © 2026" data-en="Lern·AI is a learning tool. All content should be critically reviewed. · Theo Gutendorf © 2026">Lern·AI ist ein Lernhilfsmittel. Alle Inhalte sollten kritisch geprüft werden. · Theo Gutendorf © 2026</p>
 </footer>
 
 <script>
-  let lang = 'de';
-  let currentMode = 'poster';
-  let currentSource = 'website';
-  // Ensure correct panel visible on load
-  document.addEventListener('DOMContentLoaded', function() {
-    document.querySelectorAll('.source-panel').forEach(p => p.style.display = 'none');
-    const wp = document.getElementById('panelWebsite');
-    if (wp) { wp.classList.add('active'); wp.style.display = 'block'; }
+'use strict';
+
+// ─────────────────────────────────────────────────────────────────────────────
+// STATE
+// ─────────────────────────────────────────────────────────────────────────────
+var state = {
+  lang:        'de',
+  tab:         'website',
+  mode:        'all',
+  files:       [],
+  starRating:  0,
+  pending:     null,
+  lastApiKey:  ''
+};
+
+// ─────────────────────────────────────────────────────────────────────────────
+// LANGUAGE
+// ─────────────────────────────────────────────────────────────────────────────
+function setLang(l) {
+  state.lang = l;
+  document.querySelectorAll('.lang-btn').forEach(function(b) {
+    b.classList.toggle('active', b.textContent.toLowerCase().includes(l));
   });
-  let uploadedFiles = [];
-  let selectedStar = 0;
-  let feedbackData = JSON.parse(localStorage.getItem('lernai_feedback') || '[]');
+  document.querySelectorAll('[data-' + l + ']').forEach(function(el) {
+    el.innerHTML = el.getAttribute('data-' + l);
+  });
+}
 
-  // ── Language ──
-  function setLang(l) {
-    lang = l;
-    document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
-    document.querySelector(`.lang-btn:${l==='de'?'first':'last'}-child`).classList.add('active');
-    document.querySelectorAll('[data-'+l+']').forEach(el => {
-      const val = el.getAttribute('data-'+l);
-      if (el.tagName==='TEXTAREA'||el.tagName==='INPUT') el.placeholder = val;
-      else el.innerHTML = val;
-    });
-    document.documentElement.lang = l;
+// ─────────────────────────────────────────────────────────────────────────────
+// SOURCE TABS
+// ─────────────────────────────────────────────────────────────────────────────
+function switchTab(btn, tab) {
+  state.tab = tab;
+  document.querySelectorAll('.stab').forEach(function(b) { b.classList.remove('active'); });
+  btn.classList.add('active');
+  document.querySelectorAll('.spanel').forEach(function(p) {
+    p.classList.remove('active');
+    p.style.display = 'none';
+  });
+  var panel = document.getElementById('panel' + tab.charAt(0).toUpperCase() + tab.slice(1));
+  if (panel) { panel.classList.add('active'); panel.style.display = 'block'; }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// URL MANAGEMENT
+// ─────────────────────────────────────────────────────────────────────────────
+function addUrl(listId, placeholder) {
+  var list = document.getElementById(listId);
+  var row  = document.createElement('div');
+  row.className = 'url-row';
+  row.innerHTML = '<input class="url-input" type="url" placeholder="' + placeholder + '" onblur="checkUrlHint(this)"/>'
+                + '<button class="url-remove" onclick="removeUrl(this)">✕</button>';
+  list.appendChild(row);
+}
+
+function removeUrl(btn) {
+  var row  = btn.parentElement;
+  var list = row.parentElement;
+  if (list.querySelectorAll('.url-row').length > 1) {
+    row.remove();
+  } else {
+    row.querySelector('input').value = '';
+    var hint = row.nextElementSibling;
+    if (hint && hint.classList.contains('url-hint')) hint.remove();
+  }
+}
+
+function getUrls(listId) {
+  var list = document.getElementById(listId);
+  if (!list) return [];
+  var result = [];
+  list.querySelectorAll('.url-input').forEach(function(inp) {
+    var v = inp.value.trim();
+    if (v) result.push(v);
+  });
+  return result;
+}
+
+function checkUrlHint(input) {
+  // Remove old hint
+  var old = input.parentElement.nextElementSibling;
+  if (old && old.classList.contains('url-hint')) old.remove();
+
+  var url = input.value.trim().toLowerCase();
+  if (!url) return;
+
+  var hint = null;
+  if (url.includes('wikipedia.org')) {
+    hint = { cls: 'warn', text: '⚠️ Wikipedia wird von vielen Lehrkräften nicht als zitierfähige Quelle anerkannt (laut klicksafe.de: fehlende Autorenverantwortung). Nutze Wikipedia als Einstieg und ergänze eine seriösere Quelle.' };
+  } else if (/tiktok|instagram|twitter|facebook|snapchat/.test(url)) {
+    hint = { cls: 'bad', text: '⛔ Soziale Netzwerke sind keine zitierfähigen Quellen.' };
+  } else if (/reddit|gutefrage|yahoo\.answers|quora/.test(url)) {
+    hint = { cls: 'warn', text: '⚠️ Foren haben keine redaktionelle Kontrolle und gelten nicht als zitierfähige Quellen.' };
   }
 
-  function toggleApiKey() {
-    const i = document.getElementById('apiKey');
-    i.type = i.type==='password'?'text':'password';
+  if (hint) {
+    var div = document.createElement('div');
+    div.className = 'url-hint ' + hint.cls;
+    div.textContent = hint.text;
+    input.parentElement.after(div);
   }
+}
 
-  // ── Source tabs ──
-  function switchSource(e, src) {
-    currentSource = src;
-    // Hide ALL panels and deactivate ALL tabs
-    document.querySelectorAll('.source-tab').forEach(t => t.classList.remove('active'));
-    document.querySelectorAll('.source-panel').forEach(p => {
-      p.classList.remove('active');
-      p.style.display = 'none';
-    });
-    // Activate correct tab
-    const btn = e && e.target ? (e.target.closest('.source-tab') || e.target) : null;
-    if (btn) btn.classList.add('active');
-    // Show correct panel
-    const panelId = 'panel' + src.charAt(0).toUpperCase() + src.slice(1);
-    const panel = document.getElementById(panelId);
-    if (panel) {
-      panel.classList.add('active');
-      panel.style.display = 'block';
+// ─────────────────────────────────────────────────────────────────────────────
+// FILE UPLOAD
+// ─────────────────────────────────────────────────────────────────────────────
+function handleFiles(files) {
+  for (var i = 0; i < files.length; i++) {
+    state.files.push(files[i]);
+  }
+  renderFileList();
+}
+
+function removeFile(idx) {
+  state.files.splice(idx, 1);
+  renderFileList();
+}
+
+function renderFileList() {
+  var list = document.getElementById('fileList');
+  list.innerHTML = '';
+  state.files.forEach(function(f, i) {
+    var chip = document.createElement('div');
+    chip.className = 'file-chip';
+    chip.innerHTML = f.name + '<button onclick="removeFile(' + i + ')">✕</button>';
+    list.appendChild(chip);
+  });
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// OUTPUT MODE
+// ─────────────────────────────────────────────────────────────────────────────
+function selectMode(el, mode) {
+  state.mode = mode;
+  document.querySelectorAll('.mode-btn').forEach(function(b) { b.classList.remove('active'); });
+  el.classList.add('active');
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// API KEY TOGGLE
+// ─────────────────────────────────────────────────────────────────────────────
+function toggleApi() {
+  var inp = document.getElementById('apiKey');
+  inp.type = inp.type === 'password' ? 'text' : 'password';
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// ERROR
+// ─────────────────────────────────────────────────────────────────────────────
+function showError(msg) {
+  var box = document.getElementById('errorBox');
+  box.textContent = msg;
+  box.style.display = 'block';
+}
+function hideError() {
+  document.getElementById('errorBox').style.display = 'none';
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// URL QUALITY CHECK
+// ─────────────────────────────────────────────────────────────────────────────
+function checkUrlQuality(urls) {
+  var badPatterns  = ['tiktok.com','instagram.com','twitter.com','facebook.com','snapchat.com'];
+  var warnPatterns = ['wikipedia.org','reddit.com','gutefrage','quora.com'];
+  var bad = [], warn = [];
+
+  urls.forEach(function(url) {
+    var u = url.toLowerCase();
+    if (badPatterns.some(function(p) { return u.includes(p); })) {
+      bad.push(url);
+    } else if (warnPatterns.some(function(p) { return u.includes(p); })) {
+      warn.push(url);
     }
-  }
-
-  // ── URL management ──
-  function addUrl(listId, placeholder) {
-    const list = document.getElementById(listId);
-    const row = document.createElement('div');
-    row.className = 'url-row';
-    row.innerHTML = `<input class="url-input" type="url" placeholder="${placeholder}" /><button class="url-remove" onclick="removeUrl(this)">✕</button>`;
-    list.appendChild(row);
-  }
-
-  function removeUrl(btn) {
-    const rows = btn.closest('.url-list').querySelectorAll('.url-row');
-    if (rows.length > 1) btn.parentElement.remove();
-    else btn.previousElementSibling.value = '';
-  }
-
-  function getUrls(listId) {
-    return Array.from(document.querySelectorAll('#'+listId+' .url-input'))
-      .map(i => i.value.trim()).filter(v => v.startsWith('http'));
-  }
-
-  // ── File handling ──
-  function handleFiles(input) {
-    Array.from(input.files).forEach(file => {
-      const reader = new FileReader();
-      reader.onload = e => {
-        uploadedFiles.push({ name: file.name, data: e.target.result.split(',')[1], type: file.type });
-        renderFileList();
-      };
-      reader.readAsDataURL(file);
-    });
-  }
-  function renderFileList() {
-    document.getElementById('fileList').innerHTML = uploadedFiles.map((f,i) => `
-      <div class="file-item"><span>${f.type==='application/pdf'?'📄':'🖼️'}</span><span>${f.name}</span><span class="remove-file" onclick="removeFile(${i})">✕</span></div>`).join('');
-  }
-  function removeFile(i) { uploadedFiles.splice(i,1); renderFileList(); }
-
-  const zone = document.getElementById('uploadZone');
-  zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('drag-over'); });
-  zone.addEventListener('dragleave', () => zone.classList.remove('drag-over'));
-  zone.addEventListener('drop', e => { e.preventDefault(); zone.classList.remove('drag-over'); handleFiles({files:e.dataTransfer.files}); });
-
-  function selectMode(el, mode) {
-    // Deselect ALL mode buttons first
-    document.querySelectorAll('.mode-btn').forEach(b => {
-      b.classList.remove('selected');
-      b.style.borderColor = '';
-      b.style.background = '';
-      const radio = b.querySelector('input[type="radio"]');
-      if (radio) radio.checked = false;
-    });
-    // Select only the clicked one
-    const btn = el.closest ? el.closest('.mode-btn') || el : el;
-    btn.classList.add('selected');
-    const radio = btn.querySelector('input[type="radio"]');
-    if (radio) radio.checked = true;
-    currentMode = mode;
-  }
-
-  // ── Generate ──
-  // ── Pre-check URLs client-side before API call ──
-  const SAFE_DOMAINS = ['bpb.de','planet-wissen.de','ard.de','zdf.de','deutschlandfunk.de','br.de','mdr.de','ndr.de','wdr.de','swr.de','rbb24.de','bundesregierung.de','bund.de','leifiphysik.de','chemie.de','biologie.de','wissenschaft.de','spektrum.de','geo.de','zeit.de','sueddeutsche.de','faz.net','spiegel.de','tagesschau.de','heute.de','dw.com','klicksafe.de','klett.de','cornelsen.de','schroedel.de','westermann.de'];
-  const WARN_DOMAINS = ['wikipedia.org','wikimedia.org'];
-  const BAD_DOMAINS  = ['tiktok.com','instagram.com','twitter.com','x.com','facebook.com','reddit.com','gutefrage.net','blogger.com'];
-
-  function preCheckUrls(urls) {
-    let worstRating = 'good';
-    const reasons = [];
-    for (const url of urls) {
-      const lower = url.toLowerCase();
-      if (BAD_DOMAINS.some(d => lower.includes(d))) {
-        worstRating = 'bad';
-        reasons.push('⛔ "' + url + '" – soziale Netzwerke oder Foren sind keine zitierfähigen Quellen.');
-      } else if (WARN_DOMAINS.some(d => lower.includes(d))) {
-        if (worstRating !== 'bad') worstRating = 'warn';
-        reasons.push('⚠️ Wikipedia – von vielen Lehrkräften nicht als Quelle anerkannt, da Inhalte von jedermann bearbeitet werden können (fehlende Autorenverantwortung, laut klicksafe.de).');
-      } else if (!SAFE_DOMAINS.some(d => lower.includes(d))) {
-        if (worstRating === 'good') worstRating = 'warn';
-        reasons.push('⚠️ "' + url + '" – unbekannte Quelle. Prüfe: Gibt es ein Impressum? Wer ist der Herausgeber?');
-      }
-    }
-    return { rating: worstRating, reasons };
-  }
-
-  let pendingGenerateData = null;
-
-  async function generate() {
-    const apiKey = document.getElementById('apiKey').value.trim();
-    if (!apiKey) { showError(lang==='de'?'Bitte API-Schlüssel eingeben.':'Please enter your API key.'); return; }
-
-    const websiteUrls = getUrls('websiteList');
-    const youtubeUrls = getUrls('youtubeList');
-    const text = document.getElementById('textInput').value.trim();
-
-    if (currentSource==='website' && websiteUrls.length===0) { showError(lang==='de'?'Bitte mindestens einen Link eingeben.':'Please enter at least one link.'); return; }
-    if (currentSource==='youtube' && youtubeUrls.length===0) { showError(lang==='de'?'Bitte mindestens einen YouTube-Link eingeben.':'Please enter at least one YouTube link.'); return; }
-    if (currentSource==='file' && uploadedFiles.length===0) { showError(lang==='de'?'Bitte Datei hochladen.':'Please upload a file.'); return; }
-    if (currentSource==='text' && !text) { showError(lang==='de'?'Bitte Text eingeben.':'Please enter text.'); return; }
-
-    if (currentSource === 'website' && websiteUrls.length > 0) {
-      const check = preCheckUrls(websiteUrls);
-      if (check.rating === 'warn' || check.rating === 'bad') {
-        pendingGenerateData = { apiKey, websiteUrls, youtubeUrls, text };
-        showWarningModal(check);
-        return;
-      }
-    }
-
-    hideError();
-    await runGenerate(apiKey, websiteUrls, youtubeUrls, text);
-  }
-
-  function showWarningModal(check) {
-    const isBad = check.rating === 'bad';
-    document.getElementById('warningIcon').textContent = isBad ? '⛔' : '⚠️';
-    document.getElementById('warningTitle').textContent = isBad
-      ? (lang==='de' ? 'Unsichere Quelle erkannt' : 'Unsafe source detected')
-      : (lang==='de' ? 'Quellenprüfung empfohlen' : 'Source check recommended');
-    document.getElementById('warningReasons').innerHTML = check.reasons.map(r => '<div class="warning-reason">' + r + '</div>').join('');
-    document.getElementById('warningModal').style.display = 'flex';
-  }
-
-  function closeWarningModal(proceed) {
-    document.getElementById('warningModal').style.display = 'none';
-    if (proceed && pendingGenerateData) {
-      const { apiKey, websiteUrls, youtubeUrls, text } = pendingGenerateData;
-      pendingGenerateData = null;
-      hideError();
-      runGenerate(apiKey, websiteUrls, youtubeUrls, text);
-    } else {
-      pendingGenerateData = null;
-    }
-  }
-
-  async function runGenerate(apiKey, websiteUrls, youtubeUrls, text) {
-    document.getElementById('inputSection').style.display = 'none';
-    document.getElementById('loadingState').style.display = 'block';
-    document.getElementById('results').style.display = 'none';
-
-    try {
-      let messages;
-      const useWebSearch = currentSource === 'website' || currentSource === 'youtube';
-
-      if (currentSource === 'website') {
-        document.getElementById('loadingSub').textContent = lang==='de'?'🔍 Webseiten werden analysiert…':'🔍 Analyzing websites…';
-        const urlText = websiteUrls.map((u,i)=>'Webseite ' + (i+1) + ': ' + u).join('\n');
-        messages = [{ role:'user', content: buildPrompt('website', websiteUrls.length) + '\n\nBitte analysiere diese Webseiten:\n' + urlText }];
-      } else if (currentSource === 'youtube') {
-        document.getElementById('loadingSub').textContent = lang==='de'?'🎬 YouTube-Videos werden analysiert…':'🎬 Analyzing YouTube videos…';
-        const ytUrls = youtubeUrls || getUrls('youtubeList');
-        const ytInfos = await fetchYouTubeInfos(ytUrls);
-        const ytText = ytInfos.map((v,i)=>'Video ' + (i+1) + ': ' + v).join('\n');
-        messages = [{ role:'user', content: buildPrompt('youtube', ytUrls.length) + '\n\nBitte erstelle Lernmaterial aus diesen YouTube-Videos:\n' + ytText }];
-      } else if (currentSource === 'file') {
-        const content = [];
-        for (const f of uploadedFiles) {
-          if (f.type.startsWith('image/')) content.push({type:'image',source:{type:'base64',media_type:f.type,data:f.data}});
-          else if (f.type==='application/pdf') content.push({type:'document',source:{type:'base64',media_type:'application/pdf',data:f.data}});
-        }
-        content.push({type:'text', text: buildPrompt('file', uploadedFiles.length)});
-        messages = [{role:'user', content}];
-      } else {
-        messages = [{role:'user', content: buildPrompt('text', 1) + '\n\nLernstoff:\n' + text}];
-      }
-
-      const reqBody = { model:'claude-sonnet-4-20250514', max_tokens:3000, messages };
-      if (useWebSearch) reqBody.tools = [{type:'web_search_20250305', name:'web_search'}];
-
-      const res = await fetch('https://api.anthropic.com/v1/messages', {
-        method:'POST',
-        headers:{
-          'Content-Type':'application/json',
-          'x-api-key': apiKey,
-          'anthropic-version':'2023-06-01',
-          'anthropic-dangerous-direct-browser-access':'true'
-        },
-        body: JSON.stringify(reqBody)
-      });
-
-      const data = await res.json();
-      if (data.error) throw new Error(data.error.message);
-      const raw = data.content.filter(b=>b.type==='text').map(b=>b.text).join('');
-      parseAndRender(raw);
-
-    } catch(err) {
-      document.getElementById('inputSection').style.display = 'block';
-      document.getElementById('loadingState').style.display = 'none';
-      showError((lang==='de'?'Fehler: ':'Error: ') + err.message);
-    }
-  }
-
-  // ── YouTube oEmbed – no API key needed ──
-  async function fetchYouTubeInfos(urls) {
-    const results = [];
-    for (const url of urls) {
-      try {
-        // Extract video ID
-        const match = url.match(/(?:v=|youtu\.be\/)([\w-]{11})/);
-        if (!match) { results.push('URL: ' + url + ' (Video-ID nicht erkannt)'); continue; }
-        const videoId = match[1];
-        // oEmbed gives us title and author without API key
-        const oembedUrl = 'https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=' + videoId + '&format=json';
-        const res = await fetch(oembedUrl);
-        if (!res.ok) { results.push('Video-ID: ' + videoId + ' (nicht abrufbar – möglicherweise privat)'); continue; }
-        const data = await res.json();
-        results.push('Titel: "' + data.title + '" | Kanal: ' + data.author_name + ' | URL: ' + url);
-      } catch(e) {
-        results.push('URL: ' + url + ' (Fehler beim Abrufen)');
-      }
-    }
-    return results;
-  }
-
-  function buildPrompt(sourceType, sourceCount) {
-    const ytInstr = sourceType === 'youtube' ? 'Analysiere diese YouTube-Videos anhand von Titel und Kanal. Beurteile ob der Kanal seriös und lehrreich ist (z.B. öffentlich-rechtliche Sender, anerkannte Bildungskanäle). Erstelle daraus vollständiges Lernmaterial.' : '';
-
-    const criteria = sourceType === 'website' ? `
-QUELLENPRÜFUNG (nach klicksafe.de, EU-Medienkompetenzinitiative):
-SICHER: Behörden (.bund.de), öffentlich-rechtliche Medien (ard.de, zdf.de, br.de), Universitäten, bpb.de, planet-wissen.de, leifiphysik.de, seriöse Tageszeitungen mit Impressum.
-WARNUNG: Wikipedia (jeder kann bearbeiten, keine Autorenverantwortung), unbekannte Blogs, Social Media, Seiten ohne Impressum.
-SCHLECHT: Anonyme Seiten ohne Impressum, Verschwörungsseiten, Social Networks.
-Gib konkrete ehrliche Begründung.` : '';
-
-    const multiInstr = sourceCount > 1 ? `
-MEHRQUELLEN-ANALYSE (${sourceCount} Quellen erkannt):
-1. Fasse gemeinsame Kernaussagen ALLER Quellen zusammen
-2. Erkenne aktiv Widersprüche zwischen den Quellen
-3. Korrigiere falsche Angaben aus unsicheren Quellen anhand sicherer Quellen
-4. Trage alle Widersprüche/Korrekturen ins Feld "contradictions" ein` : '';
-
-    return `Du bist ein Experte für pädagogische Lernmaterialien und Medienkompetenz für Schüler.
-${sourceType==='website'?'Lies und analysiere jede Webseite. Prüfe Seriosität nach den Kriterien unten.':sourceType==='file'?'Analysiere das Material sehr gründlich. Bei HANDSCHRIFT: Erkenne jeden Text so genau wie möglich. Wenn ein Wort schwer lesbar ist, schreibe es trotzdem hin und markiere es mit [unsicher: möglicherweise X oder Y]. Bei sehr schlechter Schrift: Liste am Ende unter handwriting_issues alle unsicheren Stellen auf. Bei BILDERN/FOTOS/GEMÄLDEN: Beschreibe ALLE sichtbaren Details präzise – Personen (Kleidung, Haltung, Gesichtsausdruck), Gegenstände (Symbole, Werkzeuge, Waffen, Insignien), Hintergrund, Farben, Komposition. Erkläre die historische oder kulturelle Bedeutung jedes Elements. Bei Porträts: analysiere Herrschaftssymbole, Rangabzeichen, Kleidung und ihre Bedeutung detailliert.':'Analysiere den Text und extrahiere die wichtigsten Informationen.'}
-${criteria}
-${ytInstr}
-${multiInstr}
-
-KRITISCH WICHTIG: Antworte AUSSCHLIESSLICH mit reinem JSON ohne Backticks oder Erklärungen.
-
-{"topic":"Hauptthema","subject":"Fach","summary":"2-3 Sätze","key_quote":"Kernaussage","source_quality":{"rating":"good","title":"Quellen: Vertrauenswürdig ✓","text":"Begründung"},"source_mix":{"rating":"great","praise":"Sehr guter Quellenmix!"},"sources":[{"title":"Name der Quelle","url":"https://..."}],"contradictions":[],"handwriting_issues":[],"image_analysis":{"has_image":false,"elements":[],"symbolism":""},"key_facts":[{"icon":"📅","label":"Kategorie","value":"Info"}],"branches":[{"title":"Unterthema","keywords":["Stichwort 1","Stichwort 2","Stichwort 3"]}],"sections":[{"title":"Abschnitt","content":"Erklärung"}],"terms":[{"name":"Begriff","definition":"Erklärung"}],"exam":["Frage 1?","Frage 2?","Frage 3?","Frage 4?","Frage 5?"]}
-
-Mindestens 6 branches, 3 key_facts, 5 exam. contradictions=[] wenn keine. handwriting_issues: Liste unsicherer Wörter [{word:'erkanntes Wort', alternatives:['Alternative1','Alternative2']}] oder []. image_analysis: {has_image:true/false, elements:[{name:'Reichsapfel', description:'Goldene Kugel mit Kreuz – Symbol der Weltherrschaft des christlichen Kaisers'}], symbolism:'Gesamtbedeutung des Bildes'}. rating=good/warn/bad. source_mix.rating: "great"=3+ seriöse Quellen, "good"=1-2, "weak"=nur unsichere. sources: alle Quellen auflisten, bei Datei/Text leer [].
-Antworte auf ${lang==='de'?'Deutsch':'Englisch'}.`;
-  }
-
-  // ── Render ──
-  function parseAndRender(raw) {
-    let d;
-    try {
-      // Strip markdown code fences
-      let clean = raw.replace(/```json/g,'').replace(/```/g,'').trim();
-      // Find first { and last } to extract JSON even if there's extra text around it
-      const start = clean.indexOf('{');
-      const end = clean.lastIndexOf('}');
-      if (start !== -1 && end !== -1) {
-        clean = clean.substring(start, end + 1);
-      }
-      d = JSON.parse(clean);
-    } catch(e) {
-      // Fallback: show raw text as summary
-      d = {topic:'Lernmaterial',subject:'',summary:'Das Material konnte nicht vollständig analysiert werden. Bitte versuche es erneut.',key_quote:'',source_quality:{rating:'',title:'',text:''},key_facts:[],branches:[{title:'Versuch es erneut',keywords:['Kürzeren Text','Andere Quelle','Neu laden']}],sections:[],terms:[],exam:[]};
-    }
-
-    renderSourceQuality(d.source_quality);
-    renderHandwritingWarning(d.handwriting_issues);
-    renderPoster(d);
-    renderOverview(d);
-    renderImageAnalysis(d.image_analysis);
-    renderExam(d);
-
-    // Reset feedback
-    selectedStar = 0;
-    updateStars();
-    document.getElementById('feedbackComment').value = '';
-    document.getElementById('feedbackSuccess').style.display = 'none';
-    document.getElementById('feedbackSubmit').disabled = false;
-
-    document.getElementById('loadingState').style.display = 'none';
-    document.getElementById('results').style.display = 'block';
-    switchTab(currentMode==='overview'?'overview':'poster');
-  }
-
-  function renderSourceQuality(sq) {
-    const el = document.getElementById('sourceQuality');
-    if (!sq||!sq.rating||!sq.text) { el.style.display='none'; return; }
-    el.className = 'source-quality ' + sq.rating;
-    document.getElementById('sqTitle').textContent = sq.title;
-    document.getElementById('sqText').textContent = sq.text;
-    el.style.display = 'block';
-  }
-
-  function renderPoster(d) {
-    const today = new Date().toLocaleDateString(lang==='de'?'de-DE':'en-GB',{day:'numeric',month:'long',year:'numeric'});
-    document.getElementById('learningPoster').innerHTML = `
-      <div class="poster-header">
-        ${d.subject?`<div class="poster-subject">${d.subject}</div>`:''}
-        <div class="poster-title">${d.topic}</div>
-        <div class="poster-summary">${d.summary}</div>
-      </div>
-      ${d.key_facts&&d.key_facts.length?`<div class="key-facts">${d.key_facts.map(f=>`<div class="fact-box"><div class="fact-icon">${f.icon||'📌'}</div><div class="fact-label">${f.label}</div><div class="fact-value">${f.value}</div></div>`).join('')}</div>`:''}
-      ${d.key_quote?`<div class="poster-quote">"${d.key_quote}"</div>`:''}
-      <div class="mindmap-container">
-        <div class="hub">${d.topic}</div>
-        <div class="connector"></div>
-        <div class="branches-grid">
-          ${(d.branches||[]).map(b=>`<div class="branch-node"><div class="branch-title">${b.title}</div><div class="branch-keywords">${(b.keywords||[]).map(k=>`<span class="branch-kw">${k}</span>`).join('')}</div></div>`).join('')}
-        </div>
-      </div>
-      ${(d.sources&&d.sources.length) ? ('<div class="poster-sources"><div class="poster-sources-title">'+(lang==="de"?'📚 Quellen':'📚 Sources')+'</div>'+d.sources.map((s,i)=>'<div class="poster-source-item"><span class="source-num">['+（i+1)+']</span> '+(s.title||s.url)+'</div>').join('')+'</div>') : ''}
-      ${(d.source_mix&&d.source_mix.praise) ? ('<div class="poster-mix-praise">'+(d.source_mix.rating==="great"?'🏆':d.source_mix.rating==="good"?'✅':'⚠️')+' '+d.source_mix.praise+'</div>') : ''}
-      <div class="poster-footer">
-        <div class="poster-brand">Lern<span>·</span>AI</div>
-        <div class="poster-date">${today}</div>
-      </div>`;
-  }
-
-  function renderOverview(d) {
-    const contradictions = (d.contradictions||[]).filter(c=>c&&c.text);
-    const contradictionsHtml = contradictions.length ? `
-      <div class="overview-section" style="margin-top:24px">
-        <div class="section-tag" style="background:#FEF3E8;color:#D4690A;">⚡ ${lang==='de'?'Widersprüche & Korrekturen':'Contradictions & Corrections'}</div>
-        ${contradictions.map(c=>`
-          <div class="contradiction-item ${c.type==='correction'?'correction':'conflict'}">
-            <span class="contradiction-icon">${c.type==='correction'?'✏️':'⚡'}</span>
-            <span>${c.text}</span>
-          </div>`).join('')}
-      </div>` : '';
-
-    document.getElementById('overviewContent').innerHTML = `
-      <div class="overview-section"><div class="section-tag tag-blue">📌 ${lang==='de'?'Zusammenfassung':'Summary'}</div><div class="overview-text">${d.summary}</div></div>
-      ${d.key_quote?`<div class="highlight-quote">"${d.key_quote}"</div>`:''}
-      ${contradictionsHtml}
-      ${(d.sections||[]).map(s=>`<div class="overview-section"><div class="section-tag tag-gold">📝 ${s.title}</div><div class="overview-text">${s.content}</div></div>`).join('')}
-      ${d.terms&&d.terms.length?`<div class="overview-section" style="margin-top:24px"><div class="section-tag tag-green">🔑 ${lang==='de'?'Schlüsselbegriffe':'Key Terms'}</div><div class="terms-grid">${d.terms.map(t=>`<div class="term-card"><div class="term-name">${t.name}</div><div class="term-def">${t.definition}</div></div>`).join('')}</div></div>`:''}
-      ${(d.source_mix&&d.source_mix.praise)?('<div class="source-mix-box '+(d.source_mix.rating||'good')+'"><span class="mix-icon">'+(d.source_mix.rating==="great"?'🏆':d.source_mix.rating==="good"?'✅':'⚠️')+'</span><span>'+d.source_mix.praise+'</span></div>'):''}   
-      ${(d.sources&&d.sources.length)?('<div class="overview-section" style="margin-top:16px"><div class="section-tag" style="background:#F5F0FE;color:#5A20AA;">📚 '+(lang==="de"?'Quellenangaben':'Sources')+'</div>'+d.sources.map((s,i)=>'<div class="source-cite-item"><span class="source-num">['+（i+1)+']</span><div><div class="source-cite-title">'+(s.title||s.url)+'</div>'+（s.url&&s.url.startsWith('http')?'<a href="'+s.url+'" target="_blank" class="source-cite-url">'+s.url+'</a>':'')+'</div></div>').join('')+'</div>'):''}  `;
-  }
-
-  // ── Live URL check on input blur ──
-  document.addEventListener("DOMContentLoaded", function() {
-    document.getElementById("websiteList").addEventListener("blur", function(e) {
-      if (e.target.classList.contains("url-input")) checkUrlLive(e.target);
-    }, true);
   });
 
-  function checkUrlLive(input) {
-    const url = input.value.trim();
-    if (!url.startsWith("http")) return;
-    const lower = url.toLowerCase();
-    let msg = "", color = "";
-    if (WARN_DOMAINS.some(d => lower.includes(d))) {
-      msg = lang==="de"
-        ? "⚠️ Wikipedia: Von vielen Lehrkräften nicht als Quelle anerkannt (laut klicksafe.de: fehlende Autorenverantwortung). Du kannst Wikipedia als Einstieg nutzen, aber bitte zusätzlich eine seriösere Quelle angeben."
-        : "⚠️ Wikipedia: Not accepted as a source by many teachers. Use as a starting point, but add a more reliable source.";
-      color = "var(--orange)";
-    } else if (BAD_DOMAINS.some(d => lower.includes(d))) {
-      msg = lang==="de"
-        ? "⛔ Soziale Netzwerke oder Foren sind keine zitierfähigen Quellen für Schule oder Studium."
-        : "⛔ Social networks and forums are not citable sources for school or academia.";
-      color = "var(--red)";
-    }
-    // Show inline hint below input
-    let hint = input.parentElement.querySelector(".url-hint");
-    if (msg) {
-      if (!hint) { hint = document.createElement("div"); hint.className = "url-hint"; input.parentElement.appendChild(hint); }
-      hint.style.cssText = "font-size:12px;line-height:1.5;padding:6px 10px;border-radius:6px;margin-top:4px;background:#FEF3E8;color:"+color;
-      hint.textContent = msg;
-    } else if (hint) hint.remove();
-  }
-
-  // ── Glossar / Begriff erklären ──
-  async function explainTerm() {
-    const apiKey = document.getElementById("apiKey").value.trim();
-    const term = document.getElementById("glossarInput").value.trim();
-    if (!apiKey) { alert(lang==="de"?"Bitte zuerst API-Schlüssel eingeben.":"Please enter your API key first."); return; }
-    if (!term) { alert(lang==="de"?"Bitte einen Begriff eingeben.":"Please enter a term."); return; }
-    document.getElementById("glossarLoading").style.display = "block";
-    document.getElementById("glossarResult").innerHTML = "";
-    document.getElementById("glossarBtn").disabled = true;
-    try {
-      const res = await fetch("https://api.anthropic.com/v1/messages", {
-        method: "POST",
-        headers: { "Content-Type":"application/json","x-api-key":apiKey,"anthropic-version":"2023-06-01","anthropic-dangerous-direct-browser-access":"true" },
-        body: JSON.stringify({
-          model: "claude-sonnet-4-20250514",
-          max_tokens: 600,
-          messages: [{ role:"user", content:
-            `Erkläre den Begriff "${term}" für einen Schüler der Mittelstufe auf ${lang==="de"?"Deutsch":"English"}.
-Antworte NUR mit diesem JSON ohne Backticks:
-{"term":"${term}","definition":"Einfache Erklärung in 2-3 Sätzen","example":"Konkretes Beispiel aus der Geschichte oder dem Alltag","origin":"Woher kommt das Wort (optional, kurz)","related":["verwandter Begriff 1","verwandter Begriff 2"]}`
-          }]
-        })
-      });
-      const data = await res.json();
-      if (data.error) throw new Error(data.error.message);
-      const raw = data.content.filter(b=>b.type==="text").map(b=>b.text).join("");
-      let clean = raw.replace(/```json|```/g,"").trim();
-      const s = clean.indexOf("{"), e = clean.lastIndexOf("}");
-      if (s!==-1&&e!==-1) clean = clean.substring(s,e+1);
-      const d = JSON.parse(clean);
-      document.getElementById("glossarResult").innerHTML = `
-        <div class="glossar-card">
-          <div class="glossar-term">${d.term}</div>
-          <div class="glossar-def">${d.definition}</div>
-          ${d.example?`<div class="glossar-example"><span class="glossar-example-label">${lang==="de"?"📖 Beispiel":"📖 Example"}:</span> ${d.example}</div>`:""}
-          ${d.origin?`<div class="glossar-origin"><span class="glossar-example-label">${lang==="de"?"🔤 Herkunft":"🔤 Origin"}:</span> ${d.origin}</div>`:""}
-          ${d.related&&d.related.length?`<div class="glossar-related">${lang==="de"?"Verwandte Begriffe":"Related terms"}: ${d.related.map(r=>`<span class="glossar-chip" onclick="document.getElementById('glossarInput').value='${r}'; explainTerm()">${r}</span>`).join("")}</div>`:""}
-        </div>`;
-    } catch(e) {
-      document.getElementById("glossarResult").innerHTML = `<div class="error-box" style="display:block;">Fehler: ${e.message}</div>`;
-    }
-    document.getElementById("glossarLoading").style.display = "none";
-    document.getElementById("glossarBtn").disabled = false;
-  }
-
-  // Allow Enter key in glossar input
-  document.addEventListener("DOMContentLoaded", function() {
-    const gi = document.getElementById("glossarInput");
-    if (gi) gi.addEventListener("keydown", e => { if(e.key==="Enter") explainTerm(); });
-  });
-
-  function renderHandwritingWarning(issues) {
-    const el = document.getElementById('handwritingWarning');
-    if (!issues||!issues.length) { if(el) el.style.display='none'; return; }
-    if (!el) return;
-    el.innerHTML = '<div class="hw-title">' + (lang==='de'?'✏️ Handschrift-Hinweise':'✏️ Handwriting Notes') + '</div>'
-      + '<div class="hw-subtitle">' + (lang==='de'?'Folgende Wörter waren schwer lesbar:':'The following words were hard to read:') + '</div>'
-      + issues.map(i=>'<div class="hw-item"><span class="hw-word">'+i.word+'</span>'
-        + (i.alternatives&&i.alternatives.length?'<span class="hw-alt">' + (lang==='de'?'möglicherweise: ':'possibly: ') + i.alternatives.join(' oder ') + '</span>':'')
-        + '</div>').join('');
-    el.style.display = 'block';
-  }
-
-  function renderImageAnalysis(ia) {
-    const el = document.getElementById('imageAnalysis');
-    if (!ia||!ia.has_image||!ia.elements||!ia.elements.length) { if(el) el.style.display='none'; return; }
-    if (!el) return;
-    el.innerHTML = '<div class="ia-title">' + (lang==='de'?'🖼️ Bildanalyse':'🖼️ Image Analysis') + '</div>'
-      + (ia.symbolism?'<div class="ia-symbolism">'+ia.symbolism+'</div>':'')
-      + '<div class="ia-elements">'
-      + ia.elements.map(e=>'<div class="ia-element"><div class="ia-element-name">'+e.name+'</div><div class="ia-element-desc">'+e.description+'</div></div>').join('')
-      + '</div>';
-    el.style.display = 'block';
-  }
-
-  function renderExam(d) {
-    document.getElementById('examContent').innerHTML = (d.exam||[]).map((q,i)=>`
-      <div class="exam-item"><div class="exam-num">${i+1}</div><div class="exam-q">${q}</div></div>`).join('');
-  }
-
-  // ── Feedback ──
-  function setStar(n) {
-    selectedStar = n;
-    updateStars();
-  }
-
-  function updateStars() {
-    document.querySelectorAll('.star').forEach((s,i) => {
-      s.classList.toggle('active', i < selectedStar);
-    });
-  }
-
-  function submitFeedback() {
-    if (selectedStar === 0) {
-      alert(lang==='de'?'Bitte erst eine Bewertung auswählen.':'Please select a rating first.');
-      return;
-    }
-    const comment = document.getElementById('feedbackComment').value.trim();
-    const entry = {
-      stars: selectedStar,
-      comment: comment,
-      date: new Date().toLocaleDateString(lang==='de'?'de-DE':'en-GB', {day:'numeric', month:'short', year:'numeric'})
+  if (bad.length > 0) {
+    return {
+      rating: 'bad',
+      reasons: bad.map(function(u) { return '⛔ ' + u + ' – keine zitierfähige Quelle'; })
+               .concat(warn.map(function(u) { return '⚠️ ' + u + ' – Qualität nicht gesichert'; }))
     };
-    feedbackData.push(entry);
-    localStorage.setItem('lernai_feedback', JSON.stringify(feedbackData));
-
-    document.getElementById('feedbackSubmit').disabled = true;
-    document.getElementById('feedbackSuccess').style.display = 'block';
-    renderFeedbackPanel();
   }
-
-  function toggleFeedbackPanel() {
-    const panel = document.getElementById('feedbackPanel');
-    const isVisible = panel.style.display !== 'none';
-    panel.style.display = isVisible ? 'none' : 'block';
-    if (!isVisible) renderFeedbackPanel();
+  if (warn.length > 0) {
+    return {
+      rating: 'warn',
+      reasons: warn.map(function(u) { return '⚠️ ' + u + ' – laut klicksafe.de: fehlende Autorenverantwortung'; })
+    };
   }
+  return { rating: 'ok' };
+}
 
-  function renderFeedbackPanel() {
-    const data = feedbackData;
-    document.getElementById('fbTotal').textContent = data.length;
-    document.getElementById('fbComments').textContent = data.filter(f=>f.comment).length;
-    const avg = data.length ? (data.reduce((s,f)=>s+f.stars,0)/data.length).toFixed(1) : '–';
-    document.getElementById('fbAvg').textContent = avg === '–' ? '–' : avg + ' ⭐';
+// ─────────────────────────────────────────────────────────────────────────────
+// WARNING MODAL
+// ─────────────────────────────────────────────────────────────────────────────
+function showWarn(check) {
+  document.getElementById('warnIcon').textContent  = check.rating === 'bad' ? '⛔' : '⚠️';
+  document.getElementById('warnTitle').textContent = check.rating === 'bad' ? 'Unsichere Quelle erkannt' : 'Quellenprüfung empfohlen';
+  document.getElementById('warnReasons').innerHTML = check.reasons.map(function(r) { return '<div>' + r + '</div>'; }).join('');
+  document.getElementById('warnModal').classList.add('show');
+}
 
-    if (data.length === 0) {
-      document.getElementById('fbList').innerHTML = `<div class="fb-empty">${lang==='de'?'Noch kein Feedback vorhanden.':'No feedback yet.'}</div>`;
+function closeWarn(proceed) {
+  document.getElementById('warnModal').classList.remove('show');
+  if (proceed && state.pending) {
+    var d = state.pending;
+    state.pending = null;
+    hideError();
+    runGenerate(d.apiKey, d.websiteUrls, d.youtubeUrls, d.files, d.text);
+  } else {
+    state.pending = null;
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// GENERATE (entry point)
+// ─────────────────────────────────────────────────────────────────────────────
+function generate() {
+  var apiKey      = document.getElementById('apiKey').value.trim();
+  var websiteUrls = getUrls('websiteList');
+  var youtubeUrls = getUrls('youtubeList');
+  var text        = document.getElementById('textInput').value.trim();
+  var files       = state.files.slice();
+
+  if (!apiKey) { showError(state.lang === 'de' ? 'Bitte API-Schlüssel eingeben.' : 'Please enter your API key.'); return; }
+  if (state.tab === 'website'  && websiteUrls.length === 0) { showError('Bitte mindestens einen Link eingeben.'); return; }
+  if (state.tab === 'youtube'  && youtubeUrls.length === 0) { showError('Bitte mindestens einen YouTube-Link eingeben.'); return; }
+  if (state.tab === 'file'     && files.length === 0)       { showError('Bitte mindestens eine Datei hochladen.'); return; }
+  if (state.tab === 'text'     && !text)                    { showError('Bitte Text eingeben.'); return; }
+
+  // Quality check for website urls
+  if (state.tab === 'website' && websiteUrls.length > 0) {
+    var check = checkUrlQuality(websiteUrls);
+    if (check.rating !== 'ok') {
+      state.pending = { apiKey: apiKey, websiteUrls: websiteUrls, youtubeUrls: youtubeUrls, files: files, text: text };
+      showWarn(check);
       return;
     }
-
-    document.getElementById('fbList').innerHTML = [...data].reverse().map(f => `
-      <div class="fb-item">
-        <div class="fb-item-header">
-          <div class="fb-stars">${'⭐'.repeat(f.stars)}</div>
-          <div class="fb-date">${f.date}</div>
-        </div>
-        ${f.comment?`<div class="fb-comment">${f.comment}</div>`:''}
-      </div>`).join('');
   }
 
-  // ── Download ──
-  async function downloadSection(elementId, filename) {
-    const el = document.getElementById(elementId);
-    if (!el) return;
-    // Temporarily style for clean export
-    const origBg = el.style.background;
-    el.style.background = "white";
-    try {
-      const canvas = await html2canvas(el, {scale:2, useCORS:true, backgroundColor:"#ffffff", logging:false});
-      const link = document.createElement("a");
-      link.download = filename + ".png";
-      link.href = canvas.toDataURL("image/png");
-      link.click();
-    } catch(e) { alert("Download fehlgeschlagen."); }
-    el.style.background = origBg;
-  }
+  hideError();
+  runGenerate(apiKey, websiteUrls, youtubeUrls, files, text);
+}
 
-  async function downloadAll() {
-    const btn = document.getElementById("dlAllBtn");
-    btn.innerHTML = lang==="de"?"⏳ Wird erstellt…":"⏳ Creating…";
-    btn.disabled = true;
-    const sections = [
-      { id: "learningPoster", name: "lernplakat" },
-      { id: "overviewContent", name: "uebersicht" },
-      { id: "examContent", name: "pruefungsfragen" }
-    ];
-    for (const s of sections) {
-      const el = document.getElementById(s.id);
-      if (!el || !el.innerHTML.trim()) continue;
-      try {
-        const origBg = el.style.background;
-        el.style.background = "white";
-        const canvas = await html2canvas(el, {scale:2, useCORS:true, backgroundColor:"#ffffff", logging:false});
-        el.style.background = origBg;
-        const link = document.createElement("a");
-        link.download = s.name + ".png";
-        link.href = canvas.toDataURL("image/png");
-        link.click();
-        // Small delay between downloads
-        await new Promise(r => setTimeout(r, 800));
-      } catch(e) { console.error("Download failed for", s.id); }
+// ─────────────────────────────────────────────────────────────────────────────
+// RUN GENERATE
+// ─────────────────────────────────────────────────────────────────────────────
+async function runGenerate(apiKey, websiteUrls, youtubeUrls, files, text) {
+  state.lastApiKey = apiKey;
+
+  document.getElementById('inputSection').style.display   = 'none';
+  document.getElementById('loadingState').style.display   = 'block';
+  document.getElementById('results').style.display        = 'none';
+  document.getElementById('feedbackOverview').style.display = 'none';
+
+  // Animate loading steps
+  setTimeout(function() { document.getElementById('step1').classList.add('done'); }, 3000);
+  setTimeout(function() { document.getElementById('step2').classList.add('done'); }, 9000);
+  setTimeout(function() { document.getElementById('step3').classList.add('done'); }, 16000);
+
+  try {
+    // Fetch YouTube metadata
+    var ytInfos = [];
+    for (var i = 0; i < youtubeUrls.length; i++) {
+      var info = await fetchYouTubeInfo(youtubeUrls[i]);
+      if (info) ytInfos.push(info);
     }
-    btn.innerHTML = lang==="de"?"⬇ Alles herunterladen":"⬇ Download All";
-    btn.disabled = false;
+
+    // Build message content
+    var content = [];
+
+    // Attach files
+    for (var j = 0; j < files.length; j++) {
+      var fd = await readFileAsBase64(files[j]);
+      if (fd.isImage) {
+        content.push({ type: 'image', source: { type: 'base64', media_type: fd.mediaType, data: fd.data } });
+      } else if (fd.isPdf) {
+        content.push({ type: 'document', source: { type: 'base64', media_type: 'application/pdf', data: fd.data } });
+      }
+    }
+
+    // Build text prompt
+    var parts = [];
+    if (websiteUrls.length > 0) parts.push('WEBSEITEN-URLS:\n' + websiteUrls.join('\n'));
+    if (ytInfos.length > 0)     parts.push('YOUTUBE-VIDEOS:\n' + ytInfos.map(function(y) { return y.title + ' (Kanal: ' + y.author + ') – ' + y.url; }).join('\n'));
+    if (text)                   parts.push('TEXT-INHALT:\n' + text);
+    if (files.length > 0 && content.length === 0) parts.push('DATEIEN: ' + files.map(function(f) { return f.name; }).join(', '));
+
+    var userText = parts.length > 0 ? parts.join('\n\n') : 'Analysiere das hochgeladene Material und erstelle Lernmaterial.';
+    content.push({ type: 'text', text: userText });
+
+    // Mode instruction
+    var modeInstr = '';
+    if (state.mode === 'poster')    modeInstr = 'Erstelle NUR das Lernplakat. overview und questions können minimal sein.';
+    if (state.mode === 'questions') modeInstr = 'Erstelle NUR die Prüfungsfragen. poster und overview können minimal sein.';
+
+    // Multi source instruction
+    var multiInstr = (websiteUrls.length + youtubeUrls.length + files.length) > 1
+      ? 'Erkenne Widersprüche zwischen den Quellen und notiere sie in contradictions.'
+      : '';
+
+    var systemPrompt = 'Du bist ein Lernassistent für Schüler. Antworte AUSSCHLIESSLICH mit einem validen JSON-Objekt – kein Text davor oder danach, keine Markdown-Backticks.\n\n'
+      + 'JSON-Struktur:\n'
+      + '{\n'
+      + '  "title": "Thema des Materials",\n'
+      + '  "subject": "Fach (z.B. Geschichte)",\n'
+      + '  "keywords": ["Wort1","Wort2","Wort3","Wort4","Wort5"],\n'
+      + '  "poster": {\n'
+      + '    "sections": [\n'
+      + '      { "title": "Abschnittstitel", "points": ["Punkt 1","Punkt 2","Punkt 3"] },\n'
+      + '      { "title": "Abschnittstitel", "points": ["Punkt 1","Punkt 2","Punkt 3"] },\n'
+      + '      { "title": "Abschnittstitel", "points": ["Punkt 1","Punkt 2","Punkt 3"] },\n'
+      + '      { "title": "Abschnittstitel", "points": ["Punkt 1","Punkt 2","Punkt 3"] }\n'
+      + '    ]\n'
+      + '  },\n'
+      + '  "overview": {\n'
+      + '    "summary": "3-4 Sätze Zusammenfassung",\n'
+      + '    "main_points": ["Hauptpunkt 1","Hauptpunkt 2","Hauptpunkt 3"],\n'
+      + '    "contradictions": [{ "type": "conflict", "text": "Beschreibung des Widerspruchs" }]\n'
+      + '  },\n'
+      + '  "questions": [\n'
+      + '    { "question": "Frage?", "answers": ["A","B","C","D"], "correct": 0, "explanation": "Warum A richtig ist" }\n'
+      + '  ],\n'
+      + '  "source_quality": { "rating": "great", "text": "Sehr guter Quellenmix aus seriösen Quellen" },\n'
+      + '  "sources": [\n'
+      + '    { "title": "Name der Quelle", "url": "https://...", "type": "good" }\n'
+      + '  ],\n'
+      + '  "handwriting_issues": [],\n'
+      + '  "image_analysis": null\n'
+      + '}\n\n'
+      + 'source_quality.rating: "great" (mind. 3 seriöse Quellen), "good" (1-2 seriöse), "weak" (nur unsichere).\n'
+      + 'sources[].type: "good" (seriös), "warn" (prüfen empfohlen), "bad" (unsicher).\n'
+      + 'Bei Handschrift: unsichere Wörter in handwriting_issues als { "word": "...", "alternatives": ["...","..."] }.\n'
+      + 'Bei Bildern/Gemälden: image_analysis als { "has_image": true, "elements": [{"name":"...","meaning":"..."}], "symbolism": "..." }.\n'
+      + 'Antworte auf Deutsch, auch wenn die Quelle auf Englisch ist.\n'
+      + modeInstr + ' ' + multiInstr;
+
+    var useWebSearch = websiteUrls.length > 0;
+    var body = {
+      model:      'claude-sonnet-4-20250514',
+      max_tokens: 4000,
+      system:     systemPrompt,
+      messages:   [{ role: 'user', content: content.length === 1 ? content[0].text : content }]
+    };
+    if (useWebSearch) body.tools = [{ type: 'web_search_20250305', name: 'web_search' }];
+
+    var resp = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type':                           'application/json',
+        'x-api-key':                              apiKey,
+        'anthropic-version':                      '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true'
+      },
+      body: JSON.stringify(body)
+    });
+
+    var data = await resp.json();
+    if (data.error) { showError('API-Fehler: ' + data.error.message); resetLoading(); return; }
+
+    // Extract text from response
+    var rawText = '';
+    if (data.content) {
+      data.content.forEach(function(block) {
+        if (block.type === 'text') rawText += block.text;
+      });
+    }
+
+    var parsed = parseJSON(rawText);
+    if (!parsed) { showError('Fehler beim Verarbeiten der Antwort. Bitte erneut versuchen.'); resetLoading(); return; }
+
+    renderResults(parsed, websiteUrls, youtubeUrls, files);
+    saveToHistorie(parsed, websiteUrls, youtubeUrls, files);
+
+  } catch (err) {
+    showError('Fehler: ' + err.message);
+    resetLoading();
+  }
+}
+
+function resetLoading() {
+  document.getElementById('loadingState').style.display = 'none';
+  document.getElementById('inputSection').style.display = 'block';
+  ['step1','step2','step3'].forEach(function(id) { document.getElementById(id).classList.remove('done'); });
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// HELPERS
+// ─────────────────────────────────────────────────────────────────────────────
+function parseJSON(text) {
+  try { return JSON.parse(text); } catch (e) { /* continue */ }
+  var m = text.match(/\{[\s\S]*\}/);
+  if (m) { try { return JSON.parse(m[0]); } catch (e) { /* continue */ } }
+  return null;
+}
+
+function readFileAsBase64(file) {
+  return new Promise(function(resolve, reject) {
+    var reader = new FileReader();
+    reader.onload = function(e) {
+      resolve({
+        data:      e.target.result.split(',')[1],
+        mediaType: file.type,
+        isImage:   file.type.startsWith('image/'),
+        isPdf:     file.type === 'application/pdf'
+      });
+    };
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
+async function fetchYouTubeInfo(url) {
+  try {
+    var m = url.match(/(?:v=|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
+    if (!m) return null;
+    var resp = await fetch('https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=' + m[1] + '&format=json');
+    if (!resp.ok) return { title: 'YouTube Video', author: 'Unbekannter Kanal', url: url };
+    var d = await resp.json();
+    return { title: d.title, author: d.author_name, url: url };
+  } catch (e) {
+    return { title: 'YouTube Video', author: 'Unbekannter Kanal', url: url };
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// RENDER RESULTS
+// ─────────────────────────────────────────────────────────────────────────────
+function renderResults(data, websiteUrls, youtubeUrls, files) {
+  document.getElementById('loadingState').style.display = 'none';
+  document.getElementById('results').style.display      = 'block';
+  ['step1','step2','step3'].forEach(function(id) { document.getElementById(id).classList.remove('done'); });
+
+  renderQualityBanner(data);
+  buildResultTabs(data);
+  if (state.mode === 'all' || state.mode === 'poster')    renderPoster(data, websiteUrls, youtubeUrls);
+  if (state.mode === 'all')                               renderOverview(data);
+  if (state.mode === 'all' || state.mode === 'questions') renderQuestions(data);
+}
+
+function renderQualityBanner(data) {
+  var el = document.getElementById('qualityBanner');
+  if (!data.source_quality) { el.innerHTML = ''; return; }
+  var q   = data.source_quality;
+  var cls = q.rating === 'great' ? 'great' : q.rating === 'good' ? 'ok' : 'weak';
+  var ico = q.rating === 'great' ? '🏆' : q.rating === 'good' ? '✅' : '⚠️';
+  el.innerHTML = '<div class="quality-banner ' + cls + '">' + ico + ' ' + q.text + '</div>';
+}
+
+function buildResultTabs(data) {
+  var tabsEl = document.getElementById('resultTabs');
+  tabsEl.innerHTML = '';
+  document.querySelectorAll('.rpanel').forEach(function(p) { p.classList.remove('active'); });
+
+  var tabs = [];
+  if (state.mode === 'all' || state.mode === 'poster')    tabs.push({ id: 'rpPoster',    label: '🗺️ Lernplakat' });
+  if (state.mode === 'all')                               tabs.push({ id: 'rpOverview',  label: '📋 Übersicht' });
+  if (state.mode === 'all' || state.mode === 'questions') tabs.push({ id: 'rpQuestions', label: '📝 Prüfungsfragen' });
+  tabs.push({ id: 'rpGlossar', label: '🔍 Begriffe' });
+
+  tabs.forEach(function(t, idx) {
+    var btn = document.createElement('button');
+    btn.className = 'rtab' + (idx === 0 ? ' active' : '');
+    btn.textContent = t.label;
+    (function(tid) {
+      btn.onclick = function() {
+        document.querySelectorAll('.rtab').forEach(function(r)  { r.classList.remove('active'); });
+        document.querySelectorAll('.rpanel').forEach(function(p) { p.classList.remove('active'); });
+        btn.classList.add('active');
+        document.getElementById(tid).classList.add('active');
+      };
+    })(t.id);
+    tabsEl.appendChild(btn);
+  });
+
+  if (tabs.length > 0) document.getElementById(tabs[0].id).classList.add('active');
+}
+
+function renderPoster(data, websiteUrls, youtubeUrls) {
+  var el = document.getElementById('rpPoster');
+
+  // Handwriting warning
+  var hwHtml = '';
+  if (data.handwriting_issues && data.handwriting_issues.length > 0) {
+    hwHtml = '<div class="hw-box"><h4>⚠️ Unsichere Wörter in der Handschrift</h4>';
+    data.handwriting_issues.forEach(function(h) {
+      hwHtml += '<div class="hw-row"><strong>' + h.word + '</strong> – mögliche Alternativen: ' + h.alternatives.join(', ') + '</div>';
+    });
+    hwHtml += '</div>';
   }
 
-  async function downloadPoster() {
-    const btn = document.getElementById('dlBtn');
-    btn.innerHTML = lang==='de'?'⏳ Wird erstellt…':'⏳ Creating…';
-    btn.disabled = true;
-    try {
-      const canvas = await html2canvas(document.getElementById('learningPoster'),{scale:2,useCORS:true,backgroundColor:'#ffffff',logging:false});
-      const link = document.createElement('a');
-      link.download = 'lernplakat.png';
-      link.href = canvas.toDataURL('image/png');
-      link.click();
-    } catch(e) { alert('Download fehlgeschlagen.'); }
-    btn.innerHTML = lang==='de'?'⬇ Als PNG speichern':'⬇ Save as PNG';
-    btn.disabled = false;
+  // Image analysis
+  var iaHtml = '';
+  if (data.image_analysis && data.image_analysis.has_image) {
+    var ia = data.image_analysis;
+    var elems = (ia.elements || []).map(function(e) {
+      return '<div class="ia-el"><strong>' + e.name + '</strong>' + e.meaning + '</div>';
+    }).join('');
+    iaHtml = '<div class="ia-box"><h4>🖼️ Bildanalyse</h4>'
+           + (elems ? '<div class="ia-grid">' + elems + '</div>' : '')
+           + (ia.symbolism ? '<div class="ia-symbolism">' + ia.symbolism + '</div>' : '')
+           + '</div>';
   }
 
-  function switchTab(name) {
-    document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
-    document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
-    const cap = name.charAt(0).toUpperCase()+name.slice(1);
-    const tabEl = document.getElementById('tab'+cap);
-    const contentEl = document.getElementById('tabContent'+cap);
-    if (tabEl) tabEl.classList.add('active');
-    if (contentEl) contentEl.classList.add('active');
+  // Keywords
+  var kwHtml = (data.keywords || []).map(function(k) { return '<span class="kw">' + k + '</span>'; }).join('');
+
+  // Sections
+  var sectionsHtml = '';
+  if (data.poster && data.poster.sections) {
+    data.poster.sections.forEach(function(s) {
+      var pts = (s.points || []).map(function(p) { return '<li>' + p + '</li>'; }).join('');
+      sectionsHtml += '<div class="poster-box"><h3>' + s.title + '</h3><ul>' + pts + '</ul></div>';
+    });
   }
 
-  function reset() {
-    uploadedFiles=[]; renderFileList();
-    document.getElementById('textInput').value='';
-    document.getElementById('fileInput').value='';
-    document.getElementById('websiteList').innerHTML=`<div class="url-row"><input class="url-input" type="url" placeholder="https://www.bpb.de/..." /><button class="url-remove" onclick="removeUrl(this)">✕</button></div>`;
-    if(document.getElementById('youtubeList')) document.getElementById('youtubeList').innerHTML=`<div class="url-row"><input class="url-input" type="url" placeholder="https://www.youtube.com/watch?v=..." /><button class="url-remove" onclick="removeUrl(this)">✕</button></div>`;
-    document.getElementById('inputSection').style.display='block';
-    document.getElementById('results').style.display='none';
-    hideError();
+  // Sources
+  var allUrls = websiteUrls.concat(youtubeUrls);
+  var srcHtml = '';
+  if (data.sources && data.sources.length > 0) {
+    srcHtml = data.sources.map(function(s, i) {
+      return '[' + (i + 1) + '] <a href="' + s.url + '" target="_blank">' + s.title + '</a>';
+    }).join(' · ');
+  } else if (allUrls.length > 0) {
+    srcHtml = allUrls.map(function(u, i) {
+      return '[' + (i + 1) + '] <a href="' + u + '" target="_blank">' + u + '</a>';
+    }).join(' · ');
   }
 
-  function showError(msg) { const b=document.getElementById('errorBox'); b.textContent=msg; b.style.display='block'; }
-  function hideError() { document.getElementById('errorBox').style.display='none'; }
+  el.innerHTML = hwHtml + iaHtml
+    + '<div class="poster">'
+    + '<div class="poster-header"><h2>' + (data.title || 'Lernplakat') + '</h2><p>' + (data.subject || '') + '</p></div>'
+    + (kwHtml ? '<div class="poster-keywords">' + kwHtml + '</div>' : '')
+    + '<div class="poster-grid">' + sectionsHtml + '</div>'
+    + (srcHtml ? '<div class="poster-sources"><strong>Quellen:</strong> ' + srcHtml + '</div>' : '')
+    + '</div>'
+    + '<div style="margin-top:10px"><button class="btn-sm" onclick="downloadPanel(\'rpPoster\',\'lernplakat\')">⬇ PNG herunterladen</button></div>';
+}
+
+function renderOverview(data) {
+  var el   = document.getElementById('rpOverview');
+  var html = '';
+
+  if (data.overview) {
+    var ov = data.overview;
+    if (ov.summary) {
+      html += '<div class="ov-section"><h3>Zusammenfassung</h3><div class="ov-card">' + ov.summary + '</div></div>';
+    }
+    if (ov.main_points && ov.main_points.length > 0) {
+      html += '<div class="ov-section"><h3>Hauptpunkte</h3>';
+      ov.main_points.forEach(function(p) { html += '<div class="ov-card">' + p + '</div>'; });
+      html += '</div>';
+    }
+    if (ov.contradictions && ov.contradictions.length > 0) {
+      html += '<div class="ov-section"><h3>⚡ Widersprüche zwischen Quellen</h3>';
+      ov.contradictions.forEach(function(c) {
+        html += '<div class="contradiction' + (c.type === 'correction' ? ' fix' : '') + '">' + c.text + '</div>';
+      });
+      html += '</div>';
+    }
+  }
+
+  if (data.sources && data.sources.length > 0) {
+    html += '<div class="ov-section"><h3>Quellen</h3>';
+    data.sources.forEach(function(s) {
+      var badgeClass = s.type === 'good' ? 'good' : s.type === 'warn' ? 'warn' : 'bad';
+      var badgeText  = s.type === 'good' ? '✅ Seriös' : s.type === 'warn' ? '⚠️ Prüfen' : '⛔ Unsicher';
+      html += '<div class="source-row">'
+            + '<span class="src-badge ' + badgeClass + '">' + badgeText + '</span>'
+            + s.title
+            + (s.url ? '<a href="' + s.url + '" target="_blank">↗ Öffnen</a>' : '')
+            + '</div>';
+    });
+    html += '</div>';
+  }
+
+  html += '<div style="margin-top:10px"><button class="btn-sm" onclick="downloadPanel(\'rpOverview\',\'uebersicht\')">⬇ PNG herunterladen</button></div>';
+  el.innerHTML = html || '<p style="color:var(--ink3);font-size:13px">Keine Übersicht verfügbar.</p>';
+}
+
+function renderQuestions(data) {
+  var el = document.getElementById('rpQuestions');
+  if (!data.questions || data.questions.length === 0) {
+    el.innerHTML = '<p style="color:var(--ink3);font-size:13px">Keine Prüfungsfragen verfügbar.</p>';
+    return;
+  }
+  var html = '';
+  data.questions.forEach(function(q, qi) {
+    html += '<div class="q-item">'
+          + '<div class="q-num">Frage ' + (qi + 1) + '</div>'
+          + '<div class="q-text">' + q.question + '</div>'
+          + '<div class="q-answers">';
+    q.answers.forEach(function(a, ai) {
+      html += '<button class="q-answer" data-qi="' + qi + '" data-ai="' + ai + '" data-correct="' + q.correct + '" data-expl="' + encodeURIComponent(q.explanation || '') + '" onclick="checkAnswer(this)">' + a + '</button>';
+    });
+    html += '</div>'
+          + '<div class="q-expl" id="expl' + qi + '"></div>'
+          + '</div>';
+  });
+  html += '<div style="margin-top:10px"><button class="btn-sm" onclick="downloadPanel(\'rpQuestions\',\'pruefungsfragen\')">⬇ PNG herunterladen</button></div>';
+  el.innerHTML = html;
+}
+
+function checkAnswer(btn) {
+  var qi      = btn.getAttribute('data-qi');
+  var ai      = parseInt(btn.getAttribute('data-ai'));
+  var correct = parseInt(btn.getAttribute('data-correct'));
+  var expl    = decodeURIComponent(btn.getAttribute('data-expl'));
+
+  // Disable all answers in this question
+  btn.closest('.q-item').querySelectorAll('.q-answer').forEach(function(b) {
+    b.onclick = null;
+    if (parseInt(b.getAttribute('data-ai')) === correct) b.classList.add('correct');
+  });
+  if (ai !== correct) btn.classList.add('wrong');
+
+  var explEl = document.getElementById('expl' + qi);
+  if (explEl && expl) { explEl.textContent = expl; explEl.style.display = 'block'; }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// GLOSSAR
+// ─────────────────────────────────────────────────────────────────────────────
+async function explainTerm(term) {
+  var input  = document.getElementById('glossarInput');
+  var t      = term || input.value.trim();
+  if (!t) return;
+  input.value = t;
+
+  var apiKey = state.lastApiKey || document.getElementById('apiKey').value.trim();
+  if (!apiKey) {
+    document.getElementById('glossarResult').innerHTML = '<p style="color:var(--red);font-size:13px">Bitte API-Schlüssel eingeben.</p>';
+    return;
+  }
+
+  document.getElementById('glossarResult').innerHTML = '<div class="spinner" style="margin:24px auto"></div>';
+
+  try {
+    var resp = await fetch('https://api.anthropic.com/v1/messages', {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json', 'x-api-key': apiKey, 'anthropic-version': '2023-06-01', 'anthropic-dangerous-direct-browser-access': 'true' },
+      body: JSON.stringify({
+        model:      'claude-sonnet-4-20250514',
+        max_tokens: 600,
+        system:     'Erkläre Fachbegriffe für Schüler. Antworte NUR mit validem JSON ohne Backticks:\n{"term":"Begriff","definition":"2-3 Sätze Erklärung","example":"konkretes Schulbeispiel","origin":"Wortherkunft in 1 Satz","related":["verwandter Begriff 1","verwandter Begriff 2"]}',
+        messages:   [{ role: 'user', content: 'Erkläre: ' + t }]
+      })
+    });
+    var d = await resp.json();
+    var raw = d.content ? d.content.map(function(b) { return b.text || ''; }).join('') : '';
+    var p   = parseJSON(raw);
+    if (!p) { document.getElementById('glossarResult').innerHTML = '<p style="color:var(--red);font-size:13px">Fehler beim Laden.</p>'; return; }
+
+    var chips = (p.related || []).map(function(r) {
+      return '<span class="glossar-chip" onclick="explainTerm(\'' + r.replace(/'/g, "\\'") + '\')">' + r + '</span>';
+    }).join('');
+
+    document.getElementById('glossarResult').innerHTML =
+      '<div class="glossar-card">'
+      + '<div class="glossar-term">' + p.term + '</div>'
+      + '<div class="glossar-def">'  + p.definition + '</div>'
+      + '<div class="glossar-meta">'
+      + '<div class="glossar-meta-box"><div class="lbl">Beispiel</div><div class="val">' + p.example + '</div></div>'
+      + '<div class="glossar-meta-box"><div class="lbl">Herkunft</div><div class="val">' + p.origin  + '</div></div>'
+      + '</div>'
+      + (chips ? '<div><div class="card-label" style="margin-bottom:8px">Verwandte Begriffe</div><div class="glossar-chips">' + chips + '</div></div>' : '')
+      + '</div>';
+  } catch (e) {
+    document.getElementById('glossarResult').innerHTML = '<p style="color:var(--red);font-size:13px">Fehler: ' + e.message + '</p>';
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// DOWNLOAD
+// ─────────────────────────────────────────────────────────────────────────────
+async function downloadPanel(panelId, filename) {
+  var el = document.getElementById(panelId);
+  var oldBg = el.style.background;
+  el.style.background = 'white';
+  try {
+    var canvas = await html2canvas(el, { backgroundColor: '#ffffff', scale: 2, useCORS: true });
+    var a = document.createElement('a');
+    a.download = filename + '.png';
+    a.href     = canvas.toDataURL('image/png');
+    a.click();
+  } catch (e) {
+    alert('Download fehlgeschlagen: ' + e.message);
+  }
+  el.style.background = oldBg;
+}
+
+function downloadActive() {
+  var active = document.querySelector('.rpanel.active');
+  if (active) downloadPanel(active.id, 'lernmaterial');
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// RESTART
+// ─────────────────────────────────────────────────────────────────────────────
+function restart() {
+  document.getElementById('results').style.display      = 'none';
+  document.getElementById('inputSection').style.display = 'block';
+  document.getElementById('qualityBanner').innerHTML    = '';
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// FEEDBACK
+// ─────────────────────────────────────────────────────────────────────────────
+function openFeedback() {
+  state.starRating = 0;
+  updateStars();
+  document.getElementById('feedbackText').value = '';
+  document.getElementById('feedbackModal').classList.add('show');
+}
+
+function closeFeedback() {
+  document.getElementById('feedbackModal').classList.remove('show');
+}
+
+function setStar(n) {
+  state.starRating = n;
+  updateStars();
+}
+
+function updateStars() {
+  document.querySelectorAll('.star').forEach(function(s, i) {
+    s.classList.toggle('on', i < state.starRating);
+  });
+}
+
+function submitFeedback() {
+  if (state.starRating === 0) { alert('Bitte Bewertung auswählen.'); return; }
+  var entries = JSON.parse(localStorage.getItem('lernai_feedback') || '[]');
+  entries.push({
+    stars:   state.starRating,
+    comment: document.getElementById('feedbackText').value.trim(),
+    date:    new Date().toLocaleDateString('de-DE')
+  });
+  localStorage.setItem('lernai_feedback', JSON.stringify(entries));
+  closeFeedback();
+  alert('Danke für dein Feedback! ⭐');
+}
+
+function showFeedbackOverview() {
+  document.getElementById('inputSection').style.display    = 'none';
+  document.getElementById('results').style.display         = 'none';
+  document.getElementById('feedbackOverview').style.display = 'block';
+
+  var entries = JSON.parse(localStorage.getItem('lernai_feedback') || '[]');
+  var content = document.getElementById('feedbackContent');
+
+  if (entries.length === 0) {
+    content.innerHTML = '<p style="color:var(--ink3);font-size:13px">Noch kein Feedback vorhanden.</p>';
+    return;
+  }
+
+  var avg   = (entries.reduce(function(s, e) { return s + e.stars; }, 0) / entries.length).toFixed(1);
+  var html  = '<div class="fb-stat"><div class="avg">' + avg + '</div><p>⭐ ' + avg + ' · ' + entries.length + ' Bewertungen</p></div>';
+  entries.slice().reverse().forEach(function(e) {
+    html += '<div class="fb-entry">'
+          + '<div class="fb-stars">' + '⭐'.repeat(e.stars) + '</div>'
+          + (e.comment ? '<div class="fb-comment">' + e.comment + '</div>' : '')
+          + '<div class="fb-date">' + e.date + '</div>'
+          + '</div>';
+  });
+  content.innerHTML = html;
+}
+
+function hideFeedbackOverview() {
+  document.getElementById('feedbackOverview').style.display = 'none';
+  document.getElementById('inputSection').style.display     = 'block';
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// QUELLEN-HISTORIE
+// ─────────────────────────────────────────────────────────────────────────────
+function saveToHistorie(data, websiteUrls, youtubeUrls, files) {
+  var entries = JSON.parse(localStorage.getItem('lernai_historie') || '[]');
+
+  // Collect sources
+  var sources = [];
+  if (data.sources && data.sources.length > 0) {
+    sources = data.sources.map(function(s) {
+      return { title: s.title, url: s.url, type: s.type };
+    });
+  } else {
+    websiteUrls.forEach(function(u) { sources.push({ title: u, url: u, type: 'unknown' }); });
+    youtubeUrls.forEach(function(u) { sources.push({ title: 'YouTube: ' + u, url: u, type: 'unknown' }); });
+    files.forEach(function(f)       { sources.push({ title: f.name, url: '', type: 'file' }); });
+  }
+
+  entries.unshift({
+    date:    new Date().toLocaleDateString('de-DE'),
+    title:   data.title || 'Ohne Titel',
+    quality: data.source_quality ? data.source_quality.rating : 'unknown',
+    sources: sources
+  });
+
+  if (entries.length > 50) entries = entries.slice(0, 50);
+  localStorage.setItem('lernai_historie', JSON.stringify(entries));
+}
+
+function openDrawer() {
+  var entries = JSON.parse(localStorage.getItem('lernai_historie') || '[]');
+  var body    = document.getElementById('drawerBody');
+
+  if (entries.length === 0) {
+    body.innerHTML = '<div class="hist-empty">📭 Noch keine Quellen gespeichert.<br><br>Nach deiner nächsten Analyse erscheinen deine Quellen hier.</div>';
+  } else {
+    var html = '';
+    entries.forEach(function(e) {
+      var qLabel = e.quality === 'great' ? '🏆 Sehr gut'
+                 : e.quality === 'good'  ? '✅ Gut'
+                 : e.quality === 'weak'  ? '⚠️ Schwach' : '';
+      var qClass = e.quality === 'great' ? 'great'
+                 : e.quality === 'good'  ? 'good'
+                 : e.quality === 'weak'  ? 'weak' : '';
+
+      html += '<div class="hist-entry">';
+      html += '<div class="hist-entry-meta">'
+            + '<span class="hist-entry-date">' + e.date + '</span>'
+            + (qLabel ? '<span class="hist-quality-badge ' + qClass + '">' + qLabel + '</span>' : '')
+            + '</div>';
+      html += '<div class="hist-entry-title">' + e.title + '</div>';
+
+      (e.sources || []).forEach(function(s) {
+        var badgeClass = s.type === 'good'    ? 'great'
+                       : s.type === 'warn'    ? 'ok'
+                       : s.type === 'bad'     ? 'weak'
+                       : s.type === 'file'    ? 'file'
+                       : 'ok';
+        var badgeText  = s.type === 'good'    ? '✅ Seriös'
+                       : s.type === 'warn'    ? '⚠️ Prüfen'
+                       : s.type === 'bad'     ? '⛔ Unsicher'
+                       : s.type === 'file'    ? '📄 Datei'
+                       : '🔗 Quelle';
+        var urlPart = s.url
+          ? '<a class="hist-src-url" href="' + s.url + '" target="_blank">' + s.title + '</a>'
+          : '<span class="hist-src-url nolink">' + s.title + '</span>';
+        html += '<div class="hist-src-row"><span class="hist-badge ' + badgeClass + '">' + badgeText + '</span>' + urlPart + '</div>';
+      });
+
+      html += '</div>';
+    });
+    html += '<button class="hist-clear" onclick="clearHistorie()">🗑 Verlauf löschen</button>';
+    body.innerHTML = html;
+  }
+
+  document.getElementById('drawerOverlay').classList.add('show');
+  document.getElementById('drawerEl').classList.add('show');
+}
+
+function closeDrawer() {
+  document.getElementById('drawerOverlay').classList.remove('show');
+  document.getElementById('drawerEl').classList.remove('show');
+}
+
+function clearHistorie() {
+  if (confirm('Verlauf wirklich löschen?')) {
+    localStorage.removeItem('lernai_historie');
+    document.getElementById('drawerBody').innerHTML = '<div class="hist-empty">📭 Verlauf gelöscht.</div>';
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// INIT – ensure correct panel visible on load
+// ─────────────────────────────────────────────────────────────────────────────
+(function init() {
+  document.querySelectorAll('.spanel').forEach(function(p) { p.style.display = 'none'; });
+  var wp = document.getElementById('panelWebsite');
+  if (wp) { wp.classList.add('active'); wp.style.display = 'block'; }
+})();
 </script>
 </body>
 </html>
