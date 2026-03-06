@@ -74,9 +74,10 @@
     .text-input:focus { border-color: var(--accent); }
 
     .mode-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 10px; }
-    .mode-btn { padding: 14px 8px; border: 2px solid var(--border); border-radius: 10px; background: white; cursor: pointer; text-align: center; transition: all 0.2s; font-family: 'DM Sans', sans-serif; user-select: none; -webkit-user-select: none; display: block; }
+    .mode-btn { padding: 14px 8px; border: 2px solid var(--border); border-radius: 10px; background: white; cursor: pointer; text-align: center; transition: all 0.2s; font-family: 'DM Sans', sans-serif; user-select: none; -webkit-user-select: none; display: block; -webkit-tap-highlight-color: transparent; }
     .mode-btn:hover { border-color: var(--accent); background: var(--accent-light); }
-    .mode-btn.selected { border-color: var(--accent); background: var(--accent-light); box-shadow: 0 0 0 3px rgba(45,91,227,0.15); }
+    .mode-btn.selected { border-color: var(--accent) !important; background: var(--accent-light) !important; box-shadow: 0 0 0 3px rgba(45,91,227,0.15); }
+    .mode-btn:not(.selected) { border-color: var(--border) !important; background: white !important; }
     .mode-icon { font-size: 22px; margin-bottom: 5px; }
     .mode-name { font-size: 13px; font-weight: 600; color: var(--ink); }
     .mode-desc { font-size: 11px; color: var(--ink-faint); margin-top: 2px; }
@@ -506,6 +507,12 @@
   let lang = 'de';
   let currentMode = 'poster';
   let currentSource = 'website';
+  // Ensure correct panel visible on load
+  document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.source-panel').forEach(p => p.style.display = 'none');
+    const wp = document.getElementById('panelWebsite');
+    if (wp) { wp.classList.add('active'); wp.style.display = 'block'; }
+  });
   let uploadedFiles = [];
   let selectedStar = 0;
   let feedbackData = JSON.parse(localStorage.getItem('lernai_feedback') || '[]');
@@ -531,14 +538,22 @@
   // ── Source tabs ──
   function switchSource(e, src) {
     currentSource = src;
+    // Hide ALL panels and deactivate ALL tabs
     document.querySelectorAll('.source-tab').forEach(t => t.classList.remove('active'));
-    document.querySelectorAll('.source-panel').forEach(p => p.classList.remove('active'));
-    // Use closest() so tapping on text inside button still works
-    const btn = e.target.closest('.source-tab');
+    document.querySelectorAll('.source-panel').forEach(p => {
+      p.classList.remove('active');
+      p.style.display = 'none';
+    });
+    // Activate correct tab
+    const btn = e && e.target ? (e.target.closest('.source-tab') || e.target) : null;
     if (btn) btn.classList.add('active');
+    // Show correct panel
     const panelId = 'panel' + src.charAt(0).toUpperCase() + src.slice(1);
     const panel = document.getElementById(panelId);
-    if (panel) panel.classList.add('active');
+    if (panel) {
+      panel.classList.add('active');
+      panel.style.display = 'block';
+    }
   }
 
   // ── URL management ──
@@ -584,15 +599,18 @@
   zone.addEventListener('drop', e => { e.preventDefault(); zone.classList.remove('drag-over'); handleFiles({files:e.dataTransfer.files}); });
 
   function selectMode(el, mode) {
-    // Deselect all
+    // Deselect ALL mode buttons first
     document.querySelectorAll('.mode-btn').forEach(b => {
       b.classList.remove('selected');
+      b.style.borderColor = '';
+      b.style.background = '';
       const radio = b.querySelector('input[type="radio"]');
       if (radio) radio.checked = false;
     });
-    // Select clicked
-    el.classList.add('selected');
-    const radio = el.querySelector('input[type="radio"]');
+    // Select only the clicked one
+    const btn = el.closest ? el.closest('.mode-btn') || el : el;
+    btn.classList.add('selected');
+    const radio = btn.querySelector('input[type="radio"]');
     if (radio) radio.checked = true;
     currentMode = mode;
   }
@@ -629,24 +647,25 @@
     if (!apiKey) { showError(lang==='de'?'Bitte API-Schlüssel eingeben.':'Please enter your API key.'); return; }
 
     const websiteUrls = getUrls('websiteList');
+    const youtubeUrls = getUrls('youtubeList');
     const text = document.getElementById('textInput').value.trim();
 
     if (currentSource==='website' && websiteUrls.length===0) { showError(lang==='de'?'Bitte mindestens einen Link eingeben.':'Please enter at least one link.'); return; }
-    if (currentSource==='youtube' && getUrls('youtubeList').length===0) { showError(lang==='de'?'Bitte mindestens einen YouTube-Link eingeben.':'Please enter at least one YouTube link.'); return; }
+    if (currentSource==='youtube' && youtubeUrls.length===0) { showError(lang==='de'?'Bitte mindestens einen YouTube-Link eingeben.':'Please enter at least one YouTube link.'); return; }
     if (currentSource==='file' && uploadedFiles.length===0) { showError(lang==='de'?'Bitte Datei hochladen.':'Please upload a file.'); return; }
     if (currentSource==='text' && !text) { showError(lang==='de'?'Bitte Text eingeben.':'Please enter text.'); return; }
 
     if (currentSource === 'website' && websiteUrls.length > 0) {
       const check = preCheckUrls(websiteUrls);
       if (check.rating === 'warn' || check.rating === 'bad') {
-        pendingGenerateData = { apiKey, websiteUrls, text };
+        pendingGenerateData = { apiKey, websiteUrls, youtubeUrls, text };
         showWarningModal(check);
         return;
       }
     }
 
     hideError();
-    await runGenerate(apiKey, websiteUrls, text);
+    await runGenerate(apiKey, websiteUrls, youtubeUrls, text);
   }
 
   function showWarningModal(check) {
@@ -662,16 +681,16 @@
   function closeWarningModal(proceed) {
     document.getElementById('warningModal').style.display = 'none';
     if (proceed && pendingGenerateData) {
-      const { apiKey, websiteUrls, text } = pendingGenerateData;
+      const { apiKey, websiteUrls, youtubeUrls, text } = pendingGenerateData;
       pendingGenerateData = null;
       hideError();
-      runGenerate(apiKey, websiteUrls, text);
+      runGenerate(apiKey, websiteUrls, youtubeUrls, text);
     } else {
       pendingGenerateData = null;
     }
   }
 
-  async function runGenerate(apiKey, websiteUrls, text) {
+  async function runGenerate(apiKey, websiteUrls, youtubeUrls, text) {
     document.getElementById('inputSection').style.display = 'none';
     document.getElementById('loadingState').style.display = 'block';
     document.getElementById('results').style.display = 'none';
@@ -686,7 +705,7 @@
         messages = [{ role:'user', content: buildPrompt('website', websiteUrls.length) + '\n\nBitte analysiere diese Webseiten:\n' + urlText }];
       } else if (currentSource === 'youtube') {
         document.getElementById('loadingSub').textContent = lang==='de'?'🎬 YouTube-Videos werden analysiert…':'🎬 Analyzing YouTube videos…';
-        const ytUrls = getUrls('youtubeList');
+        const ytUrls = youtubeUrls || getUrls('youtubeList');
         const ytInfos = await fetchYouTubeInfos(ytUrls);
         const ytText = ytInfos.map((v,i)=>'Video ' + (i+1) + ': ' + v).join('\n');
         messages = [{ role:'user', content: buildPrompt('youtube', ytUrls.length) + '\n\nBitte erstelle Lernmaterial aus diesen YouTube-Videos:\n' + ytText }];
@@ -1132,4 +1151,3 @@ Antworte NUR mit diesem JSON ohne Backticks:
   function hideError() { document.getElementById('errorBox').style.display='none'; }
 </script>
 </body>
-</html>
