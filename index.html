@@ -47,8 +47,11 @@ header { background: white; border-bottom: 1px solid var(--border); padding: 0 2
 .header-link { font-size: 12px; color: var(--ink3); cursor: pointer; background: none; border: none; font-family: 'DM Sans', sans-serif; display: flex; align-items: center; gap: 4px; padding: 0; }
 .header-link:hover { color: var(--blue); }
 .lang-toggle { display: flex; gap: 3px; background: var(--cream); border: 1px solid var(--border); border-radius: 8px; padding: 3px; }
-.lang-btn { padding: 4px 8px; border-radius: 5px; border: none; background: transparent; font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 500; cursor: pointer; color: var(--ink3); transition: all .15s; }
+.lang-btn { padding: 4px 6px; border-radius: 5px; border: none; background: transparent; font-family: 'DM Sans', sans-serif; font-size: 11px; font-weight: 500; cursor: pointer; color: var(--ink3); transition: all .15s; }
 .lang-btn.active { background: white; color: var(--ink); box-shadow: 0 1px 4px rgba(0,0,0,.1); }
+.fr-quality-toggle { display: flex; gap: 3px; background: var(--cream); border: 1px solid var(--border); border-radius: 8px; padding: 3px; margin-left: 4px; }
+.fr-q-btn { padding: 4px 7px; border-radius: 5px; border: none; background: transparent; font-family: 'DM Sans', sans-serif; font-size: 10px; font-weight: 500; cursor: pointer; color: var(--ink3); transition: all .15s; white-space: nowrap; }
+.fr-q-btn.active { background: white; color: var(--ink); box-shadow: 0 1px 4px rgba(0,0,0,.1); }
 
 /* ── MAIN + PAGES ── */
 main { max-width: 860px; margin: 0 auto; padding: 36px 20px 80px; flex: 1; width: 100%; }
@@ -107,6 +110,12 @@ main { max-width: 860px; margin: 0 auto; padding: 36px 20px 80px; flex: 1; width
 
 /* ── TEXT AREA ── */
 .text-area { width: 100%; padding: 12px; border: 1.5px solid var(--border); border-radius: 8px; font-family: 'DM Sans', sans-serif; font-size: 13px; color: var(--ink); background: var(--cream); resize: vertical; min-height: 120px; outline: none; transition: border-color .2s; }
+.voice-wrap { position: relative; }
+.voice-wrap .text-area { padding-right: 46px; }
+.voice-btn { position: absolute; bottom: 10px; right: 10px; width: 34px; height: 34px; border-radius: 50%; border: none; background: var(--blue); color: white; font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all .2s; box-shadow: 0 2px 6px rgba(45,91,227,.3); }
+.voice-btn:hover { transform: scale(1.1); background: #1e45c7; }
+.voice-btn.recording { background: #C0392B; animation: pulse-rec 1s infinite; }
+@keyframes pulse-rec { 0%,100%{ box-shadow: 0 0 0 0 rgba(192,57,43,.4); } 50%{ box-shadow: 0 0 0 8px rgba(192,57,43,0); } }
 .text-area:focus { border-color: var(--blue); background: white; }
 
 /* ── OUTPUT MODE ── */
@@ -456,7 +465,7 @@ footer { text-align: center; padding: 20px; font-size: 11px; color: var(--ink3);
     <button class="nav-tab active" onclick="showPage('home',this)">🏠 Lernmaterial</button>
     <button class="nav-tab" onclick="showPage('videofinder',this)">🎬 VideoFinder</button>
     <button class="nav-tab" onclick="showPage('quellencheck',this)">🔎 Quellencheck</button>
-    <button class="nav-tab" onclick="showPage('lerntools',this)">🧠 Lerntools</button>
+    <button class="nav-tab" onclick="showPage('lerntools',this)">🧠 Tools</button>
   </nav>
 
   <div class="header-right">
@@ -465,6 +474,12 @@ footer { text-align: center; padding: 20px; font-size: 11px; color: var(--ink3);
     <div class="lang-toggle">
       <button class="lang-btn active" onclick="setLang('de')">🇩🇪</button>
       <button class="lang-btn" onclick="setLang('en')">🇬🇧</button>
+      <button class="lang-btn" onclick="setLang('fr')">🇫🇷</button>
+      <button class="lang-btn" onclick="setLang('es')">🇪🇸</button>
+    </div>
+    <div id="frQualityToggle" class="fr-quality-toggle" style="display:none">
+      <button class="fr-q-btn active" id="frqSoutenu" onclick="setFrQuality('soutenu')">Soutenu</button>
+      <button class="fr-q-btn" id="frqStandard" onclick="setFrQuality('standard')">Standard</button>
     </div>
   </div>
 </header>
@@ -532,7 +547,10 @@ footer { text-align: center; padding: 20px; font-size: 11px; color: var(--ink3);
         </div>
 
         <div id="panelText" class="spanel">
-          <textarea id="textInput" class="text-area" rows="6" placeholder="Füge hier Text, Mitschrift oder Unterrichtsmaterial ein..."></textarea>
+          <div class="voice-wrap">
+            <textarea id="textInput" class="text-area" rows="6" placeholder="Füge hier Text, Mitschrift oder Unterrichtsmaterial ein..."></textarea>
+            <button id="voiceBtn" class="voice-btn" onclick="toggleVoice()" title="Sprache eingeben">🎙️</button>
+          </div>
         </div>
       </div>
 
@@ -1060,6 +1078,7 @@ footer { text-align: center; padding: 20px; font-size: 11px; color: var(--ink3);
 // ─────────────────────────────────────────────────────────────────────────────
 var state = {
   lang:         'de',
+  frQuality:    'soutenu',
   tab:          'website',
   mode:         'all',
   files:        [],
@@ -1092,11 +1111,662 @@ function showPage(pageId, btn) {
 // ─────────────────────────────────────────────────────────────────────────────
 // LANGUAGE
 // ─────────────────────────────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────────────────────
+// LANGUAGE / TRANSLATIONS
+// ─────────────────────────────────────────────────────────────────────────────
+var TRANSLATIONS = {
+  de: {
+    // Header
+    'nav-home':         '🏠 Lernmaterial',
+    'nav-vf':           '🎬 VideoFinder',
+    'nav-qc':           '🔎 Quellencheck',
+    'nav-lt':           '🧠 Tools',
+    'hdr-faecher':      '📚 Fächer',
+    'hdr-feedback':     '📊 Feedback',
+    // Hero
+    'hero-h1':          'Lern<em>material</em><br>in Sekunden.',
+    'hero-p':           'Gib Links, Videos oder Text ein – erhalte sofort Lernplakat, Übersicht und Prüfungsfragen.',
+    // Input card
+    'lbl-apikey':       'API-SCHLÜSSEL',
+    'lbl-sources':      'LERNMATERIAL EINGEBEN',
+    'tab-website':      '🌐 Webseiten',
+    'tab-youtube':      '🎬 YouTube',
+    'tab-file':         '📄 Dateien',
+    'tab-text':         '✏️ Text',
+    'ph-website':       'https://www.bpb.de/...',
+    'ph-youtube':       'https://www.youtube.com/watch?v=...',
+    'ph-text':          'Füge hier Text, Mitschrift oder Unterrichtsmaterial ein...',
+    'add-link':         '+ Weiteren Link hinzufügen',
+    'add-video':        '+ Weiteres Video',
+    'file-title':       'Dateien auswählen',
+    'file-sub':         'oder hierher ziehen',
+    'file-types':       'PDF · Bilder · Word',
+    // Output format
+    'lbl-format':       'AUSGABE-FORMAT',
+    'mode-all':         'Alles',
+    'mode-all-desc':    'Alle Formate',
+    'mode-poster':      'Lernplakat',
+    'mode-poster-desc': '3 Seiten',
+    'mode-q':           'Prüfungsfragen',
+    'mode-q-desc':      'Multiple Choice',
+    'mode-mm':          'Mindmap',
+    'mode-mm-desc':     'Themen vernetzen',
+    'mode-ue':          'Übersicht',
+    'mode-ue-desc':     'Kategorien & Fakten',
+    'mode-zus':         'Zusammenfassung',
+    'mode-zus-desc':    'Einl. · Hauptteil · Schluss',
+    // Gen button
+    'gen-btn':          '✨ Lernmaterial erstellen',
+    // Loading
+    'load-title':       'Analysiere Quellen...',
+    'load-sub':         'Das dauert etwa 20–40 Sekunden.',
+    'step1':            '📖 Quellen lesen & ergänzen',
+    'step2':            '🔍 Inhalte analysieren',
+    'step3':            '✍️ Lernmaterial erstellen',
+    // Results
+    'res-title':        'Dein Lernmaterial',
+    'btn-download':     '⬇ Download',
+    'btn-feedback':     '⭐ Feedback',
+    'btn-restart':      '↩ Neu starten',
+    'rtab-poster':      '🗺️ Lernplakat',
+    'rtab-overview':    '📋 Übersicht',
+    'rtab-questions':   '📝 Prüfungsfragen',
+    'rtab-mindmap':     '🕸️ Mindmap',
+    'rtab-ue':          '📊 Übersicht',
+    'rtab-zus':         '📄 Zusammenfassung',
+    'rtab-glossar':     '🔍 Begriffe',
+    // Glossar
+    'lbl-glossar':      '🔍 BEGRIFFE ERKLÄREN',
+    'ph-glossar':       'Begriff eingeben, z.B. Feudalismus...',
+    'btn-explain':      'Erklären',
+    // VideoFinder
+    'vf-h2':            '🎬 VideoFinder',
+    'vf-p':             'Beschreibe kurz was du suchst – Lern·AI findet die besten YouTube-Erklärvideos.',
+    'lbl-vfsearch':     'VIDEO SUCHEN',
+    'ph-vf':            'z.B. Karl der Große Erklärung für Schule...',
+    'btn-vf':           '🔍 Suchen',
+    'vf-hint':          'Tipp: Beschreibe das Thema wie du es googlen würdest.',
+    // Quellencheck
+    'qc-h2':            '🔎 Quellencheck',
+    'qc-p':             'Gib deine Quellen-URLs ein und erhalte eine detaillierte KI-Bewertung.',
+    'lbl-qcsources':    'QUELLEN EINGEBEN',
+    'btn-qc':           '🔎 Quellen bewerten',
+    'add-qc':           '+ Weitere Quelle hinzufügen',
+    // Lerntools
+    'lt-h2':            '🧠 Lerntools',
+    'lt-p':             'Erstelle Mindmaps, Übersichten und Zusammenfassungen – mit Erklärungen, visuellen Beispielen und KI-Unterstützung.',
+    'lbl-werkzeug':     'WERKZEUG WÄHLEN',
+    'lt-mm-title':      'Mindmap',
+    'lt-mm-desc':       'Themen vernetzen',
+    'lt-ue-title':      'Übersicht',
+    'lt-ue-desc':       'Strukturiert gliedern',
+    'lt-zus-title':     'Zusammenfassung',
+    'lt-zus-desc':      'Einl.·Hauptteil·Schluss',
+    // Subject modal
+    'sm-title':         'Fach & Ausführlichkeit',
+    'sm-sub':           'Wähle Fach und Ausführlichkeit bevor das Lernmaterial erstellt wird.',
+    'sm-ph':            'Fach: z.B. Geschichte, Biologie ...',
+    'lbl-detail':       'AUSFÜHRLICHKEIT',
+    'd-kurz':           'Kurz',
+    'd-kurz-desc':      'Kerninfos',
+    'd-mittel':         'Mittel',
+    'd-mittel-desc':    'Ausgewogen',
+    'd-aus':            'Ausführlich',
+    'd-aus-desc':       'Detailliert',
+    'btn-skip':         'Überspringen',
+    'btn-create':       'Erstellen →',
+    // Feedback
+    'fb-title':         'Wie hilfreich war Lern·AI?',
+    'ph-fb':            'Optionaler Kommentar...',
+    'btn-cancel':       'Abbrechen',
+    'btn-send':         'Absenden',
+    // Drawer
+    'drawer-title':     '📚 Meine Fächer',
+    'hist-empty':       '📭 Noch nichts erstellt.\n\nDeine Lernmaterialien erscheinen hier, sortiert nach Fach.',
+    'btn-clearall':     '🗑 Gesamten Verlauf löschen',
+    // Footer
+    'footer':           'Lern·AI ist ein Lernhilfsmittel. Alle Inhalte kritisch prüfen. · Theo Gutendorf © 2026',
+    'voice-start':      'Sprache eingeben',
+    'voice-stop':       'Aufnahme stoppen',
+    'voice-unsupported':'Spracherkennung nicht unterstützt',
+    'guide-mm-title':   '🕸️ Was ist eine Mindmap?',
+    'guide-mm-sub':     'Eine Mindmap ist eine visuelle Darstellung, bei der alle Ideen rund um ein zentrales Thema in Ästen angeordnet werden. Sie wurde in den 1970ern von Tony Buzan entwickelt und hilft, Zusammenhänge zu erkennen und Wissen zu strukturieren.',
+    'guide-mm-label':   'SO SIEHT EINE MINDMAP AUS',
+    'guide-mm-caption': 'Aufbau: Zentralbegriff in der Mitte → farbige Hauptäste → Unteräste mit Stichworten',
+    'guide-mm-s1t':'Zentralbegriff in die Mitte','guide-mm-s1':'Schreibe das Hauptthema in die Mitte des Blattes und umrahme es. Nutze ein Bild oder Symbol zusätzlich – das hilft dem Gehirn.',
+    'guide-mm-s2t':'Hauptäste anlegen','guide-mm-s2':'Zeichne 3–6 dicke Linien vom Zentrum weg. Jede steht für ein Hauptthema. Pro Ast nur ein Schlüsselwort – keine ganzen Sätze!',
+    'guide-mm-s3t':'Unteräste verzweigen','guide-mm-s3':'Von jedem Hauptast gehen dünnere Zweige ab. Hier kommen Details, Beispiele und Unterpunkte hin.',
+    'guide-mm-s4t':'Farben und Symbole','guide-mm-s4':'Jeder Hauptast bekommt eine eigene Farbe. Kleine Zeichnungen helfen, Inhalte schneller wiederzufinden.',
+    'guide-mm-r1t':'Stichworte','guide-mm-r1':'Nur Schlüsselwörter auf die Äste – nie ganze Sätze schreiben',
+    'guide-mm-r2t':'Farben','guide-mm-r2':'Ein Hauptast = eine Farbe, konsequent bis in die Unteräste',
+    'guide-mm-r3t':'Hierarchie','guide-mm-r3':'Vom Allgemeinen (innen) zum Speziellen (außen) arbeiten',
+    'guide-mm-r4t':'Querverbindungen','guide-mm-r4':'Zusammenhänge zwischen Ästen mit Pfeil-Linien verbinden',
+    'guide-ue-title':   '📊 Was ist eine Lernübersicht?',
+    'guide-ue-sub':     'Eine Lernübersicht strukturiert einen Lernstoff in klare Kategorien und zeigt Zusammenhänge auf einen Blick. Sie eignet sich besonders für Prüfungsvorbereitung und das Zusammenfassen von Unterrichtsstoff.',
+    'guide-ue-label':   'SO SIEHT EINE ÜBERSICHT AUS',
+    'guide-ue-caption': 'Aufbau: Titel oben → Kategorien als farbige Kacheln → Stichpunkte → Kernaussage unten',
+    'guide-ue-s1t':'Thema und Zeitraum festlegen','guide-ue-s1':'Schreibe den Titel oben. Bei historischen Themen: direkt den Zeitraum dazu.',
+    'guide-ue-s2t':'5–7 Kategorien bilden','guide-ue-s2':'Typisch: Wer? Was? Wann? Wo? Warum? Folgen? Bedeutung? – Jede Kategorie bekommt eine eigene Farbe.',
+    'guide-ue-s3t':'Stichpunkte eintragen','guide-ue-s3':'Pro Kategorie 2–4 knappe Stichpunkte. Kein Fließtext – nur Kernbegriffe.',
+    'guide-ue-s4t':'Kernaussage unten','guide-ue-s4':'Ein einziger Satz, der das Wichtigste zusammenfasst. Perfekte Eröffnung für eine Prüfungsantwort.',
+    'guide-zus-title':  '📝 Was ist eine Zusammenfassung?',
+    'guide-zus-sub':    'Eine Zusammenfassung gibt den Inhalt eines Textes sachlich, knapp und in eigenen Worten wieder. Sie ist immer kürzer als das Original. Die TATTZ-Formel hilft für die Einleitung: Textart · Autor · Titel · Thema · Zeit.',
+    'guide-zus-label':  'SO IST EINE ZUSAMMENFASSUNG AUFGEBAUT',
+    'guide-zus-caption':'Die TATTZ-Formel für die Einleitung: Textart · Autor · Titel · Thema · Zeit',
+    'guide-zus-s1t':'Text mehrfach lesen & markieren','guide-zus-s1':'Beim ersten Lesen: Gesamtverständnis. Beim zweiten: Hauptaussagen markieren, Sinnabschnitte einteilen.',
+    'guide-zus-s2t':'Einleitung mit TATTZ-Formel','guide-zus-s2':'Textart + Autor + Titel + Thema + Zeit = ein kompakter Einleitungssatz.',
+    'guide-zus-s3t':'Hauptteil: W-Fragen beantworten','guide-zus-s3':'Wer? Was? Wann? Wo? Warum? In chronologischer Reihenfolge. Im Präsens. In eigenen Worten.',
+    'guide-zus-s4t':'Schluss (wenn gefordert)','guide-zus-s4':'Wirkung des Textes oder kurzes Fazit. Sachlich – kein „Ich finde".',
+    'guide-zus-r1t':'Präsens','guide-zus-r1':'Immer in der Gegenwart schreiben, auch wenn die Handlung in der Vergangenheit liegt',
+    'guide-zus-r2t':'Kein „Ich"','guide-zus-r2':'Keine Ich-Perspektive außer im Schlussteil wenn gefordert',
+    'guide-zus-r3t':'Eigene Worte','guide-zus-r3':'Nie wörtlich aus dem Text kopieren – umformulieren!',
+    'guide-zus-r4t':'Kürzer','guide-zus-r4':'Die Zusammenfassung muss immer kürzer sein als der Originaltext'
+  },
+  en: {
+    'nav-home':         '🏠 Learning Material',
+    'nav-vf':           '🎬 VideoFinder',
+    'nav-qc':           '🔎 Source Check',
+    'nav-lt':           '🧠 Tools',
+    'hdr-faecher':      '📚 Subjects',
+    'hdr-feedback':     '📊 Feedback',
+    'hero-h1':          'Learning <em>materials</em><br>in seconds.',
+    'hero-p':           'Enter links, videos or text – instantly get study posters, overviews and exam questions.',
+    'lbl-apikey':       'API KEY',
+    'lbl-sources':      'ENTER LEARNING MATERIAL',
+    'tab-website':      '🌐 Websites',
+    'tab-youtube':      '🎬 YouTube',
+    'tab-file':         '📄 Files',
+    'tab-text':         '✏️ Text',
+    'ph-website':       'https://www.britannica.com/...',
+    'ph-youtube':       'https://www.youtube.com/watch?v=...',
+    'ph-text':          'Paste text, notes or study material here...',
+    'add-link':         '+ Add another link',
+    'add-video':        '+ Add another video',
+    'file-title':       'Select files',
+    'file-sub':         'or drag & drop here',
+    'file-types':       'PDF · Images · Word',
+    'lbl-format':       'OUTPUT FORMAT',
+    'mode-all':         'Everything',
+    'mode-all-desc':    'All formats',
+    'mode-poster':      'Study Poster',
+    'mode-poster-desc': '3 pages',
+    'mode-q':           'Exam Questions',
+    'mode-q-desc':      'Multiple Choice',
+    'mode-mm':          'Mindmap',
+    'mode-mm-desc':     'Connect topics',
+    'mode-ue':          'Overview',
+    'mode-ue-desc':     'Categories & Facts',
+    'mode-zus':         'Summary',
+    'mode-zus-desc':    'Intro · Body · Conclusion',
+    'gen-btn':          '✨ Create Learning Material',
+    'load-title':       'Analysing sources...',
+    'load-sub':         'This takes about 20–40 seconds.',
+    'step1':            '📖 Reading & adding sources',
+    'step2':            '🔍 Analysing content',
+    'step3':            '✍️ Creating learning material',
+    'res-title':        'Your Learning Material',
+    'btn-download':     '⬇ Download',
+    'btn-feedback':     '⭐ Feedback',
+    'btn-restart':      '↩ Start over',
+    'rtab-poster':      '🗺️ Study Poster',
+    'rtab-overview':    '📋 Overview',
+    'rtab-questions':   '📝 Exam Questions',
+    'rtab-mindmap':     '🕸️ Mindmap',
+    'rtab-ue':          '📊 Overview',
+    'rtab-zus':         '📄 Summary',
+    'rtab-glossar':     '🔍 Terms',
+    'lbl-glossar':      '🔍 EXPLAIN TERMS',
+    'ph-glossar':       'Enter a term, e.g. feudalism...',
+    'btn-explain':      'Explain',
+    'vf-h2':            '🎬 VideoFinder',
+    'vf-p':             'Describe what you are looking for – Lern·AI finds the best YouTube videos.',
+    'lbl-vfsearch':     'SEARCH VIDEO',
+    'ph-vf':            'e.g. French Revolution explained for school...',
+    'btn-vf':           '🔍 Search',
+    'vf-hint':          'Tip: Describe the topic as you would google it.',
+    'qc-h2':            '🔎 Source Check',
+    'qc-p':             'Enter your source URLs and get a detailed AI rating.',
+    'lbl-qcsources':    'ENTER SOURCES',
+    'btn-qc':           '🔎 Check Sources',
+    'add-qc':           '+ Add another source',
+    'lt-h2':            '🧠 Study Tools',
+    'lt-p':             'Create mindmaps, overviews and summaries – with explanations, visual examples and AI support.',
+    'lbl-werkzeug':     'SELECT TOOL',
+    'lt-mm-title':      'Mindmap',
+    'lt-mm-desc':       'Connect topics',
+    'lt-ue-title':      'Overview',
+    'lt-ue-desc':       'Structured outline',
+    'lt-zus-title':     'Summary',
+    'lt-zus-desc':      'Intro·Body·Conclusion',
+    'sm-title':         'Subject & Detail Level',
+    'sm-sub':           'Choose subject and detail level before creating learning material.',
+    'sm-ph':            'Subject: e.g. History, Biology...',
+    'lbl-detail':       'DETAIL LEVEL',
+    'd-kurz':           'Short',
+    'd-kurz-desc':      'Key info',
+    'd-mittel':         'Medium',
+    'd-mittel-desc':    'Balanced',
+    'd-aus':            'Detailed',
+    'd-aus-desc':       'In-depth',
+    'btn-skip':         'Skip',
+    'btn-create':       'Create →',
+    'fb-title':         'How helpful was Lern·AI?',
+    'ph-fb':            'Optional comment...',
+    'btn-cancel':       'Cancel',
+    'btn-send':         'Submit',
+    'drawer-title':     '📚 My Subjects',
+    'hist-empty':       '📭 Nothing created yet.\n\nYour learning materials will appear here, sorted by subject.',
+    'btn-clearall':     '🗑 Clear all history',
+    'footer':           'Lern·AI is a learning aid. Always verify all content. · Theo Gutendorf © 2026',
+    'voice-start':      'Voice input',
+    'voice-stop':       'Stop recording',
+    'voice-unsupported':'Speech recognition not supported',
+    // Guide: Mindmap
+    'guide-mm-title':   '🕸️ What is a Mindmap?',
+    'guide-mm-sub':     'A mindmap is a visual representation where all ideas and information around a central topic are arranged in branches. Developed in the 1970s by Tony Buzan, it helps recognise connections and structure knowledge. According to a Johns Hopkins study, grades improve by up to 12% with regular mindmap use.',
+    'guide-mm-label':   'WHAT A MINDMAP LOOKS LIKE',
+    'guide-mm-caption': 'Structure: Central concept in the middle → coloured main branches → sub-branches with keywords',
+    'guide-mm-s1t':     'Central concept in the middle',
+    'guide-mm-s1':      'Write the main topic in the centre of the page and circle it. Add an image or symbol – this helps the brain.',
+    'guide-mm-s2t':     'Create main branches',
+    'guide-mm-s2':      'Draw 3–6 thick lines from the centre. Each represents a main topic (e.g. causes, effects, people, places). Only one keyword per branch – no full sentences!',
+    'guide-mm-s3t':     'Add sub-branches',
+    'guide-mm-s3':      'Thinner branches extend from each main branch. Details, examples and sub-points go here. Branches become thinner and more specific towards the outside.',
+    'guide-mm-s4t':     'Colours and symbols',
+    'guide-mm-s4':      'Each main branch gets its own colour. Small drawings and symbols help you find content faster. The left brain loves logic, the right brain loves images – both are activated this way.',
+    'guide-mm-r1t':     'Keywords',
+    'guide-mm-r1':      'Only key words on branches – never write full sentences',
+    'guide-mm-r2t':     'Colours',
+    'guide-mm-r2':      'One main branch = one colour, consistently into the sub-branches',
+    'guide-mm-r3t':     'Hierarchy',
+    'guide-mm-r3':      'Work from general (inside) to specific (outside)',
+    'guide-mm-r4t':     'Cross-connections',
+    'guide-mm-r4':      'Connect related branches with arrow lines',
+    // Guide: Übersicht
+    'guide-ue-title':   '📊 What is a Learning Overview?',
+    'guide-ue-sub':     'A learning overview structures study material into clear categories and shows connections at a glance. Compared to a mindmap it is more linear and is especially useful for exam preparation and summarising lesson content.',
+    'guide-ue-label':   'WHAT AN OVERVIEW LOOKS LIKE',
+    'guide-ue-caption': 'Structure: Title at top → coloured category tiles → bullet points → key statement at bottom',
+    'guide-ue-s1t':     'Define topic and timeframe',
+    'guide-ue-s1':      'Write the title at the top. For historical topics: add the timeframe directly. This gives the overview instant context.',
+    'guide-ue-s2t':     'Create 5–7 categories',
+    'guide-ue-s2':      'Typical: Who? What? When? Where? Why? Consequences? Significance? – Each category gets its own colour and symbol.',
+    'guide-ue-s3t':     'Add bullet points',
+    'guide-ue-s3':      '2–4 concise bullet points per category. No running text – only key concepts. If it doesn\'t fit on an index card, it\'s too long.',
+    'guide-ue-s4t':     'Key statement at the bottom',
+    'guide-ue-s4':      'A single sentence summarising the most important point. This is also the perfect opening for an exam answer.',
+    // Guide: Zusammenfassung
+    'guide-zus-title':  '📝 What is a Summary?',
+    'guide-zus-sub':    'A summary (also called a text summary or précis) reproduces the content of a text objectively, concisely and in your own words. It is always shorter than the original and contains no personal opinion – except in the conclusion if required. The TATTR formula helps with the introduction: Text type · Author · Title · Topic · Release date.',
+    'guide-zus-label':  'HOW A SUMMARY IS STRUCTURED',
+    'guide-zus-caption':'The TATTR formula for the introduction: Text type · Author · Title · Topic · Release date',
+    'guide-zus-s1t':    'Read & mark the text multiple times',
+    'guide-zus-s1':     'First read: overall understanding. Second read: mark main statements, divide text into sections. Note key words.',
+    'guide-zus-s2t':    'Introduction with TATTR formula',
+    'guide-zus-s2':     'Text type + Author + Title + Topic + Release date = one compact opening sentence. Example: "In the short story \'Title\' by Author (Year), the story is about ..."',
+    'guide-zus-s3t':    'Main body: answer the W-questions',
+    'guide-zus-s3':     'Who acts? What happens? When? Where? Why? In chronological order. In present tense. In your own words – never copy-paste from the original.',
+    'guide-zus-s4t':    'Conclusion (if required)',
+    'guide-zus-s4':     'Effect of the text, author\'s intention or a brief conclusion. Stay objective – no "I think", instead "The text conveys..." or "In conclusion..."',
+    'guide-zus-r1t':    'Present tense',
+    'guide-zus-r1':     'Always write in present tense, even if the action takes place in the past',
+    'guide-zus-r2t':    'No "I"',
+    'guide-zus-r2':     'No first-person perspective except in the conclusion if required',
+    'guide-zus-r3t':    'Own words',
+    'guide-zus-r3':     'Never copy directly from the text – rephrase!',
+    'guide-zus-r4t':    'Shorter',
+    'guide-zus-r4':     'The summary must always be shorter than the original text'
+  },
+  fr: {
+    'nav-home':'🏠 Matériel','nav-vf':'🎬 VideoFinder','nav-qc':'🔎 Sources','nav-lt':'🧠 Outils',
+    'hdr-faecher':'📚 Matières','hdr-feedback':'📊 Retour',
+    'hero-h1':'Matériel d\'<em>apprentissage</em><br>en quelques secondes.','hero-p':'Entrez des liens, vidéos ou texte – obtenez instantanément affiches, résumés et questions d\'examen.',
+    'lbl-apikey':'CLÉ API','lbl-sources':'ENTRER LE MATÉRIEL','lbl-format':'FORMAT DE SORTIE',
+    'tab-website':'🌐 Sites web','tab-youtube':'🎬 YouTube','tab-file':'📄 Fichiers','tab-text':'✏️ Texte',
+    'ph-website':'https://www.larousse.fr/...','ph-youtube':'https://www.youtube.com/watch?v=...','ph-text':'Collez ici votre texte, notes ou cours...',
+    'add-link':'+ Ajouter un lien','add-video':'+ Ajouter une vidéo','add-qc':'+ Ajouter une source',
+    'file-title':'Sélectionner des fichiers','file-sub':'ou glisser-déposer ici','file-types':'PDF · Images · Word',
+    'mode-all':'Tout','mode-all-desc':'Tous les formats','mode-poster':'Affiche','mode-poster-desc':'3 pages',
+    'mode-q':'Questions d\'examen','mode-q-desc':'Choix multiple','mode-mm':'Carte mentale','mode-mm-desc':'Relier les thèmes',
+    'mode-ue':'Vue d\'ensemble','mode-ue-desc':'Catégories & faits','mode-zus':'Résumé','mode-zus-desc':'Intro · Corps · Conclusion',
+    'gen-btn':'✨ Créer le matériel','load-title':'Analyse des sources...','load-sub':'Cela prend environ 20–40 secondes.',
+    'step1':'📖 Lecture & enrichissement','step2':'🔍 Analyse du contenu','step3':'✍️ Création du matériel',
+    'res-title':'Votre matériel d\'apprentissage','btn-download':'⬇ Télécharger','btn-feedback':'⭐ Retour','btn-restart':'↩ Recommencer',
+    'rtab-poster':'🗺️ Affiche','rtab-overview':'📋 Vue d\'ensemble','rtab-questions':'📝 Questions d\'examen',
+    'rtab-mindmap':'🕸️ Carte mentale','rtab-ue':'📊 Vue d\'ensemble','rtab-zus':'📄 Résumé','rtab-glossar':'🔍 Termes',
+    'lbl-glossar':'🔍 EXPLIQUER LES TERMES','ph-glossar':'Entrer un terme, ex. féodalisme...','btn-explain':'Expliquer',
+    'vf-h2':'🎬 VideoFinder','vf-p':'Décrivez ce que vous cherchez – Lern·AI trouve les meilleures vidéos YouTube.','lbl-vfsearch':'RECHERCHER UNE VIDÉO',
+    'ph-vf':'ex. Révolution française expliquée...','btn-vf':'🔍 Rechercher','vf-hint':'Conseil : décrivez le sujet comme vous le googlesriez.',
+    'qc-h2':'🔎 Vérification des sources','qc-p':'Entrez vos URLs et obtenez une évaluation détaillée par IA.','lbl-qcsources':'ENTRER LES SOURCES','btn-qc':'🔎 Évaluer les sources',
+    'lt-h2':'🧠 Outils d\'apprentissage','lt-p':'Créez des cartes mentales, vues d\'ensemble et résumés – avec explications, exemples visuels et aide IA.',
+    'lbl-werkzeug':'CHOISIR L\'OUTIL','lt-mm-title':'Carte mentale','lt-mm-desc':'Relier les thèmes','lt-ue-title':'Vue d\'ensemble','lt-ue-desc':'Plan structuré','lt-zus-title':'Résumé','lt-zus-desc':'Intro·Corps·Conclusion',
+    'sm-title':'Matière & niveau de détail','sm-sub':'Choisissez la matière et le niveau avant de créer le matériel.','sm-ph':'Matière : ex. Histoire, Biologie...',
+    'lbl-detail':'NIVEAU DE DÉTAIL','d-kurz':'Court','d-kurz-desc':'Infos clés','d-mittel':'Moyen','d-mittel-desc':'Équilibré','d-aus':'Détaillé','d-aus-desc':'Approfondi',
+    'btn-skip':'Ignorer','btn-create':'Créer →','fb-title':'Dans quelle mesure Lern·AI a-t-il été utile ?','ph-fb':'Commentaire optionnel...','btn-cancel':'Annuler','btn-send':'Envoyer',
+    'drawer-title':'📚 Mes matières','btn-clearall':'🗑 Effacer l\'historique',
+    'footer':'Lern·AI est un outil pédagogique. Vérifiez toujours le contenu. · Theo Gutendorf © 2026',
+    'voice-start':'Saisie vocale','voice-stop':'Arrêter l\'enregistrement','voice-unsupported':'Reconnaissance vocale non supportée',
+    'guide-mm-title':'🕸️ Qu\'est-ce qu\'une carte mentale ?','guide-mm-sub':'Une carte mentale est une représentation visuelle où toutes les idées autour d\'un thème central sont organisées en branches. Développée dans les années 1970 par Tony Buzan, elle aide à reconnaître les liens et à structurer les connaissances.',
+    'guide-mm-label':'EXEMPLE DE CARTE MENTALE','guide-mm-caption':'Structure : concept central → branches principales colorées → sous-branches avec mots-clés',
+    'guide-mm-s1t':'Concept central au milieu','guide-mm-s1':'Écrivez le thème principal au centre de la page et entourez-le. Ajoutez une image ou un symbole – cela aide le cerveau.',
+    'guide-mm-s2t':'Créer les branches principales','guide-mm-s2':'Tracez 3 à 6 lignes épaisses depuis le centre. Chacune représente un thème principal. Un seul mot-clé par branche – pas de phrases !',
+    'guide-mm-s3t':'Ajouter des sous-branches','guide-mm-s3':'Des branches plus fines partent de chaque branche principale. Les détails, exemples et sous-points y figurent.',
+    'guide-mm-s4t':'Couleurs et symboles','guide-mm-s4':'Chaque branche principale a sa propre couleur. Les petits dessins aident à retrouver les informations plus rapidement.',
+    'guide-mm-r1t':'Mots-clés','guide-mm-r1':'Uniquement des mots-clés sur les branches – jamais de phrases entières',
+    'guide-mm-r2t':'Couleurs','guide-mm-r2':'Une branche principale = une couleur, jusqu\'aux sous-branches',
+    'guide-mm-r3t':'Hiérarchie','guide-mm-r3':'Du général (centre) au spécifique (extérieur)',
+    'guide-mm-r4t':'Connexions transversales','guide-mm-r4':'Relier les branches liées avec des flèches',
+    'guide-ue-title':'📊 Qu\'est-ce qu\'une vue d\'ensemble ?','guide-ue-sub':'Une vue d\'ensemble structure un contenu en catégories claires. Elle convient particulièrement à la préparation aux examens.',
+    'guide-ue-label':'EXEMPLE DE VUE D\'ENSEMBLE','guide-ue-caption':'Structure : titre → catégories colorées → points clés → conclusion',
+    'guide-ue-s1t':'Définir le thème','guide-ue-s1':'Écrivez le titre en haut. Pour les sujets historiques : ajoutez directement la période.',
+    'guide-ue-s2t':'Créer 5 à 7 catégories','guide-ue-s2':'Typique : Qui ? Quoi ? Quand ? Où ? Pourquoi ? Conséquences ? Importance ?',
+    'guide-ue-s3t':'Ajouter des points clés','guide-ue-s3':'2 à 4 points concis par catégorie. Pas de texte continu – uniquement des concepts clés.',
+    'guide-ue-s4t':'Conclusion en bas','guide-ue-s4':'Une seule phrase résumant l\'essentiel. C\'est aussi l\'ouverture parfaite pour une réponse d\'examen.',
+    'guide-zus-title':'📝 Qu\'est-ce qu\'un résumé ?','guide-zus-sub':'Un résumé reproduit le contenu d\'un texte de manière objective, concise et avec vos propres mots. Il est toujours plus court que l\'original. La formule TATTS aide pour l\'introduction : Type de texte · Auteur · Titre · Thème · Sortie.',
+    'guide-zus-label':'STRUCTURE D\'UN RÉSUMÉ','guide-zus-caption':'Formule TATTS pour l\'introduction : Type · Auteur · Titre · Thème · Sortie',
+    'guide-zus-s1t':'Lire et annoter le texte','guide-zus-s1':'Première lecture : compréhension globale. Deuxième : surligner les idées principales, diviser en sections.',
+    'guide-zus-s2t':'Introduction avec la formule TATTS','guide-zus-s2':'Type + Auteur + Titre + Thème + Date = une phrase d\'introduction compacte.',
+    'guide-zus-s3t':'Corps : répondre aux questions','guide-zus-s3':'Qui ? Quoi ? Quand ? Où ? Pourquoi ? En ordre chronologique. Au présent. Avec vos propres mots.',
+    'guide-zus-s4t':'Conclusion (si demandée)','guide-zus-s4':'Effet du texte ou brève conclusion. Restez objectif – pas de « Je pense ».',
+    'guide-zus-r1t':'Présent','guide-zus-r1':'Toujours écrire au présent, même si l\'action se déroule dans le passé',
+    'guide-zus-r2t':'Pas de « Je »','guide-zus-r2':'Pas de première personne sauf dans la conclusion si demandé',
+    'guide-zus-r3t':'Vos propres mots','guide-zus-r3':'Ne jamais copier directement le texte – reformulez !',
+    'guide-zus-r4t':'Plus court','guide-zus-r4':'Le résumé doit toujours être plus court que le texte original'
+  },
+  es: {
+    'nav-home':'🏠 Material','nav-vf':'🎬 VideoFinder','nav-qc':'🔎 Fuentes','nav-lt':'🧠 Herramientas',
+    'hdr-faecher':'📚 Materias','hdr-feedback':'📊 Valoración',
+    'hero-h1':'Material de <em>aprendizaje</em><br>en segundos.','hero-p':'Introduce enlaces, vídeos o texto – obtén al instante carteles, resúmenes y preguntas de examen.',
+    'lbl-apikey':'CLAVE API','lbl-sources':'INTRODUCIR MATERIAL','lbl-format':'FORMATO DE SALIDA',
+    'tab-website':'🌐 Sitios web','tab-youtube':'🎬 YouTube','tab-file':'📄 Archivos','tab-text':'✏️ Texto',
+    'ph-website':'https://www.rae.es/...','ph-youtube':'https://www.youtube.com/watch?v=...','ph-text':'Pega aquí tu texto, apuntes o material de clase...',
+    'add-link':'+ Añadir enlace','add-video':'+ Añadir vídeo','add-qc':'+ Añadir fuente',
+    'file-title':'Seleccionar archivos','file-sub':'o arrastrar aquí','file-types':'PDF · Imágenes · Word',
+    'mode-all':'Todo','mode-all-desc':'Todos los formatos','mode-poster':'Cartel','mode-poster-desc':'3 páginas',
+    'mode-q':'Preguntas de examen','mode-q-desc':'Opción múltiple','mode-mm':'Mapa mental','mode-mm-desc':'Conectar temas',
+    'mode-ue':'Resumen visual','mode-ue-desc':'Categorías y hechos','mode-zus':'Resumen','mode-zus-desc':'Intro · Cuerpo · Conclusión',
+    'gen-btn':'✨ Crear material','load-title':'Analizando fuentes...','load-sub':'Esto tarda unos 20–40 segundos.',
+    'step1':'📖 Leer y completar fuentes','step2':'🔍 Analizar contenido','step3':'✍️ Crear material',
+    'res-title':'Tu material de aprendizaje','btn-download':'⬇ Descargar','btn-feedback':'⭐ Valorar','btn-restart':'↩ Empezar de nuevo',
+    'rtab-poster':'🗺️ Cartel','rtab-overview':'📋 Resumen visual','rtab-questions':'📝 Preguntas','rtab-mindmap':'🕸️ Mapa mental','rtab-ue':'📊 Vista general','rtab-zus':'📄 Resumen','rtab-glossar':'🔍 Términos',
+    'lbl-glossar':'🔍 EXPLICAR TÉRMINOS','ph-glossar':'Introducir término, ej. feudalismo...','btn-explain':'Explicar',
+    'vf-h2':'🎬 VideoFinder','vf-p':'Describe lo que buscas – Lern·AI encuentra los mejores vídeos de YouTube.','lbl-vfsearch':'BUSCAR VÍDEO',
+    'ph-vf':'ej. Revolución Francesa explicada...','btn-vf':'🔍 Buscar','vf-hint':'Consejo: describe el tema como lo buscarías en Google.',
+    'qc-h2':'🔎 Verificación de fuentes','qc-p':'Introduce tus URLs y obtén una evaluación detallada por IA.','lbl-qcsources':'INTRODUCIR FUENTES','btn-qc':'🔎 Evaluar fuentes',
+    'lt-h2':'🧠 Herramientas de estudio','lt-p':'Crea mapas mentales, resúmenes visuales y resúmenes – con explicaciones, ejemplos visuales y ayuda de IA.',
+    'lbl-werkzeug':'ELEGIR HERRAMIENTA','lt-mm-title':'Mapa mental','lt-mm-desc':'Conectar temas','lt-ue-title':'Vista general','lt-ue-desc':'Esquema estructurado','lt-zus-title':'Resumen','lt-zus-desc':'Intro·Cuerpo·Conclusión',
+    'sm-title':'Materia y nivel de detalle','sm-sub':'Elige materia y nivel antes de crear el material.','sm-ph':'Materia: ej. Historia, Biología...',
+    'lbl-detail':'NIVEL DE DETALLE','d-kurz':'Corto','d-kurz-desc':'Info clave','d-mittel':'Medio','d-mittel-desc':'Equilibrado','d-aus':'Detallado','d-aus-desc':'En profundidad',
+    'btn-skip':'Omitir','btn-create':'Crear →','fb-title':'¿Qué tan útil fue Lern·AI?','ph-fb':'Comentario opcional...','btn-cancel':'Cancelar','btn-send':'Enviar',
+    'drawer-title':'📚 Mis materias','btn-clearall':'🗑 Borrar historial',
+    'footer':'Lern·AI es una ayuda de estudio. Verifica siempre el contenido. · Theo Gutendorf © 2026',
+    'voice-start':'Entrada de voz','voice-stop':'Detener grabación','voice-unsupported':'Reconocimiento de voz no compatible',
+    'guide-mm-title':'🕸️ ¿Qué es un mapa mental?','guide-mm-sub':'Un mapa mental es una representación visual donde todas las ideas alrededor de un tema central se organizan en ramas. Desarrollado en los años 70 por Tony Buzan, ayuda a reconocer conexiones y estructurar el conocimiento.',
+    'guide-mm-label':'EJEMPLO DE MAPA MENTAL','guide-mm-caption':'Estructura: concepto central → ramas principales de colores → subramas con palabras clave',
+    'guide-mm-s1t':'Concepto central en el centro','guide-mm-s1':'Escribe el tema principal en el centro y enciérralo en un círculo. Añade una imagen o símbolo – ayuda al cerebro.',
+    'guide-mm-s2t':'Crear ramas principales','guide-mm-s2':'Dibuja 3 a 6 líneas gruesas desde el centro. Cada una representa un tema principal. Solo una palabra clave por rama.',
+    'guide-mm-s3t':'Añadir subramas','guide-mm-s3':'Ramas más finas parten de cada rama principal. Aquí van los detalles, ejemplos y subpuntos.',
+    'guide-mm-s4t':'Colores y símbolos','guide-mm-s4':'Cada rama principal tiene su propio color. Los pequeños dibujos ayudan a encontrar información más rápidamente.',
+    'guide-mm-r1t':'Palabras clave','guide-mm-r1':'Solo palabras clave en las ramas – nunca frases completas',
+    'guide-mm-r2t':'Colores','guide-mm-r2':'Una rama = un color, de forma consistente hasta las subramas',
+    'guide-mm-r3t':'Jerarquía','guide-mm-r3':'De lo general (centro) a lo específico (exterior)',
+    'guide-mm-r4t':'Conexiones','guide-mm-r4':'Conectar ramas relacionadas con flechas',
+    'guide-ue-title':'📊 ¿Qué es un resumen visual?','guide-ue-sub':'Un resumen visual estructura el contenido en categorías claras. Es especialmente útil para preparar exámenes.',
+    'guide-ue-label':'EJEMPLO DE RESUMEN VISUAL','guide-ue-caption':'Estructura: título → categorías de colores → puntos clave → conclusión',
+    'guide-ue-s1t':'Definir el tema','guide-ue-s1':'Escribe el título arriba. Para temas históricos: añade directamente el período.',
+    'guide-ue-s2t':'Crear 5 a 7 categorías','guide-ue-s2':'Típico: ¿Quién? ¿Qué? ¿Cuándo? ¿Dónde? ¿Por qué? ¿Consecuencias? ¿Importancia?',
+    'guide-ue-s3t':'Añadir puntos clave','guide-ue-s3':'2 a 4 puntos concisos por categoría. Sin texto continuo – solo conceptos clave.',
+    'guide-ue-s4t':'Conclusión abajo','guide-ue-s4':'Una sola frase que resume lo más importante. Es también la apertura perfecta para una respuesta de examen.',
+    'guide-zus-title':'📝 ¿Qué es un resumen?','guide-zus-sub':'Un resumen reproduce el contenido de un texto de forma objetiva, concisa y con tus propias palabras. Siempre es más corto que el original.',
+    'guide-zus-label':'ESTRUCTURA DE UN RESUMEN','guide-zus-caption':'Fórmula TATTT para la introducción: Tipo · Autor · Título · Tema · Tiempo',
+    'guide-zus-s1t':'Leer y anotar el texto','guide-zus-s1':'Primera lectura: comprensión global. Segunda: subrayar ideas principales, dividir en secciones.',
+    'guide-zus-s2t':'Introducción con la fórmula','guide-zus-s2':'Tipo + Autor + Título + Tema + Año = una frase de introducción compacta.',
+    'guide-zus-s3t':'Cuerpo: responder las preguntas','guide-zus-s3':'¿Quién? ¿Qué? ¿Cuándo? ¿Dónde? ¿Por qué? En orden cronológico. En presente. Con tus propias palabras.',
+    'guide-zus-s4t':'Conclusión (si se pide)','guide-zus-s4':'Efecto del texto o breve conclusión. Mantente objetivo – no uses «Creo que».',
+    'guide-zus-r1t':'Presente','guide-zus-r1':'Siempre en tiempo presente, aunque la acción sea en el pasado',
+    'guide-zus-r2t':'Sin «Yo»','guide-zus-r2':'Sin primera persona excepto en la conclusión si se pide',
+    'guide-zus-r3t':'Palabras propias','guide-zus-r3':'Nunca copies directamente del texto – ¡reformula!',
+    'guide-zus-r4t':'Más corto','guide-zus-r4':'El resumen siempre debe ser más corto que el texto original'
+  }
+};
+
+function t(key) {
+  var val = (TRANSLATIONS[state.lang] || {})[key];
+  if (!val) val = TRANSLATIONS['de'][key];
+  return val || key;
+}
+
 function setLang(l) {
   state.lang = l;
   document.querySelectorAll('.lang-btn').forEach(function(b) {
-    b.classList.toggle('active', b.textContent.includes(l === 'de' ? '🇩🇪' : '🇬🇧'));
+    var flag = b.textContent.trim();
+    b.classList.toggle('active',
+      (l==='de'&&flag==='🇩🇪')||(l==='en'&&flag==='🇬🇧')||
+      (l==='fr'&&flag==='🇫🇷')||(l==='es'&&flag==='🇪🇸'));
   });
+  var frToggle = document.getElementById('frQualityToggle');
+  if (frToggle) frToggle.style.display = l === 'fr' ? 'flex' : 'none';
+  applyTranslations();
+}
+
+function setFrQuality(q) {
+  state.frQuality = q;
+  document.getElementById('frqSoutenu').classList.toggle('active', q === 'soutenu');
+  document.getElementById('frqStandard').classList.toggle('active', q === 'standard');
+}
+
+function getLangInstruction() {
+  switch (state.lang) {
+    case 'en': return 'Answer entirely in English. All content, titles, keywords, questions, definitions and summaries must be in English. ';
+    case 'fr':
+      if (state.frQuality === 'soutenu') {
+        return 'Réponds entièrement en français soutenu et académique, adapté au niveau scolaire secondaire. Utilise un vocabulaire précis et des formulations élaborées. Tous les contenus, titres, mots-clés, questions, définitions et résumés doivent être rédigés en français de qualité. Évite les anglicismes et privilégie les termes français appropriés. ';
+      } else {
+        return 'Réponds entièrement en français standard et clair, facile à comprendre pour les élèves. Utilise un langage simple et accessible. Tous les contenus, titres, mots-clés, questions et résumés doivent être en français courant. ';
+      }
+    case 'es': return 'Responde completamente en español claro y adaptado al nivel escolar. Todo el contenido, títulos, palabras clave, preguntas, definiciones y resúmenes deben estar en español. Usa un vocabulario preciso y apropiado para estudiantes de secundaria. ';
+    default:   return 'Antworte auf Deutsch. ';
+  }
+}
+
+function applyTranslations() {
+  var l = state.lang;
+  // Nav tabs
+  var navBtns = document.querySelectorAll('.nav-tab');
+  var navKeys = ['nav-home','nav-vf','nav-qc','nav-lt'];
+  navBtns.forEach(function(b, i) { if (navKeys[i]) b.textContent = t(navKeys[i]); });
+  // Header links
+  var hdrLinks = document.querySelectorAll('.header-link span');
+  if (hdrLinks[0]) hdrLinks[0].textContent = t('hdr-faecher').replace('📚 ','');
+  if (hdrLinks[1]) hdrLinks[1].textContent = t('hdr-feedback').replace('📊 ','');
+  // Hero
+  var heroH1 = document.querySelector('.hero h1');
+  if (heroH1) heroH1.innerHTML = t('hero-h1');
+  var heroP = document.querySelector('.hero p');
+  if (heroP) heroP.textContent = t('hero-p');
+  // Card labels
+  var labels = document.querySelectorAll('.card-label');
+  var labelMap = {
+    'API-SCHLÜSSEL': 'lbl-apikey', 'API KEY': 'lbl-apikey',
+    'LERNMATERIAL EINGEBEN': 'lbl-sources', 'ENTER LEARNING MATERIAL': 'lbl-sources',
+    'AUSGABE-FORMAT': 'lbl-format', 'OUTPUT FORMAT': 'lbl-format',
+    'VIDEO SUCHEN': 'lbl-vfsearch', 'SEARCH VIDEO': 'lbl-vfsearch',
+    'QUELLEN EINGEBEN': 'lbl-qcsources', 'ENTER SOURCES': 'lbl-qcsources',
+    'WERKZEUG WÄHLEN': 'lbl-werkzeug', 'SELECT TOOL': 'lbl-werkzeug'
+  };
+  labels.forEach(function(el) {
+    var key = labelMap[el.textContent.trim()];
+    if (key) el.textContent = t(key);
+  });
+  // Source tabs
+  var stabs = document.querySelectorAll('.stab');
+  var stabKeys = ['tab-website','tab-youtube','tab-file','tab-text'];
+  stabs.forEach(function(b, i) { if (stabKeys[i]) b.textContent = t(stabKeys[i]); });
+  // Placeholders
+  var phMap = {
+    'websiteList': 'ph-website',
+    'youtubeList': 'ph-youtube',
+    'textInput':   'ph-text',
+    'glossarInput':'ph-glossar',
+    'vfInput':     'ph-vf'
+  };
+  Object.keys(phMap).forEach(function(id) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    var inp = el.tagName === 'TEXTAREA' || el.tagName === 'INPUT' ? el : el.querySelector('input, textarea');
+    if (inp) inp.placeholder = t(phMap[id]);
+  });
+  // Add URL buttons
+  var addBtns = document.querySelectorAll('.url-add');
+  if (addBtns[0]) addBtns[0].textContent = t('add-link');
+  if (addBtns[1]) addBtns[1].textContent = t('add-video');
+  if (addBtns[2]) addBtns[2].textContent = t('add-qc');
+  // File zone
+  var fz = document.querySelector('.file-zone strong');
+  if (fz) fz.textContent = t('file-title');
+  var fzp = document.querySelectorAll('.file-zone p');
+  if (fzp[0]) fzp[0].innerHTML = '<strong>' + t('file-title') + '</strong> ' + t('file-sub');
+  if (fzp[1]) fzp[1].textContent = t('file-types');
+  // Mode buttons
+  var modeBtns = document.querySelectorAll('.mode-btn');
+  var modeData = [
+    ['mode-all','mode-all-desc'],['mode-poster','mode-poster-desc'],
+    ['mode-q','mode-q-desc'],['mode-mm','mode-mm-desc'],
+    ['mode-ue','mode-ue-desc'],['mode-zus','mode-zus-desc']
+  ];
+  modeBtns.forEach(function(btn, i) {
+    if (!modeData[i]) return;
+    var ti = btn.querySelector('.mode-title');
+    var di = btn.querySelector('.mode-desc');
+    if (ti) ti.textContent = t(modeData[i][0]);
+    if (di) di.textContent = t(modeData[i][1]);
+  });
+  // Gen button
+  var gb = document.querySelector('.gen-btn');
+  if (gb) gb.textContent = t('gen-btn');
+  // Loading
+  var lt = document.querySelector('#loadingState p');
+  if (lt) lt.textContent = t('load-title');
+  var ls = document.querySelectorAll('#loadingState p');
+  if (ls[1]) ls[1].textContent = t('load-sub');
+  var steps = ['step1','step2','step3'];
+  steps.forEach(function(id) { var el = document.getElementById(id); if (el) el.textContent = t(id); });
+  // Result header
+  var rh = document.querySelector('.result-header h2');
+  if (rh) rh.textContent = t('res-title');
+  // Page heroes
+  var pageHeroes = document.querySelectorAll('.page-hero h2');
+  var pageHeroPs = document.querySelectorAll('.page-hero p');
+  var heroData = [['vf-h2','vf-p'],['qc-h2','qc-p'],['lt-h2','lt-p']];
+  pageHeroes.forEach(function(h, i) { if (heroData[i]) h.textContent = t(heroData[i][0]); });
+  pageHeroPs.forEach(function(p, i) { if (heroData[i]) p.textContent = t(heroData[i][1]); });
+  // VF search btn & hint
+  var vfBtn = document.querySelector('.vf-btn');
+  if (vfBtn) vfBtn.textContent = t('btn-vf');
+  var vfHint = document.querySelector('.vf-hint');
+  if (vfHint) vfHint.textContent = t('vf-hint');
+  var vfInp = document.getElementById('vfInput');
+  if (vfInp) vfInp.placeholder = t('ph-vf');
+  // QC button
+  var qcBtn = document.querySelector('#pageQuellencheck .gen-btn');
+  if (qcBtn) qcBtn.textContent = t('btn-qc');
+  // LT tool buttons
+  var ltBtns = document.querySelectorAll('.lt-tool-btn');
+  var ltData = [['lt-mm-title','lt-mm-desc'],['lt-ue-title','lt-ue-desc'],['lt-zus-title','lt-zus-desc']];
+  ltBtns.forEach(function(btn, i) {
+    if (!ltData[i]) return;
+    var ti = btn.querySelector('.lt-title');
+    var di = btn.querySelector('.lt-desc');
+    if (ti) ti.textContent = t(ltData[i][0]);
+    if (di) di.textContent = t(ltData[i][1]);
+  });
+  // Subject modal
+  var smTitle = document.querySelector('#subjectModal h3');
+  if (smTitle) smTitle.textContent = t('sm-title');
+  var smSub = document.querySelector('#subjectModal p.sub');
+  if (smSub) smSub.textContent = t('sm-sub');
+  var smPh = document.getElementById('subjectInput');
+  if (smPh) smPh.placeholder = t('sm-ph');
+  var dlLabel = document.querySelector('.detail-label');
+  if (dlLabel) dlLabel.textContent = t('lbl-detail');
+  var dBtns = document.querySelectorAll('.detail-btn');
+  var dData = [['d-kurz','d-kurz-desc'],['d-mittel','d-mittel-desc'],['d-aus','d-aus-desc']];
+  dBtns.forEach(function(btn, i) {
+    if (!dData[i]) return;
+    var ti = btn.querySelector('.d-title');
+    var di = btn.querySelector('.d-desc');
+    if (ti) ti.textContent = t(dData[i][0]);
+    if (di) di.textContent = t(dData[i][1]);
+  });
+  var skipBtn = document.querySelector('#subjectModal .btn-cancel');
+  if (skipBtn) skipBtn.textContent = t('btn-skip');
+  var createBtn = document.querySelector('#subjectModal .btn-confirm');
+  if (createBtn) createBtn.textContent = t('btn-create');
+  // Feedback modal
+  var fbTitle = document.querySelector('#feedbackModal h3');
+  if (fbTitle) fbTitle.textContent = t('fb-title');
+  var fbTa = document.getElementById('feedbackText');
+  if (fbTa) fbTa.placeholder = t('ph-fb');
+  // Drawer
+  var dHead = document.querySelector('.drawer-head h3');
+  if (dHead) dHead.textContent = t('drawer-title');
+  // Footer
+  var foot = document.querySelector('footer p');
+  if (foot) foot.textContent = t('footer');
+  // Glossar
+  var glLabel = document.querySelector('#rpGlossar .card-label');
+  if (glLabel) glLabel.textContent = t('lbl-glossar');
+  var glPh = document.getElementById('glossarInput');
+  if (glPh) glPh.placeholder = t('ph-glossar');
+  var glBtn = document.querySelector('#rpGlossar .btn-sm.primary');
+  if (glBtn) glBtn.textContent = t('btn-explain');
+  // Voice button tooltip
+  var voiceBtn = document.getElementById('voiceBtn');
+  if (voiceBtn) voiceBtn.title = t('voice-start');
+  // Lerntools guides
+  applyGuideTranslations();
+}
+
+function applyGuideTranslations() {
+  // Mindmap guide
+  var mmGuide = document.getElementById('ltGuideMindmap');
+  if (mmGuide) {
+    var el = mmGuide.querySelector('.lt-guide-title'); if (el) el.textContent = t('guide-mm-title');
+    el = mmGuide.querySelector('.lt-guide-sub'); if (el) el.textContent = t('guide-mm-sub');
+    el = mmGuide.querySelector('.lt-example-label'); if (el) el.textContent = t('guide-mm-label');
+    el = mmGuide.querySelector('.lt-example-caption'); if (el) el.textContent = t('guide-mm-caption');
+    var steps = mmGuide.querySelectorAll('.lt-step');
+    var mmSteps = [['guide-mm-s1t','guide-mm-s1'],['guide-mm-s2t','guide-mm-s2'],['guide-mm-s3t','guide-mm-s3'],['guide-mm-s4t','guide-mm-s4']];
+    steps.forEach(function(s,i){ if(!mmSteps[i]) return; var b=s.querySelector('strong'); var sp=s.querySelector('span'); if(b) b.textContent=t(mmSteps[i][0]); if(sp) sp.textContent=t(mmSteps[i][1]); });
+    var rules = mmGuide.querySelectorAll('.lt-rule');
+    var mmRules = [['guide-mm-r1t','guide-mm-r1'],['guide-mm-r2t','guide-mm-r2'],['guide-mm-r3t','guide-mm-r3'],['guide-mm-r4t','guide-mm-r4']];
+    rules.forEach(function(r,i){ if(!mmRules[i]) return; var ti=r.querySelector('.r-title'); var tx=r.querySelector('.r-text'); if(ti) ti.textContent=t(mmRules[i][0]); if(tx) tx.textContent=t(mmRules[i][1]); });
+  }
+  // Übersicht guide
+  var ueGuide = document.getElementById('ltGuideUebersicht');
+  if (ueGuide) {
+    var el = ueGuide.querySelector('.lt-guide-title'); if (el) el.textContent = t('guide-ue-title');
+    el = ueGuide.querySelector('.lt-guide-sub'); if (el) el.textContent = t('guide-ue-sub');
+    el = ueGuide.querySelector('.lt-example-label'); if (el) el.textContent = t('guide-ue-label');
+    el = ueGuide.querySelector('.lt-example-caption'); if (el) el.textContent = t('guide-ue-caption');
+    var steps = ueGuide.querySelectorAll('.lt-step');
+    var ueSteps = [['guide-ue-s1t','guide-ue-s1'],['guide-ue-s2t','guide-ue-s2'],['guide-ue-s3t','guide-ue-s3'],['guide-ue-s4t','guide-ue-s4']];
+    steps.forEach(function(s,i){ if(!ueSteps[i]) return; var b=s.querySelector('strong'); var sp=s.querySelector('span'); if(b) b.textContent=t(ueSteps[i][0]); if(sp) sp.textContent=t(ueSteps[i][1]); });
+  }
+  // Zusammenfassung guide
+  var zusGuide = document.getElementById('ltGuideZusammenfassung');
+  if (zusGuide) {
+    var el = zusGuide.querySelector('.lt-guide-title'); if (el) el.textContent = t('guide-zus-title');
+    el = zusGuide.querySelector('.lt-guide-sub'); if (el) el.textContent = t('guide-zus-sub');
+    el = zusGuide.querySelector('.lt-example-label'); if (el) el.textContent = t('guide-zus-label');
+    el = zusGuide.querySelector('.lt-example-caption'); if (el) el.textContent = t('guide-zus-caption');
+    var steps = zusGuide.querySelectorAll('.lt-step');
+    var zusSteps = [['guide-zus-s1t','guide-zus-s1'],['guide-zus-s2t','guide-zus-s2'],['guide-zus-s3t','guide-zus-s3'],['guide-zus-s4t','guide-zus-s4']];
+    steps.forEach(function(s,i){ if(!zusSteps[i]) return; var b=s.querySelector('strong'); var sp=s.querySelector('span'); if(b) b.textContent=t(zusSteps[i][0]); if(sp) sp.textContent=t(zusSteps[i][1]); });
+    var rules = zusGuide.querySelectorAll('.lt-rule');
+    var zusRules = [['guide-zus-r1t','guide-zus-r1'],['guide-zus-r2t','guide-zus-r2'],['guide-zus-r3t','guide-zus-r3'],['guide-zus-r4t','guide-zus-r4']];
+    rules.forEach(function(r,i){ if(!zusRules[i]) return; var ti=r.querySelector('.r-title'); var tx=r.querySelector('.r-text'); if(ti) ti.textContent=t(zusRules[i][0]); if(tx) tx.textContent=t(zusRules[i][1]); });
+  }
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -1194,6 +1864,62 @@ function selectMode(el, mode) {
 function toggleApi()   { var i = document.getElementById('apiKey');   i.type = i.type === 'password' ? 'text' : 'password'; }
 function toggleVfApi() { var i = document.getElementById('vfApiKey'); i.type = i.type === 'password' ? 'text' : 'password'; }
 function toggleQcApi() { var i = document.getElementById('qcApiKey'); i.type = i.type === 'password' ? 'text' : 'password'; }
+
+// ─────────────────────────────────────────────────────────────────────────────
+// VOICE INPUT
+// ─────────────────────────────────────────────────────────────────────────────
+var voiceRecognition = null;
+var voiceActive = false;
+
+function toggleVoice() {
+  var btn = document.getElementById('voiceBtn');
+  if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+    alert(t('voice-unsupported'));
+    return;
+  }
+  if (voiceActive) {
+    voiceRecognition.stop();
+    voiceActive = false;
+    btn.classList.remove('recording');
+    btn.textContent = '🎙️';
+    btn.title = t('voice-start');
+    return;
+  }
+  var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  voiceRecognition = new SR();
+  voiceRecognition.lang = state.lang === 'en' ? 'en-US' : state.lang === 'fr' ? 'fr-FR' : state.lang === 'es' ? 'es-ES' : 'de-DE';
+  voiceRecognition.continuous = true;
+  voiceRecognition.interimResults = true;
+  var finalTranscript = document.getElementById('textInput').value;
+  voiceRecognition.onstart = function() {
+    voiceActive = true;
+    btn.classList.add('recording');
+    btn.textContent = '⏹️';
+    btn.title = t('voice-stop');
+  };
+  voiceRecognition.onresult = function(e) {
+    var interim = '';
+    for (var i = e.resultIndex; i < e.results.length; i++) {
+      if (e.results[i].isFinal) finalTranscript += e.results[i][0].transcript + ' ';
+      else interim = e.results[i][0].transcript;
+    }
+    document.getElementById('textInput').value = finalTranscript + interim;
+  };
+  voiceRecognition.onend = function() {
+    voiceActive = false;
+    btn.classList.remove('recording');
+    btn.textContent = '🎙️';
+    btn.title = t('voice-start');
+    document.getElementById('textInput').value = finalTranscript.trim();
+  };
+  voiceRecognition.onerror = function(e) {
+    voiceActive = false;
+    btn.classList.remove('recording');
+    btn.textContent = '🎙️';
+    if (e.error !== 'no-speech') alert('Fehler: ' + e.error);
+  };
+  voiceRecognition.start();
+}
 
 // ─────────────────────────────────────────────────────────────────────────────
 // DETAIL LEVEL
@@ -1353,7 +2079,7 @@ async function runGenerate(apiKey, websiteUrls, youtubeUrls, files, text) {
       + ']},'
       + '"overview":{"summary":"...","main_points":["...","...","...","..."],"contradictions":[]},'
       + '"questions":[{"question":"...","answers":["A","B","C","D"],"correct":0,"explanation":"..."}],'
-      + '"mindmap":{"center":"Zentralbegriff","branches":[{"label":"Hauptthema","color":"#2D5BE3","sub":["Unterpunkt1","Unterpunkt2","Unterpunkt3"]}]},'
+      + '"mindmap":{"center":"Zentralbegriff","branches":[{"label":"Hauptthema","color":"#2D5BE3","sub":["Unterpunkt1","Unterpunkt2","Unterpunkt3","Unterpunkt4"]},{"label":"Hauptthema2","color":"#2A7D4F","sub":["Unterpunkt1","Unterpunkt2","Unterpunkt3"]},{"label":"Hauptthema3","color":"#C9933A","sub":["Unterpunkt1","Unterpunkt2","Unterpunkt3"]},{"label":"Hauptthema4","color":"#C0392B","sub":["Unterpunkt1","Unterpunkt2","Unterpunkt3"]},{"label":"Hauptthema5","color":"#7B2FBE","sub":["Unterpunkt1","Unterpunkt2"]},{"label":"Hauptthema6","color":"#D4690A","sub":["Unterpunkt1","Unterpunkt2"]}]},'
       + '"uebersicht":{"title":"...","subtitle":"Zeitraum/Kontext","categories":[{"icon":"📅","label":"Zeitraum","color":"#2D5BE3","points":["...","..."]},{"icon":"🎯","label":"Ziele","color":"#2A7D4F","points":["...","..."]},{"icon":"⚔️","label":"Ereignisse","color":"#C9933A","points":["...","..."]},{"icon":"🏛️","label":"Ergebnisse","color":"#C0392B","points":["...","..."]},{"icon":"📚","label":"Bedeutung","color":"#7B2FBE","points":["...","..."]},{"icon":"🌍","label":"Nachwirkung","color":"#D4690A","points":["...","..."]}],"kernaussage":"Ein Satz"},'
       + '"zusammenfassung":{"einleitung":"1-2 Sätze mit TATTZ-Formel","hauptteil":"Fließtext im Präsens, W-Fragen beantwortet","schluss":"Wirkung/Fazit sachlich","tipps":["Tipp1","Tipp2"]},'
       + '"definitions":[{"term":"...","definition":"..."}],'
@@ -1361,7 +2087,8 @@ async function runGenerate(apiKey, websiteUrls, youtubeUrls, files, text) {
       + '"sources":[{"title":"...","url":"https://...","type":"good","ai_added":false}],'
       + '"handwriting_issues":[],'
       + '"image_analyses":' + (imgCount > 0 ? '[{"img_index":0,"title":"...","elements":[{"num":1,"name":"...","meaning":"..."}],"symbolism":"..."}]' : '[]') + '}\n\n'
-      + 'Antworte auf Deutsch. ' + modeInstr + ' ' + multiInstr;
+      + getLangInstruction()
+      + modeInstr + ' ' + multiInstr;
 
     var body = { model: 'claude-sonnet-4-20250514', max_tokens: 6000, system: systemPrompt, messages: [{ role: 'user', content: content.length === 1 ? content[0].text : content }] };
     if (websiteUrls.length) body.tools = [{ type: 'web_search_20250305', name: 'web_search' }];
@@ -1543,7 +2270,7 @@ async function checkQuellen() {
       + '"recommendation":"Konkrete Handlungsempfehlung für den Schüler"}'
       + ']}\n'
       + 'rating: "good" (seriös, zitierfähig), "warn" (mit Einschränkungen nutzbar), "bad" (nicht empfohlen).\n'
-      + 'Antworte auf Deutsch.';
+      + getLangInstruction();
 
     var resp = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
@@ -1668,7 +2395,9 @@ function renderAiNote(data) {
   var added = (data.sources || []).filter(function(s) { return s.ai_added; });
   if (added.length) {
     el.style.display = 'block';
-    el.innerHTML = '🤖 Lern·AI hat <strong>' + added.length + ' weitere seriöse Quelle' + (added.length > 1 ? 'n' : '') + '</strong> ergänzt. Diese sind als <em>KI-Ergänzung</em> gekennzeichnet.';
+    el.innerHTML = state.lang === 'en'
+      ? '🤖 Lern·AI added <strong>' + added.length + ' additional reliable source' + (added.length > 1 ? 's' : '') + '</strong>. These are marked as <em>AI addition</em>.'
+      : '🤖 Lern·AI hat <strong>' + added.length + ' weitere seriöse Quelle' + (added.length > 1 ? 'n' : '') + '</strong> ergänzt. Diese sind als <em>KI-Ergänzung</em> gekennzeichnet.';
   } else { el.style.display = 'none'; }
 }
 
@@ -1677,13 +2406,13 @@ function buildResultTabs() {
   tabsEl.innerHTML = '';
   document.querySelectorAll('.rpanel').forEach(function(p) { p.classList.remove('active'); });
   var tabs = [];
-  if (state.mode === 'all' || state.mode === 'poster')          tabs.push({ id: 'rpPoster',          label: '🗺️ Lernplakat' });
-  if (state.mode === 'all')                                     tabs.push({ id: 'rpOverview',         label: '📋 Übersicht' });
-  if (state.mode === 'all' || state.mode === 'questions')       tabs.push({ id: 'rpQuestions',        label: '📝 Prüfungsfragen' });
-  if (state.mode === 'all' || state.mode === 'mindmap')         tabs.push({ id: 'rpMindmap',          label: '🕸️ Mindmap' });
-  if (state.mode === 'all' || state.mode === 'uebersicht')      tabs.push({ id: 'rpUebersicht',       label: '📊 Übersicht' });
-  if (state.mode === 'all' || state.mode === 'zusammenfassung') tabs.push({ id: 'rpZusammenfassung',  label: '📄 Zusammenfassung' });
-  tabs.push({ id: 'rpGlossar', label: '🔍 Begriffe' });
+  if (state.mode === 'all' || state.mode === 'poster')          tabs.push({ id: 'rpPoster',          label: t('rtab-poster') });
+  if (state.mode === 'all')                                     tabs.push({ id: 'rpOverview',         label: t('rtab-overview') });
+  if (state.mode === 'all' || state.mode === 'questions')       tabs.push({ id: 'rpQuestions',        label: t('rtab-questions') });
+  if (state.mode === 'all' || state.mode === 'mindmap')         tabs.push({ id: 'rpMindmap',          label: t('rtab-mindmap') });
+  if (state.mode === 'all' || state.mode === 'uebersicht')      tabs.push({ id: 'rpUebersicht',       label: t('rtab-ue') });
+  if (state.mode === 'all' || state.mode === 'zusammenfassung') tabs.push({ id: 'rpZusammenfassung',  label: t('rtab-zus') });
+  tabs.push({ id: 'rpGlossar', label: t('rtab-glossar') });
   tabs.forEach(function(t, idx) {
     var btn = document.createElement('button');
     btn.className = 'rtab' + (idx === 0 ? ' active' : '');
@@ -1809,38 +2538,170 @@ function checkAnswer(btn) {
 function renderMindmapResult(data) {
   var el = document.getElementById('rpMindmap');
   if (!data.mindmap) { el.innerHTML = '<p style="color:var(--ink3);font-size:13px;padding:16px">Keine Mindmap-Daten vorhanden.</p>'; return; }
-  var mm = data.mindmap;
-  var W = 660, H = 420, cx = W/2, cy = H/2;
+  el.innerHTML = '<canvas id="mindmapCanvas" style="width:100%;border-radius:12px;background:#FAFAF7"></canvas>'
+    + '<div style="margin-top:10px"><button class="btn-sm" onclick="downloadMindmapCanvas()">⬇ PNG herunterladen</button></div>';
+  setTimeout(function() { drawMindmap(data.mindmap, data.title); }, 50);
+}
+
+function drawMindmap(mm, fallbackTitle) {
+  var canvas = document.getElementById('mindmapCanvas');
+  if (!canvas) return;
   var branches = mm.branches || [];
-  var colors   = ['#2D5BE3','#2A7D4F','#C9933A','#C0392B','#7B2FBE','#D4690A'];
-  var angles   = [225, 315, 45, 135, 270, 0];
-  var svg = '<svg width="' + W + '" height="' + H + '" viewBox="0 0 ' + W + ' ' + H + '" font-family="DM Sans,sans-serif" style="max-width:100%">';
-  branches.forEach(function(br, i) {
-    var ang = (angles[i] || (i * 60)) * Math.PI / 180;
-    var bx  = cx + Math.cos(ang) * 155;
-    var by  = cy + Math.sin(ang) * 155;
+  var colors   = ['#2D5BE3','#2A7D4F','#C9933A','#C0392B','#7B2FBE','#D4690A','#1A9AB0','#8B4513'];
+
+  // ── measure text helper ──
+  var measureCtx = canvas.getContext('2d');
+  function measureText(txt, fontSize, bold) {
+    measureCtx.font = (bold ? 'bold ' : '') + fontSize + 'px DM Sans, sans-serif';
+    return measureCtx.measureText(txt).width;
+  }
+
+  // ── compute layout ──
+  var PAD_BRANCH = 16, PAD_SUB = 10;
+  var centerLabel = mm.center || fallbackTitle || 'Thema';
+  var cRx = Math.max(60, measureText(centerLabel, 14, true) / 2 + 20);
+  var cRy = 28;
+
+  // angles: evenly spread, starting top-right
+  var n = branches.length || 1;
+  var branchData = branches.map(function(br, i) {
+    var ang = (2 * Math.PI * i / n) - Math.PI / 2;
     var col = br.color || colors[i % colors.length];
-    svg += '<line x1="' + cx + '" y1="' + cy + '" x2="' + bx + '" y2="' + by + '" stroke="' + col + '" stroke-width="4" stroke-linecap="round"/>';
-    svg += '<ellipse cx="' + bx + '" cy="' + by + '" rx="58" ry="22" fill="' + col + '"/>';
-    var bl = (br.label||'').length > 12 ? (br.label||'').substring(0,11)+'…' : (br.label||'');
-    svg += '<text x="' + bx + '" y="' + (by+5) + '" text-anchor="middle" fill="white" font-size="12" font-weight="600">' + bl + '</text>';
-    (br.sub || []).slice(0,3).forEach(function(sub, si) {
-      var spread = (si - 1) * 36;
-      var perpAng = ang + Math.PI/2;
-      var sx = bx + Math.cos(ang)*78 + Math.cos(perpAng)*spread;
-      var sy = by + Math.sin(ang)*78 + Math.sin(perpAng)*spread;
-      svg += '<line x1="' + bx + '" y1="' + by + '" x2="' + sx + '" y2="' + sy + '" stroke="' + col + '" stroke-width="2"/>';
-      var sl = sub.length > 13 ? sub.substring(0,12)+'…' : sub;
-      svg += '<rect x="' + (sx-36) + '" y="' + (sy-11) + '" width="72" height="22" rx="5" fill="white" stroke="' + col + '" stroke-width="1.5"/>';
-      svg += '<text x="' + sx + '" y="' + (sy+5) + '" text-anchor="middle" fill="' + col + '" font-size="10">' + sl + '</text>';
+    var label = br.label || '';
+    var brRx = Math.max(52, measureText(label, 13, true) / 2 + PAD_BRANCH);
+    var brRy = 22;
+    // sub-node widths
+    var subs = (br.sub || []).map(function(s) {
+      var sw = Math.max(60, measureText(s, 11, false) + PAD_SUB * 2);
+      return { text: s, w: sw, h: 22 };
+    });
+    return { label: label, col: col, ang: ang, brRx: brRx, brRy: brRy, subs: subs };
+  });
+
+  // figure out canvas size from farthest points
+  var BRANCH_DIST = 190;
+  var SUB_DIST    = 80;
+  var maxReach = BRANCH_DIST + SUB_DIST + 80;
+  var W = (maxReach + cRx) * 2 + 40;
+  var H = (maxReach + cRy) * 2 + 40;
+  W = Math.max(W, 600); H = Math.max(H, 520);
+  canvas.width  = W;
+  canvas.height = H;
+  var cx = W / 2, cy = H / 2;
+
+  var ctx = canvas.getContext('2d');
+  ctx.clearRect(0, 0, W, H);
+  ctx.fillStyle = '#FAFAF7';
+  ctx.fillRect(0, 0, W, H);
+  ctx.font = '13px DM Sans, sans-serif';
+
+  // ── draw branches ──
+  branchData.forEach(function(br) {
+    var ang = br.ang;
+    var col = br.col;
+    // branch center
+    var bx = cx + Math.cos(ang) * BRANCH_DIST;
+    var by = cy + Math.sin(ang) * BRANCH_DIST;
+
+    // ── line: center ellipse edge → branch ellipse edge ──
+    // find intersection of line with center ellipse
+    var dx = bx - cx, dy = by - cy;
+    var dist = Math.sqrt(dx*dx + dy*dy);
+    var ux = dx/dist, uy = dy/dist;
+    // parametric intersection with ellipse: simple approximation
+    var t0 = 1 / Math.sqrt((ux/cRx)*(ux/cRx) + (uy/cRy)*(uy/cRy));
+    var lx1 = cx + ux * t0, ly1 = cy + uy * t0;
+    // branch ellipse edge (opposite side)
+    var t1 = 1 / Math.sqrt((ux/br.brRx)*(ux/br.brRx) + (uy/br.brRy)*(uy/br.brRy));
+    var lx2 = bx - ux * t1, ly2 = by - uy * t1;
+
+    ctx.beginPath();
+    ctx.moveTo(lx1, ly1);
+    ctx.lineTo(lx2, ly2);
+    ctx.strokeStyle = col;
+    ctx.lineWidth = 3.5;
+    ctx.lineCap = 'round';
+    ctx.stroke();
+
+    // ── branch ellipse ──
+    ctx.beginPath();
+    ctx.ellipse(bx, by, br.brRx, br.brRy, 0, 0, Math.PI * 2);
+    ctx.fillStyle = col;
+    ctx.fill();
+    ctx.font = 'bold 13px DM Sans, sans-serif';
+    ctx.fillStyle = 'white';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(br.label, bx, by);
+
+    // ── sub-nodes ──
+    var subs = br.subs;
+    if (!subs.length) return;
+    var totalH = subs.length * (22 + 8) - 8;
+    var startY = by - totalH / 2;
+    // sub direction: away from center
+    var subDirX = Math.cos(ang), subDirY = Math.sin(ang);
+    var perpX = -Math.sin(ang), perpY = Math.cos(ang);
+
+    subs.forEach(function(sub, si) {
+      var sy = startY + si * 30;
+      // position along perpendicular from branch node
+      var offset = sy - by;
+      var sx = bx + subDirX * SUB_DIST + perpX * offset * 0.6;
+      var sy2 = by + subDirY * SUB_DIST + perpY * offset * 0.6;
+
+      // line from branch ellipse edge to sub box
+      var ddx = sx - bx, ddy = sy2 - by;
+      var ddist = Math.sqrt(ddx*ddx + ddy*ddy) || 1;
+      var uux = ddx/ddist, uuy = ddy/ddist;
+      var te = 1 / Math.sqrt((uux/br.brRx)*(uux/br.brRx) + (uuy/br.brRy)*(uuy/br.brRy));
+      var ex = bx + uux * te, ey = by + uuy * te;
+
+      ctx.beginPath();
+      ctx.moveTo(ex, ey);
+      ctx.lineTo(sx, sy2);
+      ctx.strokeStyle = col;
+      ctx.lineWidth = 1.8;
+      ctx.stroke();
+
+      // sub box
+      var boxW = sub.w, boxH = sub.h;
+      var bx2 = sx - boxW / 2, by2 = sy2 - boxH / 2;
+      ctx.beginPath();
+      ctx.roundRect(bx2, by2, boxW, boxH, 6);
+      ctx.fillStyle = 'white';
+      ctx.fill();
+      ctx.strokeStyle = col;
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+
+      ctx.font = '11px DM Sans, sans-serif';
+      ctx.fillStyle = col;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(sub.text, sx, sy2);
     });
   });
-  svg += '<ellipse cx="' + cx + '" cy="' + cy + '" rx="68" ry="32" fill="#1A1A18"/>';
-  var cl2 = (mm.center||data.title||'').length > 14 ? (mm.center||data.title||'').substring(0,13)+'…' : (mm.center||data.title||'');
-  svg += '<text x="' + cx + '" y="' + (cy+5) + '" text-anchor="middle" fill="white" font-size="13" font-weight="700">' + cl2 + '</text>';
-  svg += '</svg>';
-  el.innerHTML = '<div class="mindmap-container" id="mindmapSvgWrap">' + svg + '</div>'
-    + '<div style="margin-top:10px"><button class="btn-sm" onclick="downloadPanel(\'rpMindmap\',\'mindmap\')">⬇ PNG herunterladen</button></div>';
+
+  // ── center ellipse (drawn last = on top) ──
+  ctx.beginPath();
+  ctx.ellipse(cx, cy, cRx, cRy, 0, 0, Math.PI * 2);
+  ctx.fillStyle = '#1A1A18';
+  ctx.fill();
+  ctx.font = 'bold 14px DM Sans, sans-serif';
+  ctx.fillStyle = 'white';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText(centerLabel, cx, cy);
+}
+
+function downloadMindmapCanvas() {
+  var canvas = document.getElementById('mindmapCanvas');
+  if (!canvas) return;
+  var a = document.createElement('a');
+  a.download = 'mindmap.png';
+  a.href = canvas.toDataURL('image/png');
+  a.click();
 }
 
 function renderUebersichtResult(data) {
@@ -2237,6 +3098,7 @@ function renderZusammenfassungResult(zus) {
   document.querySelectorAll('.spanel').forEach(function(p) { p.style.display = 'none'; });
   var wp = document.getElementById('panelWebsite');
   if (wp) { wp.classList.add('active'); wp.style.display = 'block'; }
+  applyTranslations();
 })();
 </script>
 </body>
