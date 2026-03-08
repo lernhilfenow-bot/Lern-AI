@@ -45,6 +45,8 @@ header { background: white; border-bottom: 1px solid var(--border); padding: 0 2
 
 .header-right { display: flex; align-items: center; gap: 6px; flex-shrink: 0; flex: 1; justify-content: flex-end; }
 .header-link { font-size: 11px; color: var(--ink3); cursor: pointer; background: none; border: none; font-family: 'DM Sans', sans-serif; display: flex; align-items: center; gap: 3px; padding: 0; white-space: nowrap; }
+.header-link span { display: inline; }
+@media (max-width: 1000px) { .header-link span { display: none; } }
 .header-link:hover { color: var(--blue); }
 .lang-toggle { display: flex; gap: 3px; background: var(--cream); border: 1px solid var(--border); border-radius: 8px; padding: 3px; }
 .lang-btn { padding: 4px 6px; border-radius: 5px; border: none; background: transparent; font-family: 'DM Sans', sans-serif; font-size: 11px; font-weight: 500; cursor: pointer; color: var(--ink3); transition: all .15s; }
@@ -275,6 +277,18 @@ main { max-width: 860px; margin: 0 auto; padding: 36px 20px 80px; flex: 1; width
 .detail-btn.active { border-color: var(--blue); background: var(--blue-l); }
 .detail-btn.active .d-title { color: var(--blue); }
 
+/* ── SLIDERS ── */
+.slider-section { margin: 16px 0 20px; display: flex; flex-direction: column; gap: 18px; }
+.slider-row { display: flex; flex-direction: column; gap: 6px; }
+.slider-label-row { display: flex; justify-content: space-between; align-items: center; }
+.slider-label { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: .8px; color: var(--ink3); }
+.slider-val { font-size: 13px; font-weight: 700; color: var(--blue); background: var(--blue-l); padding: 2px 10px; border-radius: 20px; }
+.detail-slider { -webkit-appearance: none; appearance: none; width: 100%; height: 6px; border-radius: 3px; background: var(--border); outline: none; cursor: pointer; }
+.detail-slider::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 22px; height: 22px; border-radius: 50%; background: var(--blue); cursor: pointer; box-shadow: 0 2px 6px rgba(45,91,227,.35); border: 3px solid white; }
+.detail-slider::-moz-range-thumb { width: 22px; height: 22px; border-radius: 50%; background: var(--blue); cursor: pointer; box-shadow: 0 2px 6px rgba(45,91,227,.35); border: 3px solid white; }
+.slider-ticks { display: flex; justify-content: space-between; padding: 0 2px; }
+.slider-ticks span { font-size: 10px; color: var(--ink3); text-align: center; line-height: 1.2; }
+
 /* ── FEEDBACK ── */
 .stars { display: flex; gap: 8px; justify-content: center; margin: 14px 0; }
 .star { font-size: 28px; cursor: pointer; filter: grayscale(1); transition: transform .1s; }
@@ -475,20 +489,23 @@ footer { text-align: center; padding: 20px; font-size: 11px; color: var(--ink3);
   </nav>
 
   <div class="header-right">
-    <button class="header-link" onclick="openDrawer()">📚 <span>Fächer</span></button>
-    <button class="header-link" onclick="showFeedbackOverview()">📊 <span>Feedback</span></button>
+    <button class="header-link" onclick="openDrawer()" id="hdrFaecher" title="Fächer">📚 <span data-t="hdr-faecher">Fächer</span></button>
+    <button class="header-link" onclick="showFeedbackOverview()" id="hdrFeedback" title="Feedback">📊 <span data-t="hdr-feedback">Feedback</span></button>
     <div class="lang-toggle">
       <button class="lang-btn active" onclick="setLang('de')">🇩🇪</button>
       <button class="lang-btn" onclick="setLang('en')">🇬🇧</button>
       <button class="lang-btn" onclick="setLang('fr')">🇫🇷</button>
       <button class="lang-btn" onclick="setLang('es')">🇪🇸</button>
     </div>
-    <div id="frQualityToggle" class="fr-quality-toggle" style="display:none">
-      <button class="fr-q-btn active" id="frqSoutenu" onclick="setFrQuality('soutenu')">Soutenu</button>
-      <button class="fr-q-btn" id="frqStandard" onclick="setFrQuality('standard')">Standard</button>
-    </div>
   </div>
 </header>
+<div id="frQualityBar" style="display:none;background:white;border-bottom:1px solid var(--border);padding:6px 20px;display:none;align-items:center;gap:8px;justify-content:flex-end">
+  <span style="font-size:11px;color:var(--ink3);font-family:'DM Sans',sans-serif">Stil:</span>
+  <div class="fr-quality-toggle">
+    <button class="fr-q-btn active" id="frqSoutenu" onclick="setFrQuality('soutenu')">Soutenu</button>
+    <button class="fr-q-btn" id="frqStandard" onclick="setFrQuality('standard')">Standard</button>
+  </div>
+</div>
 
 <main>
 
@@ -578,16 +595,6 @@ footer { text-align: center; padding: 20px; font-size: 11px; color: var(--ink3);
             <span class="mode-title">Prüfungsfragen</span>
             <span class="mode-desc">Multiple Choice</span>
           </div>
-          <div class="mode-btn" onclick="selectMode(this,'mindmap')">
-            <span class="mode-icon">🕸️</span>
-            <span class="mode-title">Mindmap</span>
-            <span class="mode-desc">Themen vernetzen</span>
-          </div>
-          <div class="mode-btn" onclick="selectMode(this,'uebersicht')">
-            <span class="mode-icon">📊</span>
-            <span class="mode-title">Übersicht</span>
-            <span class="mode-desc">Kategorien &amp; Fakten</span>
-          </div>
           <div class="mode-btn" onclick="selectMode(this,'zusammenfassung')">
             <span class="mode-icon">📄</span>
             <span class="mode-title">Zusammenfassung</span>
@@ -624,10 +631,7 @@ footer { text-align: center; padding: 20px; font-size: 11px; color: var(--ink3);
       <div id="aiSourcesNote" class="ai-sources-note"></div>
       <div class="result-tabs" id="resultTabs"></div>
       <div id="rpPoster"           class="rpanel"></div>
-      <div id="rpOverview"         class="rpanel"></div>
       <div id="rpQuestions"        class="rpanel"></div>
-      <div id="rpMindmap"          class="rpanel"></div>
-      <div id="rpUebersicht"       class="rpanel"></div>
       <div id="rpZusammenfassung"  class="rpanel"></div>
       <div id="rpGlossar"   class="rpanel">
         <div class="card">
@@ -1002,6 +1006,10 @@ footer { text-align: center; padding: 20px; font-size: 11px; color: var(--ink3);
       </div>
     </div>
 
+    <!-- Result containers for lerntools generators -->
+    <div id="ltUebersichtResult" style="display:none;margin-top:16px"></div>
+    <div id="ltZusResult"        style="display:none;margin-top:16px"></div>
+
   </div><!-- end pageLerntools -->
 
 <!-- ── SUBJECT MODAL ── -->
@@ -1011,18 +1019,26 @@ footer { text-align: center; padding: 20px; font-size: 11px; color: var(--ink3);
     <h3>Fach &amp; Ausführlichkeit</h3>
     <p class="sub">Wähle Fach und Ausführlichkeit bevor das Lernmaterial erstellt wird.</p>
     <input id="subjectInput" class="subject-input-big" type="text" placeholder="Fach: z.B. Geschichte, Biologie ..." onkeydown="if(event.key==='Enter')document.getElementById('subjectInput').blur()"/>
-    <div class="detail-label">AUSFÜHRLICHKEIT</div>
-    <div class="detail-btns">
-      <div class="detail-btn" id="detailKurz" onclick="selectDetail('kurz')">
-        <span class="d-icon">⚡</span><span class="d-title">Kurz</span><span class="d-desc">Kerninfos</span>
+
+    <div class="slider-section">
+      <div class="slider-row">
+        <div class="slider-label-row">
+          <span class="slider-label">📄 Seitenanzahl</span>
+          <span class="slider-val" id="sliderPagesVal">1 Seite</span>
+        </div>
+        <input type="range" id="sliderPages" class="detail-slider" min="1" max="20" value="2" step="1" oninput="updateSliders()"/>
+        <div class="slider-ticks"><span>1</span><span>5</span><span>10</span><span>15</span><span>20</span></div>
       </div>
-      <div class="detail-btn active" id="detailMittel" onclick="selectDetail('mittel')">
-        <span class="d-icon">📋</span><span class="d-title">Mittel</span><span class="d-desc">Ausgewogen</span>
-      </div>
-      <div class="detail-btn" id="detailAusfuehrlich" onclick="selectDetail('ausfuehrlich')">
-        <span class="d-icon">📖</span><span class="d-title">Ausführlich</span><span class="d-desc">Detailliert</span>
+      <div class="slider-row">
+        <div class="slider-label-row">
+          <span class="slider-label">🧠 Komplexität</span>
+          <span class="slider-val" id="sliderComplexVal">Mittel</span>
+        </div>
+        <input type="range" id="sliderComplex" class="detail-slider" min="1" max="5" value="3" step="1" oninput="updateSliders()"/>
+        <div class="slider-ticks"><span>Einfach</span><span>Leicht</span><span>Mittel</span><span>Anspruchs-voll</span><span>Komplex</span></div>
       </div>
     </div>
+
     <div class="modal-btns">
       <button class="btn-cancel" style="flex:1;padding:11px;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer" onclick="confirmSubject(true)">Überspringen</button>
       <button class="btn-confirm" style="flex:1;padding:11px;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer;background:var(--blue);color:white;border:none" onclick="confirmSubject()">Erstellen →</button>
@@ -1090,6 +1106,8 @@ var state = {
   files:        [],
   imageFiles:   [],
   detail:       'mittel',
+  pages:        2,       // slider: 1–8 maps to 0.5,1,1.5,2,3,4,5,6+ pages
+  complexity:   3,       // slider: 1–5 (einfach→komplex)
   starRating:   0,
   pending:      null,
   lastApiKey:   '',
@@ -1550,8 +1568,8 @@ function setLang(l) {
       (l==='de'&&flag==='🇩🇪')||(l==='en'&&flag==='🇬🇧')||
       (l==='fr'&&flag==='🇫🇷')||(l==='es'&&flag==='🇪🇸'));
   });
-  var frToggle = document.getElementById('frQualityToggle');
-  if (frToggle) frToggle.style.display = l === 'fr' ? 'flex' : 'none';
+  var frToggle = document.getElementById('frQualityBar');
+  if (frToggle) { frToggle.style.display = l === 'fr' ? 'flex' : 'none'; }
   applyTranslations();
 }
 
@@ -1930,11 +1948,32 @@ function toggleVoice() {
 // ─────────────────────────────────────────────────────────────────────────────
 // DETAIL LEVEL
 // ─────────────────────────────────────────────────────────────────────────────
+function updateSliders() {
+  var pVal = parseInt(document.getElementById('sliderPages').value);
+  var cVal = parseInt(document.getElementById('sliderComplex').value);
+  state.pages      = pVal;
+  state.complexity = cVal;
+
+  var pLabel = pVal === 1 ? '1 Seite' : pVal + ' Seiten';
+  var complexLabels = ['Einfach','Leicht','Mittel','Anspruchsvoll','Komplex'];
+  document.getElementById('sliderPagesVal').textContent   = pLabel;
+  document.getElementById('sliderComplexVal').textContent = complexLabels[cVal - 1];
+
+  // Map to legacy detail
+  if (pVal <= 1 && cVal <= 2) state.detail = 'kurz';
+  else if (pVal >= 4 || cVal >= 4) state.detail = 'ausfuehrlich';
+  else state.detail = 'mittel';
+}
+
 function selectDetail(level) {
   state.detail = level;
-  ['Kurz','Mittel','Ausfuehrlich'].forEach(function(l) { document.getElementById('detail' + l).classList.remove('active'); });
+  ['Kurz','Mittel','Ausfuehrlich'].forEach(function(l) {
+    var el = document.getElementById('detail' + l);
+    if (el) el.classList.remove('active');
+  });
   var map = { kurz: 'detailKurz', mittel: 'detailMittel', ausfuehrlich: 'detailAusfuehrlich' };
-  document.getElementById(map[level]).classList.add('active');
+  var el = document.getElementById(map[level]);
+  if (el) el.classList.add('active');
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -1981,7 +2020,10 @@ function closeWarn(proceed) {
 function openSubjectModal(pendingData) {
   state.pending = pendingData;
   document.getElementById('subjectInput').value = '';
-  selectDetail('mittel');
+  // Init sliders to defaults
+  document.getElementById('sliderPages').value   = state.pages   || 2;
+  document.getElementById('sliderComplex').value = state.complexity || 3;
+  updateSliders();
   document.getElementById('subjectModal').classList.add('show');
   setTimeout(function() { document.getElementById('subjectInput').focus(); }, 100);
 }
@@ -2049,18 +2091,30 @@ async function runGenerate(apiKey, websiteUrls, youtubeUrls, files, text) {
     }
 
     var parts = [];
-    if (websiteUrls.length) parts.push('WEBSEITEN:\n' + websiteUrls.join('\n'));
-    if (ytInfos.length)     parts.push('YOUTUBE:\n' + ytInfos.map(function(y) { return y.title + ' (' + y.author + ') – ' + y.url; }).join('\n'));
+    if (websiteUrls.length) parts.push('VOM NUTZER DIREKT EINGEGEBEN (nur diese dürfen ai_added:false bekommen):\n' + websiteUrls.join('\n'));
+    if (ytInfos.length)     parts.push('VOM NUTZER DIREKT EINGEGEBEN – YOUTUBE:\n' + ytInfos.map(function(y) { return y.title + ' (' + y.author + ') – ' + y.url; }).join('\n'));
     if (text)               parts.push('TEXT:\n' + text);
     if (files.length && !content.length) parts.push('DATEIEN: ' + files.map(function(f) { return f.name; }).join(', '));
     var userText = parts.length ? parts.join('\n\n') : 'Analysiere das hochgeladene Material.';
     content.push({ type: 'text', text: userText });
 
-    var detailInstr = {
-      kurz:         'AUSFÜHRLICHKEIT: Kurz – knappe Punkte, 3-4 Sätze Einleitung, 6-8 Sätze Hauptteil, 2 Sätze Schluss, 5 Prüfungsfragen.',
-      mittel:       'AUSFÜHRLICHKEIT: Mittel – die Zusammenfassung MUSS mindestens eine halbe DIN-A4-Seite füllen: Einleitung 3-4 Sätze mit TATTZ-Formel, Hauptteil mindestens 10-12 ausführliche Sätze die alle wichtigen W-Fragen (Wer/Was/Wann/Wo/Warum/Wie) beantworten, Schluss 3-4 Sätze mit Wirkung und Fazit. 8 Prüfungsfragen.',
-      ausfuehrlich: 'AUSFÜHRLICHKEIT: Ausführlich – Zusammenfassung füllt eine komplette DIN-A4-Seite: Einleitung 4-5 Sätze, Hauptteil mindestens 15-18 Sätze mit allen Details, Beispielen und Zusammenhängen, Schluss 4-5 Sätze. 12 Prüfungsfragen, Mindmap mit 6-8 Unterpunkten pro Ast.'
-    }[state.detail];
+    // Build detail instruction from sliders (pages 1-20, complexity 1-5)
+    var pLabel = state.pages === 1 ? '1 Seite' : state.pages + ' Seiten';
+    var complexLabels = ['sehr einfach (Klasse 5-6)','einfach (Klasse 7-8)','mittel (Klasse 9-10)','anspruchsvoll (Gymnasium Oberstufe)','komplex (Abiturniveau)'];
+    var complexLabel = complexLabels[(state.complexity || 3) - 1];
+    var targetWords  = Math.round((state.pages || 2) * 350);
+    var qCount       = Math.min(4 + Math.round((state.pages || 2) * 1.5) + (state.complexity || 3), 20);
+
+    var detailInstr = 'LÄNGE UND KOMPLEXITÄT: '
+      + 'Die Zusammenfassung MUSS ' + pLabel + ' füllen (Ziel: ' + targetWords + ' Wörter im Hauptteil – zähle sorgfältig). '
+      + 'Komplexität und Sprachniveau: ' + complexLabel + '. '
+      + 'Einleitung: ' + (state.pages <= 2 ? '2-3' : state.pages <= 5 ? '3-4' : '5-6') + ' Sätze mit TATTZ-Formel (Textart · Autor/Quelle · Titel · Thema · Zeit/Kontext). '
+      + 'Hauptteil: GENAU ' + targetWords + ' WÖRTER – alle W-Fragen (Wer/Was/Wann/Wo/Warum/Wie/Welche Folgen) ausführlich beantworten, '
+      + 'Hintergründe und Zusammenhänge erläutern, Beispiele nennen, Entwicklungen beschreiben. '
+      + (state.pages >= 3 ? 'Gliedere den Hauptteil in ' + Math.min(Math.round(state.pages * 0.8), 10) + ' inhaltliche Absätze. ' : '')
+      + (state.pages >= 8 ? 'Füge Zwischenüberschriften ein. ' : '')
+      + 'Schluss: ' + (state.pages <= 2 ? '2-3' : '4-5') + ' Sätze mit Bedeutung, Wirkung und Fazit. '
+      + qCount + ' Prüfungsfragen.';
 
     var imgCount  = state.imageFiles.length;
     var modeInstr = state.mode === 'poster' ? 'Erstelle NUR das Lernplakat (3 Seiten).' : state.mode === 'questions' ? 'Erstelle NUR Prüfungsfragen.' : '';
@@ -2069,7 +2123,7 @@ async function runGenerate(apiKey, websiteUrls, youtubeUrls, files, text) {
 
     var systemPrompt = 'Du bist ein Lernassistent für Schüler. AUSSCHLIESSLICH valides JSON, kein Text davor/danach, keine Backticks.\n\n'
       + 'REGELN:\n'
-      + '1. QUELLEN: Mindestens 8 Quellen. Ergänze fehlende seriöse Quellen selbst (bpb.de, britannica.com, nationalgeographic.com, bundesarchiv.de, lemo.de, planet-wissen.de, dw.com, zdf.de, br.de). Ergänzte: "ai_added":true.\n'
+      + '1. QUELLEN: Mindestens 8 Quellen. Ergänze fehlende seriöse Quellen selbst (bpb.de, britannica.com, nationalgeographic.com, bundesarchiv.de, lemo.de, planet-wissen.de, dw.com, zdf.de, br.de). WICHTIG: Nur URLs die der Nutzer selbst direkt eingegeben hat bekommen "ai_added":false. ALLE anderen Quellen – auch wenn du sie aus deinem Wissen über frühere Suchanfragen des Nutzers kennst – bekommen IMMER "ai_added":true. Wenn du dir nicht sicher bist ob eine Quelle vom Nutzer kam: setze "ai_added":true.\n'
       + '2. KONSISTENZ: core_facts ist Wahrheitsquelle. Alles basiert NUR auf core_facts.\n'
       + '3. POSTER: 3 Seiten. Seite 1: Grundlagen. Seite 2: Ereignisse & Leistungen. Seite 3: Bedeutung & Nachwirkung.\n'
       + '4. DEFINITIONEN: 4–6 Fachbegriffe.\n'
@@ -2085,7 +2139,6 @@ async function runGenerate(apiKey, websiteUrls, youtubeUrls, files, text) {
       + ']},'
       + '"overview":{"summary":"...","main_points":["...","...","...","..."],"contradictions":[]},'
       + '"questions":[{"question":"...","answers":["A","B","C","D"],"correct":0,"explanation":"..."}],'
-      + '"mindmap":{"center":"Zentralbegriff","branches":[{"label":"Hauptthema","color":"#2D5BE3","sub":["Unterpunkt1","Unterpunkt2","Unterpunkt3","Unterpunkt4"]},{"label":"Hauptthema2","color":"#2A7D4F","sub":["Unterpunkt1","Unterpunkt2","Unterpunkt3"]},{"label":"Hauptthema3","color":"#C9933A","sub":["Unterpunkt1","Unterpunkt2","Unterpunkt3"]},{"label":"Hauptthema4","color":"#C0392B","sub":["Unterpunkt1","Unterpunkt2","Unterpunkt3"]},{"label":"Hauptthema5","color":"#7B2FBE","sub":["Unterpunkt1","Unterpunkt2"]},{"label":"Hauptthema6","color":"#D4690A","sub":["Unterpunkt1","Unterpunkt2"]}]},'
       + '"uebersicht":{"title":"...","subtitle":"Zeitraum/Kontext","categories":[{"icon":"📅","label":"Zeitraum","color":"#2D5BE3","points":["...","..."]},{"icon":"🎯","label":"Ziele","color":"#2A7D4F","points":["...","..."]},{"icon":"⚔️","label":"Ereignisse","color":"#C9933A","points":["...","..."]},{"icon":"🏛️","label":"Ergebnisse","color":"#C0392B","points":["...","..."]},{"icon":"📚","label":"Bedeutung","color":"#7B2FBE","points":["...","..."]},{"icon":"🌍","label":"Nachwirkung","color":"#D4690A","points":["...","..."]}],"kernaussage":"Ein Satz"},'
       + '"zusammenfassung":{"einleitung":"2-3 Sätze mit TATTZ-Formel: Textart + Autor/Quelle + Titel + Thema + Zeit/Kontext","hauptteil":"Ausführlicher Fließtext im Präsens, MINDESTENS 200 Wörter bei Mittel und 350 Wörter bei Ausführlich. Beantworte alle W-Fragen: Wer handelt? Was passiert? Wann? Wo? Warum? Welche Folgen? Erkläre Zusammenhänge und Hintergründe. Gliedere in mehrere Absätze wenn nötig.","schluss":"3-5 Sätze: Bedeutung/Wirkung des Themas, Fazit, warum es relevant ist","tipps":["konkreter Lerntipp1","konkreter Lerntipp2","konkreter Lerntipp3"]},'
       + '"definitions":[{"term":"...","definition":"..."}],'
@@ -2377,10 +2430,12 @@ function renderResults(data, websiteUrls, youtubeUrls, files) {
   var inputSec = document.getElementById('inputSection');
   var loadSec  = document.getElementById('loadingState');
   var fbOv     = document.getElementById('feedbackOverview');
+  var heroEl   = document.querySelector('#pageHome .hero');
   var resSec   = document.getElementById('results');
   if (inputSec) inputSec.style.display  = 'none';
   if (loadSec)  loadSec.style.display   = 'none';
   if (fbOv)     fbOv.style.display      = 'none';
+  if (heroEl)   heroEl.style.display    = 'none';
   if (resSec)   resSec.style.display    = 'block';
   ['step1','step2','step3'].forEach(function(id) {
     var el = document.getElementById(id);
@@ -2390,10 +2445,7 @@ function renderResults(data, websiteUrls, youtubeUrls, files) {
   renderAiNote(data);
   buildResultTabs();
   if (state.mode === 'all' || state.mode === 'poster')           renderPoster(data, websiteUrls, youtubeUrls);
-  if (state.mode === 'all')                                      renderOverview(data);
   if (state.mode === 'all' || state.mode === 'questions')        renderQuestions(data);
-  if (state.mode === 'all' || state.mode === 'mindmap')          renderMindmapResult(data);
-  if (state.mode === 'all' || state.mode === 'uebersicht')       renderUebersichtResult(data);
   if (state.mode === 'all' || state.mode === 'zusammenfassung')  renderZusammenfassungResult(data);
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
@@ -2424,10 +2476,7 @@ function buildResultTabs() {
   document.querySelectorAll('.rpanel').forEach(function(p) { p.classList.remove('active'); });
   var tabs = [];
   if (state.mode === 'all' || state.mode === 'poster')          tabs.push({ id: 'rpPoster',          label: t('rtab-poster') });
-  if (state.mode === 'all')                                     tabs.push({ id: 'rpOverview',         label: t('rtab-overview') });
   if (state.mode === 'all' || state.mode === 'questions')       tabs.push({ id: 'rpQuestions',        label: t('rtab-questions') });
-  if (state.mode === 'all' || state.mode === 'mindmap')         tabs.push({ id: 'rpMindmap',          label: t('rtab-mindmap') });
-  if (state.mode === 'all' || state.mode === 'uebersicht')      tabs.push({ id: 'rpUebersicht',       label: t('rtab-ue') });
   if (state.mode === 'all' || state.mode === 'zusammenfassung') tabs.push({ id: 'rpZusammenfassung',  label: t('rtab-zus') });
   tabs.push({ id: 'rpGlossar', label: t('rtab-glossar') });
   tabs.forEach(function(t, idx) {
@@ -2503,7 +2552,8 @@ function renderPoster(data, websiteUrls, youtubeUrls) {
 }
 
 function renderOverview(data) {
-  var el = document.getElementById('rpOverview'), html = '';
+  var el = document.getElementById('rpOverview');
+  if (!el) return;
   if (data.overview) {
     var ov = data.overview;
     if (ov.summary) html += '<div class="ov-section"><h3>Zusammenfassung</h3><div class="ov-card">' + ov.summary + '</div></div>';
@@ -2552,13 +2602,7 @@ function checkAnswer(btn) {
   if (explEl && expl) { explEl.textContent = expl; explEl.style.display = 'block'; }
 }
 
-function renderMindmapResult(data) {
-  var el = document.getElementById('rpMindmap');
-  if (!data.mindmap) { el.innerHTML = '<p style="color:var(--ink3);font-size:13px;padding:16px">Keine Mindmap-Daten vorhanden.</p>'; return; }
-  el.innerHTML = '<canvas id="mindmapCanvas" style="width:100%;border-radius:12px;background:#FAFAF7"></canvas>'
-    + '<div style="margin-top:10px"><button class="btn-sm" onclick="downloadMindmapCanvas()">⬇ PNG herunterladen</button></div>';
-  setTimeout(function() { drawMindmap(data.mindmap, data.title); }, 50);
-}
+function renderMindmapResult(data) { /* Mindmap entfernt */ }
 
 function drawMindmap(mm, fallbackTitle) {
   var canvas = document.getElementById('mindmapCanvas');
@@ -2815,6 +2859,8 @@ function restart() {
   document.getElementById('results').style.display      = 'none';
   document.getElementById('inputSection').style.display = 'block';
   document.getElementById('qualityBanner').innerHTML    = '';
+  var heroEl = document.querySelector('#pageHome .hero');
+  if (heroEl) heroEl.style.display = '';
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
