@@ -521,15 +521,14 @@ footer { text-align: center; padding: 20px; font-size: 11px; color: var(--ink3);
 
     <div id="inputSection">
       <div class="card">
-        <div class="card-label">API-SCHLÜSSEL</div>
-        <div class="api-row">
+        <div class="card-label" data-t="lbl-apikey">API-SCHLÜSSEL</div>        <div class="api-row">
           <input id="apiKey" class="api-input" type="password" placeholder="sk-ant-api..." autocomplete="off"/>
           <button class="icon-btn" onclick="toggleApi()">👁</button>
         </div>
       </div>
 
       <div class="card">
-        <div class="card-label">LERNMATERIAL EINGEBEN</div>
+        <div class="card-label" data-t="lbl-sources">LERNMATERIAL EINGEBEN</div>
         <div class="source-tabs">
           <button class="stab active" onclick="switchTab(this,'website')">🌐 Webseiten</button>
           <button class="stab" onclick="switchTab(this,'youtube')">🎬 YouTube</button>
@@ -580,7 +579,7 @@ footer { text-align: center; padding: 20px; font-size: 11px; color: var(--ink3);
       </div>
 
       <div class="card">
-        <div class="card-label">AUSGABE-FORMAT</div>
+        <div class="card-label" data-t="lbl-format">AUSGABE-FORMAT</div>
         <div class="mode-grid">
           <div class="mode-btn active" onclick="selectMode(this,'all')">
             <span class="mode-icon">✨</span>
@@ -643,7 +642,7 @@ footer { text-align: center; padding: 20px; font-size: 11px; color: var(--ink3);
       <div id="rpMindmap"          class="rpanel"></div>
       <div id="rpGlossar"   class="rpanel">
         <div class="card">
-          <div class="card-label">🔍 BEGRIFFE ERKLÄREN</div>
+          <div class="card-label" data-t="lbl-glossar">🔍 BEGRIFFE ERKLÄREN</div>
           <div class="glossar-search">
             <input id="glossarInput" class="glossar-input" type="text" placeholder="Begriff eingeben, z.B. Feudalismus..." onkeydown="if(event.key==='Enter')explainTerm()"/>
             <button class="btn-sm primary" onclick="explainTerm()">Erklären</button>
@@ -671,7 +670,7 @@ footer { text-align: center; padding: 20px; font-size: 11px; color: var(--ink3);
     </div>
 
     <div class="card">
-      <div class="card-label">API-SCHLÜSSEL</div>
+      <div class="card-label" data-t="lbl-apikey">API-SCHLÜSSEL</div>
       <div class="api-row">
         <input id="vfApiKey" class="api-input" type="password" placeholder="sk-ant-api..." autocomplete="off"/>
         <button class="icon-btn" onclick="toggleVfApi()">👁</button>
@@ -679,7 +678,7 @@ footer { text-align: center; padding: 20px; font-size: 11px; color: var(--ink3);
     </div>
 
     <div class="card">
-      <div class="card-label">VIDEO SUCHEN</div>
+      <div class="card-label" data-t="lbl-vfsearch">VIDEO SUCHEN</div>
       <div class="vf-search-row">
         <input id="vfInput" class="vf-input" type="text" placeholder="z.B. Karl der Große Erklärung für Schule..." onkeydown="if(event.key==='Enter')findVideos()"/>
         <button class="vf-btn" onclick="findVideos()">🔍 Suchen</button>
@@ -703,7 +702,7 @@ footer { text-align: center; padding: 20px; font-size: 11px; color: var(--ink3);
     </div>
 
     <div class="card">
-      <div class="card-label">API-SCHLÜSSEL</div>
+      <div class="card-label" data-t="lbl-apikey">API-SCHLÜSSEL</div>
       <div class="api-row">
         <input id="qcApiKey" class="api-input" type="password" placeholder="sk-ant-api..." autocomplete="off"/>
         <button class="icon-btn" onclick="toggleQcApi()">👁</button>
@@ -711,7 +710,7 @@ footer { text-align: center; padding: 20px; font-size: 11px; color: var(--ink3);
     </div>
 
     <div class="card">
-      <div class="card-label">QUELLEN EINGEBEN</div>
+      <div class="card-label" data-t="lbl-qcsources">QUELLEN EINGEBEN</div>
       <div id="qcUrlList" class="qc-url-list">
         <div class="url-row">
           <input class="url-input" type="url" placeholder="https://www.bpb.de/..."/>
@@ -739,7 +738,7 @@ footer { text-align: center; padding: 20px; font-size: 11px; color: var(--ink3);
 
     <!-- API Key -->
     <div class="card">
-      <div class="card-label">API-SCHLÜSSEL</div>
+      <div class="card-label" data-t="lbl-apikey">API-SCHLÜSSEL</div>
       <div class="api-row">
         <input id="ltApiKey" class="api-input" type="password" placeholder="sk-ant-api..." autocomplete="off"/>
         <button class="icon-btn" onclick="toggleLtApi()">👁</button>
@@ -748,7 +747,7 @@ footer { text-align: center; padding: 20px; font-size: 11px; color: var(--ink3);
 
     <!-- Tool Selector -->
     <div class="card">
-      <div class="card-label">WERKZEUG WÄHLEN</div>
+      <div class="card-label" data-t="lbl-werkzeug">WERKZEUG WÄHLEN</div>
       <div class="lt-tool-grid">
         <div class="lt-tool-btn active" id="ltBtnMindmap" onclick="switchLtTool('mindmap',this)">
           <span class="lt-icon">🕸️</span>
@@ -1603,68 +1602,55 @@ function getLangInstruction() {
 
 function applyTranslations() {
   var l = state.lang;
-  // Nav tabs
+
+  // ── Universal: translate ALL elements with data-t attribute ──
+  document.querySelectorAll('[data-t]').forEach(function(el) {
+    var key = el.getAttribute('data-t');
+    var val = t(key);
+    if (val && val !== key) el.textContent = val;
+  });
+
+  // ── Nav tabs ──
   var navBtns = document.querySelectorAll('.nav-tab');
   var navKeys = ['nav-home','nav-vf','nav-qc','nav-lt'];
   navBtns.forEach(function(b, i) { if (navKeys[i]) b.textContent = t(navKeys[i]); });
-  // Header links
-  var hdrLinks = document.querySelectorAll('.header-link span');
-  if (hdrLinks[0]) hdrLinks[0].textContent = t('hdr-faecher').replace('📚 ','');
-  if (hdrLinks[1]) hdrLinks[1].textContent = t('hdr-feedback').replace('📊 ','');
-  // Hero
+
+  // ── Hero (home) ──
   var heroH1 = document.querySelector('.hero h1');
   if (heroH1) heroH1.innerHTML = t('hero-h1');
   var heroP = document.querySelector('.hero p');
   if (heroP) heroP.textContent = t('hero-p');
-  // Card labels
-  var labels = document.querySelectorAll('.card-label');
-  var labelMap = {
-    'API-SCHLÜSSEL': 'lbl-apikey', 'API KEY': 'lbl-apikey',
-    'LERNMATERIAL EINGEBEN': 'lbl-sources', 'ENTER LEARNING MATERIAL': 'lbl-sources',
-    'AUSGABE-FORMAT': 'lbl-format', 'OUTPUT FORMAT': 'lbl-format',
-    'VIDEO SUCHEN': 'lbl-vfsearch', 'SEARCH VIDEO': 'lbl-vfsearch',
-    'QUELLEN EINGEBEN': 'lbl-qcsources', 'ENTER SOURCES': 'lbl-qcsources',
-    'WERKZEUG WÄHLEN': 'lbl-werkzeug', 'SELECT TOOL': 'lbl-werkzeug'
-  };
-  labels.forEach(function(el) {
-    var key = labelMap[el.textContent.trim()];
-    if (key) el.textContent = t(key);
-  });
-  // Source tabs
+
+  // ── Source tabs ──
   var stabs = document.querySelectorAll('.stab');
   var stabKeys = ['tab-website','tab-youtube','tab-file','tab-text'];
   stabs.forEach(function(b, i) { if (stabKeys[i]) b.textContent = t(stabKeys[i]); });
-  // Placeholders
-  var phMap = {
-    'websiteList': 'ph-website',
-    'youtubeList': 'ph-youtube',
-    'textInput':   'ph-text',
-    'glossarInput':'ph-glossar',
-    'vfInput':     'ph-vf'
-  };
+
+  // ── Placeholders ──
+  var phMap = { 'websiteList':'ph-website','youtubeList':'ph-youtube','textInput':'ph-text','glossarInput':'ph-glossar','vfInput':'ph-vf' };
   Object.keys(phMap).forEach(function(id) {
     var el = document.getElementById(id);
     if (!el) return;
-    var inp = el.tagName === 'TEXTAREA' || el.tagName === 'INPUT' ? el : el.querySelector('input, textarea');
+    var inp = el.tagName==='TEXTAREA'||el.tagName==='INPUT' ? el : el.querySelector('input,textarea');
     if (inp) inp.placeholder = t(phMap[id]);
   });
-  // Add URL buttons
+
+  // ── Add URL buttons ──
   var addBtns = document.querySelectorAll('.url-add');
   if (addBtns[0]) addBtns[0].textContent = t('add-link');
   if (addBtns[1]) addBtns[1].textContent = t('add-video');
   if (addBtns[2]) addBtns[2].textContent = t('add-qc');
-  // File zone
-  var fz = document.querySelector('.file-zone strong');
-  if (fz) fz.textContent = t('file-title');
+
+  // ── File zone ──
   var fzp = document.querySelectorAll('.file-zone p');
   if (fzp[0]) fzp[0].innerHTML = '<strong>' + t('file-title') + '</strong> ' + t('file-sub');
   if (fzp[1]) fzp[1].textContent = t('file-types');
-  // Mode buttons
+
+  // ── Mode buttons (by index) ──
   var modeBtns = document.querySelectorAll('.mode-btn');
   var modeData = [
     ['mode-all','mode-all-desc'],['mode-poster','mode-poster-desc'],
-    ['mode-q','mode-q-desc'],['mode-mm','mode-mm-desc'],
-    ['mode-ue','mode-ue-desc'],['mode-zus','mode-zus-desc']
+    ['mode-q','mode-q-desc'],['mode-zus','mode-zus-desc'],['mode-mm','mode-mm-desc']
   ];
   modeBtns.forEach(function(btn, i) {
     if (!modeData[i]) return;
@@ -1673,36 +1659,42 @@ function applyTranslations() {
     if (ti) ti.textContent = t(modeData[i][0]);
     if (di) di.textContent = t(modeData[i][1]);
   });
-  // Gen button
+
+  // ── Gen button ──
   var gb = document.querySelector('.gen-btn');
   if (gb) gb.textContent = t('gen-btn');
-  // Loading
-  var lt = document.querySelector('#loadingState p');
-  if (lt) lt.textContent = t('load-title');
+
+  // ── Loading ──
   var ls = document.querySelectorAll('#loadingState p');
+  if (ls[0]) ls[0].textContent = t('load-title');
   if (ls[1]) ls[1].textContent = t('load-sub');
   var steps = ['step1','step2','step3'];
   steps.forEach(function(id) { var el = document.getElementById(id); if (el) el.textContent = t(id); });
-  // Result header
+
+  // ── Result header ──
   var rh = document.querySelector('.result-header h2');
   if (rh) rh.textContent = t('res-title');
-  // Page heroes
+
+  // ── Page heroes (VideoFinder, Quellencheck, Lerntools) ──
   var pageHeroes = document.querySelectorAll('.page-hero h2');
   var pageHeroPs = document.querySelectorAll('.page-hero p');
   var heroData = [['vf-h2','vf-p'],['qc-h2','qc-p'],['lt-h2','lt-p']];
   pageHeroes.forEach(function(h, i) { if (heroData[i]) h.textContent = t(heroData[i][0]); });
   pageHeroPs.forEach(function(p, i) { if (heroData[i]) p.textContent = t(heroData[i][1]); });
-  // VF search btn & hint
+
+  // ── VideoFinder ──
   var vfBtn = document.querySelector('.vf-btn');
   if (vfBtn) vfBtn.textContent = t('btn-vf');
   var vfHint = document.querySelector('.vf-hint');
   if (vfHint) vfHint.textContent = t('vf-hint');
   var vfInp = document.getElementById('vfInput');
   if (vfInp) vfInp.placeholder = t('ph-vf');
-  // QC button
+
+  // ── Quellencheck ──
   var qcBtn = document.querySelector('#pageQuellencheck .gen-btn');
   if (qcBtn) qcBtn.textContent = t('btn-qc');
-  // LT tool buttons
+
+  // ── Lerntools buttons ──
   var ltBtns = document.querySelectorAll('.lt-tool-btn');
   var ltData = [['lt-mm-title','lt-mm-desc'],['lt-ue-title','lt-ue-desc'],['lt-zus-title','lt-zus-desc']];
   ltBtns.forEach(function(btn, i) {
@@ -1712,50 +1704,38 @@ function applyTranslations() {
     if (ti) ti.textContent = t(ltData[i][0]);
     if (di) di.textContent = t(ltData[i][1]);
   });
-  // Subject modal
+
+  // ── Subject modal ──
   var smTitle = document.querySelector('#subjectModal h3');
   if (smTitle) smTitle.textContent = t('sm-title');
   var smSub = document.querySelector('#subjectModal p.sub');
   if (smSub) smSub.textContent = t('sm-sub');
   var smPh = document.getElementById('subjectInput');
   if (smPh) smPh.placeholder = t('sm-ph');
-  var dlLabel = document.querySelector('.detail-label');
-  if (dlLabel) dlLabel.textContent = t('lbl-detail');
-  var dBtns = document.querySelectorAll('.detail-btn');
-  var dData = [['d-kurz','d-kurz-desc'],['d-mittel','d-mittel-desc'],['d-aus','d-aus-desc']];
-  dBtns.forEach(function(btn, i) {
-    if (!dData[i]) return;
-    var ti = btn.querySelector('.d-title');
-    var di = btn.querySelector('.d-desc');
-    if (ti) ti.textContent = t(dData[i][0]);
-    if (di) di.textContent = t(dData[i][1]);
-  });
   var skipBtn = document.querySelector('#subjectModal .btn-cancel');
   if (skipBtn) skipBtn.textContent = t('btn-skip');
   var createBtn = document.querySelector('#subjectModal .btn-confirm');
   if (createBtn) createBtn.textContent = t('btn-create');
-  // Feedback modal
+
+  // ── Feedback modal ──
   var fbTitle = document.querySelector('#feedbackModal h3');
   if (fbTitle) fbTitle.textContent = t('fb-title');
   var fbTa = document.getElementById('feedbackText');
   if (fbTa) fbTa.placeholder = t('ph-fb');
-  // Drawer
+
+  // ── Drawer ──
   var dHead = document.querySelector('.drawer-head h3');
   if (dHead) dHead.textContent = t('drawer-title');
-  // Footer
+
+  // ── Footer ──
   var foot = document.querySelector('footer p');
   if (foot) foot.textContent = t('footer');
-  // Glossar
-  var glLabel = document.querySelector('#rpGlossar .card-label');
-  if (glLabel) glLabel.textContent = t('lbl-glossar');
-  var glPh = document.getElementById('glossarInput');
-  if (glPh) glPh.placeholder = t('ph-glossar');
-  var glBtn = document.querySelector('#rpGlossar .btn-sm.primary');
-  if (glBtn) glBtn.textContent = t('btn-explain');
-  // Voice button tooltip
+
+  // ── Voice button ──
   var voiceBtn = document.getElementById('voiceBtn');
   if (voiceBtn) voiceBtn.title = t('voice-start');
-  // Lerntools guides
+
+  // ── Lerntools guides ──
   applyGuideTranslations();
 }
 
@@ -2145,7 +2125,7 @@ async function runGenerate(apiKey, websiteUrls, youtubeUrls, files, text) {
       + '5. FACH: "' + state.subject + '".\n'
       + '6. ZUSAMMENFASSUNG PFLICHTREGELN – unbedingt einhalten:\n'
       + '   EINLEITUNG: 2–3 vollständige Sätze nach TATTZ-Formel (Textart · Autor/Quelle · Titel · Thema · Zeit/Kontext). Präsens.\n'
-      + '   HAUPTTEIL: Ausformulierter Fließtext – KEINE Stichpunkte, KEIN Stichpunkt-Format, KEINE Aufzählungszeichen. Mindestens ' + targetWords + ' Wörter. W-Fragen beantworten: Wer? Was? Wann? Wo? Warum? Wie? Welche Folgen? Zusammenhänge und Hintergründe erklären. Mehrere Absätze mit \\n\\n trennen. Präsens.\n'
+      + '   HAUPTTEIL: Ausformulierter Fließtext – KEINE Stichpunkte, KEIN Stichpunkt-Format, KEINE Aufzählungszeichen. Mindestens ' + targetWords + ' Wörter. W-Fragen beantworten: Wer? Was? Wann? Wo? Warum? Wie? Welche Folgen? Zusammenhänge und Hintergründe erklären. Mehrere Absätze. Präsens.\n'
       + '   SCHLUSS: 3–5 vollständige Sätze mit Bedeutung, Wirkung und Fazit.\n'
       + '   TIPPS: 3 konkrete schulrelevante Lerntipps.\n'
       + (imgInstr ? '7. ' + imgInstr + '\n' : '')
@@ -2160,7 +2140,7 @@ async function runGenerate(apiKey, websiteUrls, youtubeUrls, files, text) {
       + '"overview":{"summary":"[1 Satz]","main_points":["[Punkt]","[Punkt]","[Punkt]","[Punkt]"],"contradictions":[]},'
       + '"questions":[{"question":"[Frage]","answers":["[A]","[B]","[C]","[D]"],"correct":0,"explanation":"[Erklärung]"}],'
       + '"mindmap":{"center":"[Zentralbegriff]","branches":[{"label":"[Hauptthema]","color":"#4A7FE5","desc":"[1 Satz Erklärung]","sub":["[Punkt1]","[Punkt2]","[Punkt3]"]},{"label":"[Hauptthema2]","color":"#3DAA6E","desc":"[1 Satz]","sub":["[Punkt1]","[Punkt2]","[Punkt3]"]}]},'
-      + '"zusammenfassung":{"einleitung":"[TATTZ-Einleitung hier als vollständige Sätze – KEIN Platzhaltertext]","hauptteil":"[Langer Fließtext hier – mindestens ' + targetWords + ' Wörter – absolut KEIN Stichpunktformat – Absätze mit \\n\\n trennen]","schluss":"[Fazit und Bedeutung hier als vollständige Sätze]","tipps":["[Lerntipp 1]","[Lerntipp 2]","[Lerntipp 3]"]},'
+      + '"zusammenfassung":{"einleitung":"[TATTZ-Einleitung – vollständige Sätze]","hauptteil":"[Langer Fließtext – mindestens ' + targetWords + ' Wörter – KEIN Stichpunktformat]","schluss":"[Fazit und Bedeutung – vollständige Sätze]","tipps":["[Lerntipp 1]","[Lerntipp 2]","[Lerntipp 3]"]},'
       + '"definitions":[{"term":"[Begriff]","definition":"[Definition]"}],'
       + '"source_quality":{"rating":"great","text":"[Bewertungstext]"},'
       + '"sources":[{"title":"[Titel]","url":"https://...","type":"good","ai_added":true}],'
@@ -2418,9 +2398,38 @@ function renderQuellenResults(results) {
 // HELPERS
 // ─────────────────────────────────────────────────────────────────────────────
 function parseJSON(text) {
+  // Clean common issues: remove backtick fences, leading/trailing whitespace
+  text = text.replace(/```json|```/g, '').trim();
+  // Try direct parse first
   try { return JSON.parse(text); } catch(e) { /* continue */ }
+  // Extract largest {...} block
   var m = text.match(/\{[\s\S]*\}/);
-  if (m) { try { return JSON.parse(m[0]); } catch(e) { /* continue */ } }
+  if (m) {
+    try { return JSON.parse(m[0]); } catch(e) {
+      // Try to fix truncated JSON by closing open structures
+      var s = m[0];
+      // Count unclosed braces/brackets
+      var opens = 0, openBrackets = 0;
+      var inStr = false, esc = false;
+      for (var i = 0; i < s.length; i++) {
+        var ch = s[i];
+        if (esc) { esc = false; continue; }
+        if (ch === '\\' && inStr) { esc = true; continue; }
+        if (ch === '"') { inStr = !inStr; continue; }
+        if (inStr) continue;
+        if (ch === '{') opens++;
+        else if (ch === '}') opens--;
+        else if (ch === '[') openBrackets++;
+        else if (ch === ']') openBrackets--;
+      }
+      // Close truncated string
+      if (inStr) s += '"';
+      // Close arrays and objects
+      for (var k = 0; k < openBrackets; k++) s += ']';
+      for (var j = 0; j < opens; j++) s += '}';
+      try { return JSON.parse(s); } catch(e2) { /* continue */ }
+    }
+  }
   return null;
 }
 function readFileAsBase64(file) {
