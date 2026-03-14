@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="de">
 <head>
@@ -2163,7 +2164,11 @@ async function runGenerate(apiKey, websiteUrls, youtubeUrls, files, text) {
     if (data.error) { showError('API-Fehler: ' + data.error.message); resetLoading(); return; }
 
     var rawText = '';
-    if (data.content) { data.content.forEach(function(b) { if (b.type === 'text') rawText += b.text; }); }
+    if (data.content) {
+      // With web_search, multiple tool blocks appear - the final JSON is always the last text block
+      var textBlocks = data.content.filter(function(b) { return b.type === 'text' && b.text; });
+      if (textBlocks.length) rawText = textBlocks[textBlocks.length - 1].text;
+    }
     var parsed = parseJSON(rawText);
     if (!parsed) { showError('Fehler beim Verarbeiten. Bitte erneut versuchen.'); resetLoading(); return; }
 
@@ -2992,7 +2997,9 @@ function renderZusammenfassungResult(data) {
   if (!data.zusammenfassung) { el.innerHTML = '<p style="color:var(--ink3);font-size:13px;padding:16px">Keine Zusammenfassung vorhanden.</p>'; return; }
   var z = data.zusammenfassung;
 
-  // Render hauptteil: split on \n\n into multiple <p> tags for proper paragraphs
+  // Store data globally for PPTX export
+  window._lastZusammenfassungData = { z: z, title: data.title || 'Zusammenfassung' };
+
   function toParas(text) {
     if (!text) return '';
     return text.split(/\n\n+/).map(function(p) {
@@ -3021,7 +3028,104 @@ function renderZusammenfassungResult(data) {
       + '<div style="font-size:11px;font-weight:700;letter-spacing:1px;color:var(--blue);text-transform:uppercase;margin-bottom:8px">💡 Lern-Tipps</div>'
       + '<ul style="padding-left:18px;margin:0">' + tipps + '</ul></div>' : '')
     + '</div>'
-    + '<div style="margin-top:12px"><button class="btn-sm" onclick="downloadPanel(\'zusammenfassungDownloadTarget\',\'zusammenfassung\')">⬇ PNG herunterladen</button></div>';
+    + '<div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap">'
+    + '<button class="btn-sm" onclick="downloadPanel(\'zusammenfassungDownloadTarget\',\'zusammenfassung\')">⬇ PNG herunterladen</button>'
+    + '<button class="btn-sm" style="background:var(--blue);color:white;border:none" onclick="downloadZusammenfassungPptx()">📊 PowerPoint herunterladen</button>'
+    + '</div>';
+}
+
+async function downloadZusammenfassungPptx() {
+  var d = window._lastZusammenfassungData;
+  if (!d) return;
+  var z = d.z;
+  var title = d.title;
+
+  // Load PptxGenJS from CDN dynamically
+  if (typeof PptxGenJS === 'undefined') {
+    await new Promise(function(resolve, reject) {
+      var s = document.createElement('script');
+      s.src = 'https://cdnjs.cloudflare.com/ajax/libs/pptxgenjs/3.12.0/pptxgen.bundle.js';
+      s.onload = resolve; s.onerror = reject;
+      document.head.appendChild(s);
+    });
+  }
+
+  var pres = new PptxGenJS();
+  pres.layout = 'LAYOUT_16x9';
+  pres.title  = title;
+
+  var BLUE  = '2563EB';
+  var GREEN = '16A34A';
+  var GOLD  = 'B45309';
+  var DARK  = '1E293B';
+  var LIGHT = 'F8FAFC';
+  var MID   = '64748B';
+
+  function makeShadow() { return { type: 'outer', blur: 8, offset: 3, angle: 135, color: '000000', opacity: 0.10 }; }
+
+  // ── SLIDE 1: Titelfolie ──
+  var s1 = pres.addSlide();
+  s1.background = { color: '1E293B' };
+  s1.addShape(pres.ShapeType.rect, { x: 0, y: 0, w: 0.08, h: 5.625, fill: { color: BLUE } });
+  s1.addText(title, { x: 0.35, y: 1.6, w: 9.3, h: 1.6, fontSize: 36, bold: true, color: 'FFFFFF', fontFace: 'Calibri', valign: 'middle', margin: 0 });
+  s1.addText('Zusammenfassung · Lern·AI', { x: 0.35, y: 3.3, w: 9.3, h: 0.5, fontSize: 16, color: '94A3B8', fontFace: 'Calibri', margin: 0 });
+
+  // ── SLIDE 2: Einleitung ──
+  var s2 = pres.addSlide();
+  s2.background = { color: LIGHT };
+  s2.addShape(pres.ShapeType.rect, { x: 0, y: 0, w: 10, h: 1.0, fill: { color: GREEN } });
+  s2.addText('EINLEITUNG', { x: 0.4, y: 0.18, w: 9.2, h: 0.64, fontSize: 22, bold: true, color: 'FFFFFF', fontFace: 'Calibri', valign: 'middle', margin: 0 });
+  var einlText = (z.einleitung || '').replace(/<[^>]+>/g, '');
+  s2.addShape(pres.ShapeType.rect, { x: 0.4, y: 1.2, w: 9.2, h: 3.8, fill: { color: 'FFFFFF' }, shadow: makeShadow() });
+  s2.addText(einlText, { x: 0.6, y: 1.35, w: 8.8, h: 3.5, fontSize: 15, color: DARK, fontFace: 'Calibri', valign: 'top', wrap: true, margin: 0 });
+
+  // ── SLIDE 3+: Hauptteil (aufgeteilt in Abschnitte) ──
+  var hauptteilRaw = (z.hauptteil || '').replace(/<[^>]+>/g, '');
+  var absaetze = hauptteilRaw.split(/\n\n+/).filter(function(p) { return p.trim().length > 0; });
+  // Gruppiere je ~3 Absätze auf eine Folie
+  var gruppen = [];
+  for (var i = 0; i < absaetze.length; i += 3) {
+    gruppen.push(absaetze.slice(i, i + 3).join('\n\n'));
+  }
+  if (gruppen.length === 0) gruppen = [hauptteilRaw];
+
+  gruppen.forEach(function(gruppe, idx) {
+    var s = pres.addSlide();
+    s.background = { color: LIGHT };
+    s.addShape(pres.ShapeType.rect, { x: 0, y: 0, w: 10, h: 1.0, fill: { color: BLUE } });
+    s.addText('HAUPTTEIL' + (gruppen.length > 1 ? ' · Teil ' + (idx+1) + ' / ' + gruppen.length : ''), { x: 0.4, y: 0.18, w: 9.2, h: 0.64, fontSize: 22, bold: true, color: 'FFFFFF', fontFace: 'Calibri', valign: 'middle', margin: 0 });
+    s.addShape(pres.ShapeType.rect, { x: 0.4, y: 1.2, w: 9.2, h: 3.8, fill: { color: 'FFFFFF' }, shadow: makeShadow() });
+    s.addText(gruppe, { x: 0.6, y: 1.35, w: 8.8, h: 3.5, fontSize: 14, color: DARK, fontFace: 'Calibri', valign: 'top', wrap: true, margin: 0 });
+  });
+
+  // ── SLIDE: Schluss ──
+  var sSchluss = pres.addSlide();
+  sSchluss.background = { color: LIGHT };
+  sSchluss.addShape(pres.ShapeType.rect, { x: 0, y: 0, w: 10, h: 1.0, fill: { color: GOLD } });
+  sSchluss.addText('SCHLUSS', { x: 0.4, y: 0.18, w: 9.2, h: 0.64, fontSize: 22, bold: true, color: 'FFFFFF', fontFace: 'Calibri', valign: 'middle', margin: 0 });
+  var schlussText = (z.schluss || '').replace(/<[^>]+>/g, '');
+  sSchluss.addShape(pres.ShapeType.rect, { x: 0.4, y: 1.2, w: 9.2, h: 3.8, fill: { color: 'FFFFFF' }, shadow: makeShadow() });
+  sSchluss.addText(schlussText, { x: 0.6, y: 1.35, w: 8.8, h: 3.5, fontSize: 15, color: DARK, fontFace: 'Calibri', valign: 'top', wrap: true, margin: 0 });
+
+  // ── SLIDE: Lern-Tipps (wenn vorhanden) ──
+  if (z.tipps && z.tipps.length) {
+    var sTipps = pres.addSlide();
+    sTipps.background = { color: '1E3A5F' };
+    sTipps.addShape(pres.ShapeType.rect, { x: 0, y: 0, w: 0.08, h: 5.625, fill: { color: BLUE } });
+    sTipps.addText('💡 Lern-Tipps', { x: 0.35, y: 0.3, w: 9.3, h: 0.7, fontSize: 26, bold: true, color: 'FFFFFF', fontFace: 'Calibri', margin: 0 });
+    var tipRows = z.tipps.map(function(tip) { return { text: tip, options: { bullet: true, breakLine: true, fontSize: 16, color: 'E2E8F0', fontFace: 'Calibri' } }; });
+    if (tipRows.length) tipRows[tipRows.length - 1].options.breakLine = false;
+    sTipps.addText(tipRows, { x: 0.5, y: 1.2, w: 9.0, h: 3.8 });
+  }
+
+  // ── SLIDE: Letzte Folie ──
+  var sEnd = pres.addSlide();
+  sEnd.background = { color: '1E293B' };
+  sEnd.addText('Erstellt mit Lern·AI', { x: 1, y: 2.0, w: 8, h: 0.8, fontSize: 28, bold: true, color: 'FFFFFF', fontFace: 'Calibri', align: 'center' });
+  sEnd.addText('Theo Gutendorf © 2026', { x: 1, y: 2.9, w: 8, h: 0.5, fontSize: 14, color: '64748B', fontFace: 'Calibri', align: 'center' });
+
+  var safeName = title.replace(/[^a-zA-Z0-9äöüÄÖÜß\s_-]/g, '').replace(/\s+/g, '_').substring(0, 40);
+  await pres.writeFile({ fileName: 'LernAI_Zusammenfassung_' + safeName + '.pptx' });
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -3356,15 +3460,15 @@ async function generateZusammenfassung() {
     var zus  = parseJSON(raw);
     document.getElementById('ltZusLoading').style.display = 'none';
     if (!zus) { document.getElementById('ltZusResult').innerHTML = '<p style="color:var(--red);font-size:13px">Fehler.</p>'; document.getElementById('ltZusResult').style.display = 'block'; return; }
-    renderZusammenfassungResult(zus);
+    renderLtZusammenfassungResult(zus);
   } catch(e) {
     document.getElementById('ltZusLoading').style.display = 'none';
     alert('Fehler: ' + e.message);
   }
 }
 
-function renderZusammenfassungResult(zus) {
-  var tipps = (zus.tipps || []).map(function(t) { return '<li style="font-size:12px;color:var(--ink2);margin-bottom:4px">' + t + '</li>'; }).join('');
+function renderLtZusammenfassungResult(zus) {
+  var tipps = (zus.tipps || []).map(function(tip) { return '<li style="font-size:12px;color:var(--ink2);margin-bottom:4px">' + tip + '</li>'; }).join('');
   var html = '<div class="zus-result">'
     + '<div class="zus-part einleitung"><h4>EINLEITUNG</h4><p>' + (zus.einleitung||'') + '</p></div>'
     + '<div class="zus-part hauptteil"><h4>HAUPTTEIL</h4><p>' + (zus.hauptteil||'') + '</p></div>'
@@ -3409,7 +3513,7 @@ var DIAG_CHECKS = [
   { id: 'fn-showpage',     label: 'Funktion: showPage()',       check: function() { return typeof showPage === 'function'; },            heal: null },
   // State
   { id: 'state-lang',      label: 'State: Sprache gesetzt',     check: function() { return ['de','en','fr','es'].indexOf(state.lang) > -1; }, heal: function() { state.lang = 'de'; applyTranslations(); return true; } },
-  { id: 'state-mode',      label: 'State: Mode gültig',         check: function() { return ['all','poster','questions','zusammenfassung'].indexOf(state.mode) > -1; }, heal: function() { state.mode = 'all'; return true; } },
+  { id: 'state-mode',      label: 'State: Mode gültig',         check: function() { return ['all','poster','questions','zusammenfassung','mindmap'].indexOf(state.mode) > -1; }, heal: function() { state.mode = 'all'; return true; } },
   // localStorage
   { id: 'localstorage',    label: 'localStorage verfügbar',     check: function() { try { localStorage.setItem('_diagtest','1'); localStorage.removeItem('_diagtest'); return true; } catch(e) { return false; } }, heal: null },
   // Translations
